@@ -1,0 +1,22 @@
+{
+    "name": "dashboard",
+    "version": "0.0.1",
+    "homepage": "https://github.com/as-me/dashboard",
+    "authors": [
+    "Sanjay krishna anbalagan <sanjay1909@gmail.com>"
+  ],
+    "description": "Dashboard targetting OAutt 2 data",
+    "keywords": [
+    "reactjs",
+    "dashboard"
+  ],
+    "license": "MPL 2.0",
+    "dependencies": {
+        "react": "~0.13.3",
+        "fontawesome": "~4.3.0",
+        "bootstrap": "~3.3.5"
+    },
+    "devDependencies": {
+
+    }
+}

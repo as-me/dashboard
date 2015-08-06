@@ -27,6 +27,7 @@
     "gulp-jshint": "^1.11.2",
     "gulp-notify": "^2.2.0",
     "gulp-util": "^3.0.6",
+    "imports-loader": "^0.6.4",
     "path": "^0.11.14",
     "require-dir": "^0.3.0",
     "weavecore": "git+https://github.com/sanjay1909/WeaveCoreJS.git",

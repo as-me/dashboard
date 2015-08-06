@@ -1,0 +1,23 @@
+{
+  "name": "D3Chart",
+  "version": "0.0.0",
+  "homepage": "https://github.com/sanjay1909/D3Chart",
+  "authors": [
+    "Sanjay krishna anbalagan <sanjay1909@gmail.com>"
+  ],
+  "description": "Visualization charts built on D3",
+  "main": "d3Chart.js",
+  "keywords": [
+    "d3",
+    "charts",
+    "visualization"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

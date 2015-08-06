@@ -4,18 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- font-awesome CSS -->
+    <link href="../bower_components/fontawesome/css/font-awesome.min.css" rel="stylesheet" />
+    <style type="text/css">
+        body {
+            margin-top: 50px;
+            background-color: #111;
+        }
+
+        #page-wrapper {
+            width: 100%;
+            padding: 0;
+            background-color: #fff;
+        }
+    </style>
 </head>
 
 <body>
-    <div>
-        <a href="#">Home</a>
-        <a href="#Charts">Charts</a>
-        <a href="#Data-Source">Data-Source</a>
+    <div id="menu"></div>
+    <div id="page-wrapper">
+        <div id="content" class="container-fluid">
+        </div>
     </div>
-    <div id="app"></div>
     <script src="vendors.js"></script>
     <script src="bundle.js"></script>
-
 </body>
 
 </html>

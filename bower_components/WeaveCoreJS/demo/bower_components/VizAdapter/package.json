@@ -1,0 +1,28 @@
+{
+  "name": "VizAdapter",
+  "version": "1.0.0",
+  "description": "Interface for seesion and visualization framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://sanjay1909:momndad19@github.com/sanjay1909/VizAdapter.git"
+  },
+  "keywords": [
+    "session",
+    "visualization"
+  ],
+  "author": "Sanjay",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanjay1909/VizAdapter/issues"
+  },
+  "homepage": "https://github.com/sanjay1909/VizAdapter",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-uglify": "^0.8.1"
+  }
+}

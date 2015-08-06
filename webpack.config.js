@@ -15,7 +15,7 @@ var config = {
     // specify that react should be part of that chunk
     entry: {
         app: path.resolve(__dirname, 'src/app.js'),
-        vendors: ['react']
+        vendors: ['weavecore', 'react']
     },
     // The resolve.alias object takes require expressions
     // (require('react')) as keys and filepath to actual
@@ -28,11 +28,16 @@ var config = {
     // and create a vendors.js file. As you can see the first argument matches the key
     // of the entry, "vendors"
     plugins: [
+        /*new webpack.ProvidePlugin({
+            createjs: "createjs",
+            "window.createjs": "createjs"
+        }),*/
     new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js')
   ],
     output: {
         path: './build',
         filename: 'bundle.js'
+
     },
     module: {
         // There is no reason for WebPack to parse this file
@@ -44,13 +49,19 @@ var config = {
                 loader: 'babel',
                 exclude: [bower_dir, node_modules_dir]
             }
+            /*,
+            {
+                test: /[\/\\]node_modules[\/\\]some-module[\/\\]index\.js$/,
+                loader: "imports?this=>window"
+            }*/
         ]
     }
 
 };
-
+config.addVendor('weavecore', bower_dir + '/WeaveCoreJS/build/weavecore.js');
 config.addVendor('react', bower_dir + '/react/react.js');
-config.addVendor('bootstrap', bower_dir + '/bootstrap/dist/js/bootstrap.min.js');
-config.addVendor('bootstrap.css', bower_dir + '/bootstrap/dist/css/bootstrap.min.css');
+//config.addVendor('bootstrap', bower_dir + '/bootstrap/dist/bootstrap.css');
+//console.log(config.resolve, config.module.noParse);
+
 
 module.exports = config;

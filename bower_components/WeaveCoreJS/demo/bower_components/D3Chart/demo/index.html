@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <link rel="stylesheet" href="../d3Chart.min.css">
+    <style>
+        svg {
+            border: 1px solid black;
+            border-radius: 25px;
+        }
+    </style>
+
+    <script type="text/javascript" src="../bower_components/d3/d3.js"></script>
+    <script type="text/javascript" src="../d3Chart.js"></script>
+
+
+</head>
+
+<body>
+
+    <div style="float:left">
+
+        X-Axis:
+        <select id="xSel" onchange="updateXAxis()"> </select>
+    </div>
+
+    <div>
+        Y-Axis:
+        <select id="ySel" onchange="updateYAxis()"> </select>
+    </div>
+    <div id="div1"></div>
+    <div id="div2"></div>
+
+
+    <script type="text/javascript">
+        var config = {
+            container: "div1",
+            margin: {
+                top: 40,
+                right: 20,
+                bottom: 140,
+                left: 80
+            },
+            size: {
+                width: 500,
+                height: 500
+            },
+            columns: {
+                x: "name",
+                y: "protein",
+                key: "name"
+            },
+            interactions: {
+                onProbe: {
+                    showToolTip: true
+                }
+            }
+        }
+
+        var chart = new d3Chart.Scatterplot(config);
+
+        var config2 = {
+            container: "div2",
+            margin: {
+                top: 40,
+                right: 20,
+                bottom: 140,
+                left: 80
+            },
+            size: {
+                width: 500,
+                height: 500
+            },
+            columns: {
+                x: "name",
+                y: "fat",
+                key: "name"
+            },
+            interactions: {
+                onProbe: {
+                    showToolTip: true
+                }
+            }
+        }
+
+        var chart2 = new d3Chart.Scatterplot(config2);
+
+        var headerNames;
+        d3.csv("cereal.csv", function (error, rows) {
+            headerNames = d3.keys(rows[0]);
+            var xSelect = document.getElementById("xSel");
+            var ySelect = document.getElementById("ySel");
+
+            for (var i = 0; i < headerNames.length; i++) {
+                var opt = headerNames[i];
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                xSelect.appendChild(el);
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                ySelect.appendChild(el);
+            }
+
+
+            console.log(headerNames);
+            chart.renderChart(rows);
+            chart2.renderChart(rows);
+            xSelect.value = config.columns.x;
+            ySelect.value = config.columns.y;
+        });
+
+        function updateXAxis() {
+            var xSelect = document.getElementById("xSel");
+            console.log(xSelect.value);
+            chart.setXAttribute(xSelect.value);
+        }
+
+        function updateYAxis() {
+            var ySelect = document.getElementById("ySel");
+            console.log(ySelect.value);
+            chart.setYAttribute(ySelect.value);
+        }
+    </script>
+</body>
+
+</html>

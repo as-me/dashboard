@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sliderDemoApp" id="top">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="bower_components/D3Chart/d3Chart.min.css">
+    <link rel="stylesheet" href="labelledSlider/jquery.ui.labeledslider.css">
+    <style>
+        svg {
+            border: 1px solid black;
+            border-radius: 25px;
+        }
+
+        h4 {
+            text-align: center;
+        }
+    </style>
+
+
+    <script type="text/javascript" src="bower_components/d3/d3.js"></script>
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="bower_components/D3Chart/d3Chart.js"></script>
+    <script type="text/javascript" src="slider.js"></script>
+    <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
+    <script type="text/javascript" src="../build/weavecore.js"></script>
+    <script type="text/javascript" src="bower_components/VizAdapter/VizAdapter.js"></script>
+
+
+
+</head>
+
+<body ng-controller="sliderDemoCtrl">
+
+    <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
+
+
+    <div>
+        <div style="float:left">
+            X-Axis:
+            <select id="xSel" onchange="updateXAxis()"> </select>
+        </div>
+        <div>
+            Y-Axis:
+            <select id="ySel" onchange="updateYAxis()"> </select>
+        </div>
+    </div>
+    <h4>Only Probing Linked</h4>
+
+    <div id="div1"></div>
+
+    <h4>Probing and Selection Linked</h4>
+
+    <div id="div2"></div>
+    <script type="text/javascript">
+        var app = angular.module('sliderDemoApp', ['ui.slider']);
+
+        var sc;
+        var testObj = {};
+
+        var xColName = WeaveAPI.globalHashMap.requestObject('xColumn', weavecore.LinkableString, false);
+        var yColName = WeaveAPI.globalHashMap.requestObject('yColumn', weavecore.LinkableString, false);
+
+        var weaveInteractionPeer = new peer.WeaveJSInterface();
+
+        app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
+            $scope.safeApply = function (fn) {
+                var phase = this.$root.$$phase;
+                if (phase == '$apply' || phase == '$digest') {
+                    if (fn && (typeof (fn) === 'function')) {
+                        fn();
+                    }
+                } else {
+                    this.$apply(fn);
+                }
+            };
+
+            // Slider options with event handlers
+            $scope.labeledslider = {
+                'options': {
+                    start: function (event, ui) {
+                        $log.info('Event: Slider start');
+                    },
+                    stop: function (event, ui) {
+                        $log.info('Event: Slider stop');
+                        handleSliderValueChange(ui);
+                    }
+                }
+            }
+
+            $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+            var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
+            cc.addGroupedCallback({}, updateSliderValues, true);
+
+            function updateSliderValues() {
+                $scope.sliderPosition = $scope.log._undoHistory.length;
+                // since this function is called programatically in next frame in next frame ,
+                // and not called by UI event , we need to manually trigger digest cycle.
+                console.log('UpdateSliderValues called')
+                $scope.safeApply();
+            }
+
+            function handleSliderValueChange(ui) {
+                var delta = ui.value - $scope.log.undoHistory.length;
+                if (delta < 0)
+                    $scope.log.undo(-delta);
+                else
+                    $scope.log.redo(delta);
+                $scope.$apply();
+            }
+
+
+
+
+            xColName.addImmediateCallback({}, updateXCol.bind(this));
+            yColName.addImmediateCallback({}, updateYCol.bind(this));
+
+            $scope.log.clearHistory();
+
+
+
+            var config = {
+                container: "div1",
+                margin: {
+                    top: 16,
+                    right: 20,
+                    bottom: 110,
+                    left: 80
+                },
+                size: {
+                    width: 920,
+                    height: 120
+                },
+                columns: {
+                    x: "name",
+                    y: "protein",
+                    key: "name"
+                },
+                interactions: {
+                    onProbe: {
+                        showToolTip: true,
+                        callback: onUIProbe
+                    }
+                }
+            }
+            var config2 = {
+                container: "div2",
+                margin: {
+                    top: 16,
+                    right: 20,
+                    bottom: 110,
+                    left: 80
+                },
+                size: {
+                    width: 920,
+                    height: 120
+                },
+                columns: {
+                    x: "name",
+                    y: "fat",
+                    key: "name"
+                },
+                interactions: {
+                    onProbe: {
+                        showToolTip: true,
+                        callback: onUIProbe
+                    },
+                    onSelect: {
+                        callback: onUISelection
+                    }
+                }
+            }
+
+            function onUIProbe(d) {
+                weaveInteractionPeer.activeHook = this;
+                weaveInteractionPeer.doProbe(d);
+            }
+
+            function onUISelection(keys) {
+                weaveInteractionPeer.activeHook = this;
+                weaveInteractionPeer.doSelection(keys);
+            }
+
+
+            var chart = testObj.chart = new d3Chart.Scatterplot(config);
+            var chart2 = testObj.chart2 = new d3Chart.Scatterplot(config2);
+
+            d3.csv("cereal.csv", function (error, rows) {
+                var headerNames = d3.keys(rows[0]);
+                var xSelect = document.getElementById("xSel");
+                var ySelect = document.getElementById("ySel");
+
+                for (var i = 0; i < headerNames.length; i++) {
+                    var opt = headerNames[i];
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    xSelect.appendChild(el);
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    ySelect.appendChild(el);
+                }
+
+
+                console.log(headerNames);
+
+                xSelect.value = config.columns.x;
+                ySelect.value = config.columns.y;
+                chart.renderChart(rows);
+                chart2.renderChart(rows);
+            });
+
+            weaveInteractionPeer.hooks.push(new hook.D3Interface(chart));
+            weaveInteractionPeer.hooks.push(new hook.D3Interface(chart2));
+
+            $scope.log.clearHistory();
+
+
+        });
+
+        function updateXAxis() {
+            console.log('xaxis update');
+            var xSelect = document.getElementById("xSel");
+            console.log(xSelect.value);
+            xColName.value = xSelect.value;
+        }
+
+        function updateYAxis() {
+            console.log('yaxis update');
+            var ySelect = document.getElementById("ySel");
+            console.log(ySelect.value);
+            yColName.value = ySelect.value;
+        }
+
+        function updateXCol() {
+            console.log('xaxis update - session');
+            testObj.chart.setXAttribute(xColName.value);
+        }
+
+        function updateYCol() {
+            console.log('yaxis update - session');
+            testObj.chart.setYAttribute(yColName.value);
+        }
+    </script>
+</body>
+
+</html>

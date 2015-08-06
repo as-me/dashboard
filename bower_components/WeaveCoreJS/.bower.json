@@ -20,11 +20,11 @@
     "**/.*",
     "node_modules"
   ],
-  "_release": "d4b20a2857",
+  "_release": "5f44814e8c",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "d4b20a2857cb73e692e3c21dda49628a31a4e76e"
+    "commit": "5f44814e8c84d8781e38d868936e8b33f8ba4e8f"
   },
   "_source": "https://github.com/sanjay1909/WeaveCoreJS.git",
   "_target": "*",

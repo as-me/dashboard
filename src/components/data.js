@@ -1,8 +1,7 @@
-import WeaveCore from 'weavecore';
-
 /**
  * @module asme
  */
+import WeaveCore from 'weavecore';
 
 //namesapce
 if (typeof window === 'undefined') {

@@ -1,0 +1,22 @@
+{
+	"ecmaFeatures": {
+		"arrowFunctions": true,
+		"blockBindings": true,
+		"classes": true,
+		"destructuring": true,
+		"forOf": true,
+		"jsx": true,
+		"modules": true,
+		"objectLiteralComputedProperties": true,
+		"objectLiteralShorthandMethods": true,
+		"objectLiteralShorthandProperties": true,
+		"templateStrings": true,
+	},
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"rules": {
+		
+	}
+}

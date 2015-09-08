@@ -1,6 +1,5 @@
 import React from 'react';
 import WeaveCore from 'weavecore';
-import GregSlider from 'greg-slider';
 import HomePage from './components/homePage/Home.jsx';
 import ChartsPage from './components/chartsPage/Charts.jsx';
 import DataSourcePage from './components/dataSourcePage/DataSource.jsx';

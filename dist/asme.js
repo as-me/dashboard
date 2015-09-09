@@ -60,6 +60,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Navigation = __webpack_require__(176);
 
 	exports.Content = __webpack_require__(178);
+	exports.Layout = __webpack_require__(181);
+
+	exports.ToolPanel = __webpack_require__(186);
 
 /***/ },
 /* 1 */
@@ -22745,15 +22748,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsChartsPageCharts2 = _interopRequireDefault(_componentsChartsPageCharts);
 
-	var _componentsDataSourcePageDataSource = __webpack_require__(181);
+	var _componentsDataSourcePageDataSource = __webpack_require__(183);
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(182);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(184);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(183);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(185);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -22871,10 +22874,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -22900,122 +22899,147 @@ return /******/ (function(modules) { // webpackBootstrap
 	var NavItem = ReactBootstrap.NavItem;
 	var NavDropdown = ReactBootstrap.NavDropdown;
 	var Nav = __webpack_require__(1);
+	var Layout = __webpack_require__(181);
 
 	var Charts = (function (_React$Component) {
 	    _inherits(Charts, _React$Component);
 
-	    function Charts() {
+	    function Charts(props) {
 	        _classCallCheck(this, Charts);
 
-	        _get(Object.getPrototypeOf(Charts.prototype), 'constructor', this).apply(this, arguments);
+	        _get(Object.getPrototypeOf(Charts.prototype), 'constructor', this).call(this, props);
+	        this.tools = window.NavigationHashMap.getObject("tools");
+
+	        this._onToolSelection = this._onToolSelection.bind(this);
+	        this.counter = 0;
 	    }
 
 	    _createClass(Charts, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {}
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
+	        key: '_onToolSelection',
+	        value: function _onToolSelection(toolsName, eventKey, href, target) {
+	            var ls = this.tools.requestObject(toolsName + this.counter++, weavecore.LinkableString);
+	            ls.value = toolsName;
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2['default'].createElement(
-	                Navbar,
-	                { brand: _react2['default'].createElement(
-	                        'span',
-	                        { className: 'asmeMenu' },
-	                        _react2['default'].createElement(
-	                            'i',
-	                            null,
-	                            ' Charts '
-	                        )
-	                    ), staticTop: true, toggleNavKey: 0 },
+	                'div',
+	                null,
 	                _react2['default'].createElement(
-	                    Nav,
-	                    { right: true, eventKey: 0 },
-	                    _react2['default'].createElement(
-	                        NavItem,
-	                        null,
-	                        _react2['default'].createElement(
+	                    Navbar,
+	                    { brand: _react2['default'].createElement(
 	                            'span',
 	                            { className: 'asmeMenu' },
 	                            _react2['default'].createElement(
 	                                'i',
-	                                { className: 'fa fa-fw fa-folder-open-o' },
-	                                ' '
-	                            ),
-	                            _react2['default'].createElement(
-	                                'i',
 	                                null,
-	                                ' Open'
+	                                ' Charts '
 	                            )
-	                        )
-	                    ),
+	                        ), staticTop: true, toggleNavKey: 0 },
 	                    _react2['default'].createElement(
-	                        NavItem,
-	                        null,
+	                        Nav,
+	                        { right: true, eventKey: 0 },
 	                        _react2['default'].createElement(
-	                            'span',
-	                            { className: 'asmeMenu' },
-	                            _react2['default'].createElement(
-	                                'i',
-	                                { className: 'fa fa-fw fa-floppy-o' },
-	                                ' '
-	                            ),
-	                            _react2['default'].createElement(
-	                                'i',
-	                                null,
-	                                ' Save'
-	                            )
-	                        )
-	                    ),
-	                    _react2['default'].createElement(
-	                        NavDropdown,
-	                        { eventKey: 3, title: _react2['default'].createElement(
-	                                'span',
-	                                { className: 'asmeMenu' },
-	                                _react2['default'].createElement(
-	                                    'i',
-	                                    null,
-	                                    ' Tools '
-	                                )
-	                            ), id: 'nav-brand-dropdown' },
-	                        _react2['default'].createElement(
-	                            MenuItem,
-	                            { eventKey: '1' },
+	                            NavItem,
+	                            null,
 	                            _react2['default'].createElement(
 	                                'span',
 	                                { className: 'asmeMenu' },
 	                                _react2['default'].createElement(
 	                                    'i',
+	                                    { className: 'fa fa-fw fa-folder-open-o' },
+	                                    ' '
+	                                ),
+	                                _react2['default'].createElement(
+	                                    'i',
 	                                    null,
-	                                    ' ScatterPlot D3 '
+	                                    ' Open'
 	                                )
 	                            )
 	                        ),
 	                        _react2['default'].createElement(
-	                            MenuItem,
-	                            { eventKey: '2' },
+	                            NavItem,
+	                            null,
 	                            _react2['default'].createElement(
 	                                'span',
 	                                { className: 'asmeMenu' },
 	                                _react2['default'].createElement(
 	                                    'i',
+	                                    { className: 'fa fa-fw fa-floppy-o' },
+	                                    ' '
+	                                ),
+	                                _react2['default'].createElement(
+	                                    'i',
 	                                    null,
-	                                    ' ScatterPlot C3 '
+	                                    ' Save'
 	                                )
 	                            )
 	                        ),
-	                        _react2['default'].createElement(MenuItem, { divider: true }),
 	                        _react2['default'].createElement(
-	                            MenuItem,
-	                            { eventKey: '4' },
+	                            NavDropdown,
+	                            { eventKey: 3, title: _react2['default'].createElement(
+	                                    'span',
+	                                    { className: 'asmeMenu' },
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        null,
+	                                        ' Tools '
+	                                    )
+	                                ), id: 'nav-brand-dropdown' },
 	                            _react2['default'].createElement(
-	                                'span',
-	                                { className: 'asmeMenu' },
+	                                MenuItem,
+	                                { eventKey: '1', onSelect: this._onToolSelection.bind(this, "d3ScatterPlotTool"), target: 'd3ScatterPlotTool' },
 	                                _react2['default'].createElement(
-	                                    'i',
-	                                    null,
-	                                    ' BarChart '
+	                                    'span',
+	                                    { className: 'asmeMenu' },
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        null,
+	                                        ' ScatterPlot-D3 '
+	                                    )
+	                                )
+	                            ),
+	                            _react2['default'].createElement(
+	                                MenuItem,
+	                                { eventKey: '2', onSelect: this._onToolSelection.bind(this, "c3ScatterPlotTool"), target: 'c3ScatterPlotTool' },
+	                                _react2['default'].createElement(
+	                                    'span',
+	                                    { className: 'asmeMenu' },
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        null,
+	                                        ' ScatterPlot-C3 '
+	                                    )
+	                                )
+	                            ),
+	                            _react2['default'].createElement(MenuItem, { divider: true }),
+	                            _react2['default'].createElement(
+	                                MenuItem,
+	                                { eventKey: '4', onSelect: this._onToolSelection.bind(this, "BarchartTool"), target: 'BarchartTool' },
+	                                _react2['default'].createElement(
+	                                    'span',
+	                                    { className: 'asmeMenu' },
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        null,
+	                                        ' BarChart '
+	                                    )
 	                                )
 	                            )
 	                        )
 	                    )
-	                )
+	                ),
+	                _react2['default'].createElement(Layout, null)
 	            );
 	        }
 	    }]);
@@ -23023,11 +23047,156 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Charts;
 	})(_react2['default'].Component);
 
-	exports['default'] = Charts;
-	module.exports = exports['default'];
+	module.exports = Charts;
 
 /***/ },
 /* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Grid = ReactBootstrap.Grid;
+	var ToolPanel = __webpack_require__(182);
+
+	var Layout = (function (_React$Component) {
+	    _inherits(Layout, _React$Component);
+
+	    function Layout(props) {
+	        _classCallCheck(this, Layout);
+
+	        _get(Object.getPrototypeOf(Layout.prototype), 'constructor', this).call(this, props);
+	        this.tools = window.NavigationHashMap.getObject("tools");
+
+	        this.state = {
+	            names: this.tools.getNames()
+	        };
+	        this._updateState = this._updateState.bind(this);
+	    }
+
+	    _createClass(Layout, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.tools.addGroupedCallback(this, this._updateState);
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_updateState',
+	        value: function _updateState() {
+	            //this wil call render function which in turn calls componentDidUpdate
+	            this.setState({
+	                names: this.tools.getNames()
+	            });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.tools.removeCallback(this, this._updateState);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var children = [];
+	            if (this.state.names) {
+	                for (var i = 0; i < this.state.names.length; i++) {
+	                    var ls = this.state.names[i];
+	                    var toolName = this.tools.getObject(ls).value;
+	                    var toolContent = "Sessioned Chart Component will be tied up insted of " + toolName;
+	                    children.push(React.createElement(ToolPanel, { title: toolName,
+	                        content: toolContent
+	                    }));
+	                }
+	            }
+
+	            return React.createElement(
+	                Grid,
+	                null,
+	                ' ',
+	                children,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return Layout;
+	})(React.Component);
+
+	module.exports = Layout;
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Panel = ReactBootstrap.Panel;
+
+	var ToolPanel = (function (_React$Component) {
+	    _inherits(ToolPanel, _React$Component);
+
+	    function ToolPanel() {
+	        _classCallCheck(this, ToolPanel);
+
+	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    _createClass(ToolPanel, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                Panel,
+	                { header: this.props.title },
+	                ' ',
+	                this.props.content,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return ToolPanel;
+	})(React.Component);
+
+	module.exports = ToolPanel;
+
+/***/ },
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23077,13 +23246,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 182 */
+/* 184 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 183 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23131,6 +23300,59 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports['default'] = ErrorPage;
 	module.exports = exports['default'];
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Panel = ReactBootstrap.Panel;
+
+	var ToolPanel = (function (_React$Component) {
+	    _inherits(ToolPanel, _React$Component);
+
+	    function ToolPanel() {
+	        _classCallCheck(this, ToolPanel);
+
+	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).apply(this, arguments);
+	    }
+
+	    _createClass(ToolPanel, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                Panel,
+	                { header: this.props.title },
+	                ' ',
+	                this.props.content,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return ToolPanel;
+	})(React.Component);
+
+	module.exports = ToolPanel;
 
 /***/ }
 /******/ ])

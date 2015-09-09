@@ -23211,15 +23211,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        this.props.title,
 	                        ' ',
 	                        React.createElement(
-	                            Button,
-	                            { bsSize: 'small',
-	                                onClick: this._closePanel },
+	                            'span',
+	                            { className: 'pull-right' },
 	                            ' ',
 	                            React.createElement(
 	                                'i',
-	                                { className: 'fa fa-times fa-lg' },
+	                                { className: 'fa fa-wrench fa-fw' },
 	                                ' '
-	                            )
+	                            ),
+	                            '   ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-times fa-fw fa-pointer',
+	                                    onClick: this._closePanel },
+	                                ' '
+	                            ),
+	                            '  '
 	                        ),
 	                        ' '
 	                    ) },
@@ -23408,15 +23415,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        this.props.title,
 	                        ' ',
 	                        React.createElement(
-	                            Button,
-	                            { bsSize: 'small',
-	                                onClick: this._closePanel },
+	                            'span',
+	                            { className: 'pull-right' },
 	                            ' ',
 	                            React.createElement(
 	                                'i',
-	                                { className: 'fa fa-times fa-lg' },
+	                                { className: 'fa fa-wrench fa-fw' },
 	                                ' '
-	                            )
+	                            ),
+	                            '   ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-times fa-fw fa-pointer',
+	                                    onClick: this._closePanel },
+	                                ' '
+	                            ),
+	                            '  '
 	                        ),
 	                        ' '
 	                    ) },

@@ -23094,7 +23094,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(Layout, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            this.tools.addGroupedCallback(this, this._updateState);
+	            //this.tools.addGroupedCallback(this,this._updateState );
+	            this.tools.childListCallbacks.addImmediateCallback(this, this._updateState);
 	        }
 	    }, {
 	        key: 'componentDidUpdate',
@@ -23102,7 +23103,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_updateState',
 	        value: function _updateState() {
-	            //this wil call render function which in turn calls componentDidUpdate
 	            this.setState({
 	                names: this.tools.getNames()
 	            });
@@ -23110,7 +23110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.tools.removeCallback(this, this._updateState);
+	            this.tools.childListCallbacks.removeCallback(this, this._updateState);
 	        }
 	    }, {
 	        key: 'render',
@@ -23119,10 +23119,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (this.state.names) {
 	                for (var i = 0; i < this.state.names.length; i++) {
 	                    var ls = this.state.names[i];
-	                    var toolName = this.tools.getObject(ls).value;
+	                    var tool = this.tools.getObject(ls);
+	                    var toolName = tool.value;
 	                    var toolContent = "Sessioned Chart Component will be tied up insted of " + toolName;
 	                    children.push(React.createElement(ToolPanel, { title: toolName,
-	                        content: toolContent
+	                        content: toolContent,
+	                        sessionedTool: tool
 	                    }));
 	                }
 	            }
@@ -23167,22 +23169,60 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
 	var Panel = ReactBootstrap.Panel;
+	var Button = ReactBootstrap.Button;
 
 	var ToolPanel = (function (_React$Component) {
 	    _inherits(ToolPanel, _React$Component);
 
-	    function ToolPanel() {
+	    function ToolPanel(props) {
 	        _classCallCheck(this, ToolPanel);
 
-	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).apply(this, arguments);
+	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
+	        this.tool = props.sessionedTool;
+
+	        this._closePanel = this._closePanel.bind(this);
 	    }
 
 	    _createClass(ToolPanel, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {}
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_closePanel',
+	        value: function _closePanel() {
+	            var tools = window.NavigationHashMap.getObject("tools");
+	            var name = tools.getName(this.props.sessionedTool);
+	            tools.removeObject(name);
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return React.createElement(
 	                Panel,
-	                { header: this.props.title },
+	                { header: React.createElement(
+	                        'div',
+	                        null,
+	                        ' ',
+	                        this.props.title,
+	                        ' ',
+	                        React.createElement(
+	                            Button,
+	                            { bsSize: 'small',
+	                                onClick: this._closePanel },
+	                            ' ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-times fa-lg' },
+	                                ' '
+	                            )
+	                        ),
+	                        ' '
+	                    ) },
 	                ' ',
 	                this.props.content,
 	                ' '
@@ -23326,22 +23366,60 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
 	var Panel = ReactBootstrap.Panel;
+	var Button = ReactBootstrap.Button;
 
 	var ToolPanel = (function (_React$Component) {
 	    _inherits(ToolPanel, _React$Component);
 
-	    function ToolPanel() {
+	    function ToolPanel(props) {
 	        _classCallCheck(this, ToolPanel);
 
-	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).apply(this, arguments);
+	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
+	        this.tool = props.sessionedTool;
+
+	        this._closePanel = this._closePanel.bind(this);
 	    }
 
 	    _createClass(ToolPanel, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {}
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_closePanel',
+	        value: function _closePanel() {
+	            var tools = window.NavigationHashMap.getObject("tools");
+	            var name = tools.getName(this.props.sessionedTool);
+	            tools.removeObject(name);
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return React.createElement(
 	                Panel,
-	                { header: this.props.title },
+	                { header: React.createElement(
+	                        'div',
+	                        null,
+	                        ' ',
+	                        this.props.title,
+	                        ' ',
+	                        React.createElement(
+	                            Button,
+	                            { bsSize: 'small',
+	                                onClick: this._closePanel },
+	                            ' ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-times fa-lg' },
+	                                ' '
+	                            )
+	                        ),
+	                        ' '
+	                    ) },
 	                ' ',
 	                this.props.content,
 	                ' '

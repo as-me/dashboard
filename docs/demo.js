@@ -4,6 +4,7 @@ import Asme from 'src/';
 
 window.NavigationHashMap = new weavecore.LinkableHashMap();
 var activePage = window.NavigationHashMap.requestObject("activePage", weavecore.LinkableString);
+var tools = window.NavigationHashMap.requestObject("tools", weavecore.LinkableHashMap);
 activePage.value = 'charts';
 
 var Navigation = Asme.Navigation;

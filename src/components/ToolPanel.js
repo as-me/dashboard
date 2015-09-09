@@ -34,10 +34,10 @@ class ToolPanel extends React.Component {
     render() {
         return ( < Panel header = { < div > {
                     this.props.title
-                } < Button bsSize = 'small'
+                } < span className = "pull-right" > < i className = "fa fa-wrench fa-fw" > < /i> &nbsp;&nbsp;< i className = "fa fa-times fa-fw fa-pointer"
                 onClick = {
                     this._closePanel
-                } > < i className = "fa fa-times fa-lg" > < /i></Button > < /div >
+                } > < /i>  < /span > < /div >
             } > {
                 this.props.content
             } < /Panel>

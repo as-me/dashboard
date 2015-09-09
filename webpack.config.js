@@ -40,7 +40,7 @@ module.exports = {
 	],
     externals: {
         "react": "React",
-        "react-bootstrap": "react-bootstrap",
+        "react-bootstrap": "ReactBootstrap",
         "weavecore": ["weavecore", "WeaveAPI"]
     },
     resolve: {

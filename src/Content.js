@@ -47,9 +47,8 @@ class Content extends React.Component {
     render() {
         var pageComponent = this.routes[this.state.page];
 
-        return <div > {
-            pageComponent
-        } < /div>
+        return pageComponent;
+
     }
 
 

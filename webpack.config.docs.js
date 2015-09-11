@@ -43,8 +43,6 @@ myConfig.plugins.push(new CommonsChunkPlugin({
     minChunks: Infinity
 }));
 
-// myConfig.plugins.push(new CommonsChunkPlugin("react-stockcharts-docs-core", "react-stockcharts-docs-core.js"));
-// myConfig.plugins.push(new CommonsChunkPlugin("react-stockcharts-docs-core.js"));
 myConfig.resolve.root = [__dirname, path.join(__dirname, "docs")];
 
 myConfig.devtool = "sourcemap"; // "sourcemap", "sourcemap-inline", "eval";

@@ -9,10 +9,9 @@ var Button = ReactBootstrap.Button;
 class ToolPanel extends React.Component {
     constructor(props) {
         super(props)
-        this.tool = props.sessionedTool;
-
 
         this._closePanel = this._closePanel.bind(this);
+        this._openSettings = this._openSettings.bind(this);
     }
 
     componentDidMount() {
@@ -30,11 +29,22 @@ class ToolPanel extends React.Component {
         tools.removeObject(name);
     }
 
+    _openSettings() {
+        var tools = window.NavigationHashMap.getObject("tools");
+        var name = tools.getName(this.props.sessionedTool);
+        var activetool = window.NavigationHashMap.getObject("activeTool");
+        activetool.value = name;
+
+    }
+
     componentWillUnmount() {}
     render() {
         return ( < Panel header = { < div > {
                     this.props.title
-                } < span className = "pull-right" > < i className = "fa fa-wrench fa-fw" > < /i> &nbsp;&nbsp;< i className = "fa fa-times fa-fw fa-pointer"
+                } < span className = "pull-right" > < i className = "fa fa-wrench fa-fw fa-pointer"
+                onClick = {
+                    this._openSettings
+                } > < /i> &nbsp;&nbsp;< i className = "fa fa-trash-o fa-fw fa-pointer"
                 onClick = {
                     this._closePanel
                 } > < /i>  < /span > < /div >

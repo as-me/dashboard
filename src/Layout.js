@@ -19,7 +19,6 @@ class Layout extends React.Component {
         }
 
         componentDidMount() {
-            //this.tools.addGroupedCallback(this,this._updateState );
             this.tools.childListCallbacks.addImmediateCallback(this, this._updateState)
         }
 
@@ -37,6 +36,7 @@ class Layout extends React.Component {
         componentWillUnmount() {
             this.tools.childListCallbacks.removeCallback(this, this._updateState)
         }
+
         render() {
             var children = [];
             if (this.state.names) {
@@ -61,8 +61,11 @@ class Layout extends React.Component {
 
             return ( < Grid > {
                     children
-                } < /Grid>);
+                } < /Grid> );
             }
         }
 
         module.exports = Layout;
+        /*< div className = {
+                    'layout ' + moveClass + this.props.alignment
+                } >*/

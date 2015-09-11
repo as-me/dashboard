@@ -6,8 +6,12 @@ var MenuItem = ReactBootstrap.MenuItem;
 var Navbar = ReactBootstrap.Navbar;
 var NavItem = ReactBootstrap.NavItem;
 var NavDropdown = ReactBootstrap.NavDropdown;
+
+
 var Nav = require('../../Nav.js');
 var Layout = require('../../Layout.js');
+var Settings = require('../../Settingsbar.js');
+var Content = require('./ChartContent.js');
 
  class Charts extends React.Component {
   constructor(props) {
@@ -30,12 +34,13 @@ var Layout = require('../../Layout.js');
     }
 
     _onToolSelection(toolsName, eventKey, href, target){
-    var ls = this.tools.requestObject(toolsName + this.counter++,weavecore.LinkableString);
-     ls.value = toolsName;
+        var ls = this.tools.requestObject(toolsName + this.counter++,weavecore.LinkableString);
+        ls.value = toolsName;
     }
 
       render() {
-              return   (<div><Navbar brand={<span className="asmeMenu"><i> Charts < /i></span>}  staticTop  toggleNavKey={0}>
+              return   (<div>
+                            <Navbar brand={<span className="asmeMenu"><i> Charts < /i></span>}  staticTop  toggleNavKey={0}>
                                     <Nav right={ true } eventKey={0}>
                                         <NavItem>
                                             <span className="asmeMenu">< i className = "fa fa-fw fa-folder-open-o" > < /i><i> Open</i></span>
@@ -51,7 +56,9 @@ var Layout = require('../../Layout.js');
                                           </NavDropdown>
                                     </Nav>
                             </Navbar>
-                            <Layout></Layout></div>
+
+                            <Content/>
+                        </div>
                             );
       }
 }

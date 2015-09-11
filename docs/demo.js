@@ -4,8 +4,12 @@ import Asme from 'src/';
 
 window.NavigationHashMap = new weavecore.LinkableHashMap();
 var activePage = window.NavigationHashMap.requestObject("activePage", weavecore.LinkableString);
+var activeTool = window.NavigationHashMap.requestObject("activeTool", weavecore.LinkableString);
+var slideBarStyle = window.NavigationHashMap.requestObject("slideBarStyle", weavecore.LinkableString);
 var tools = window.NavigationHashMap.requestObject("tools", weavecore.LinkableHashMap);
 activePage.value = 'charts';
+activeTool.value = "";
+slideBarStyle.value = 'scaleRotate';
 
 var Navigation = Asme.Navigation;
 var Content = Asme.Content;

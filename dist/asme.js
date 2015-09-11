@@ -23504,7 +23504,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return (0, _appendVendorPrefix2['default'])({
 	                position: 'fixed',
 	                zIndex: 2,
-	                width: 300,
+	                width: 200,
 	                height: '100%',
 	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
 	                transition: 'all 0.5s',

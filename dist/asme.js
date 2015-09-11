@@ -61,8 +61,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.Content = __webpack_require__(178);
 	exports.Layout = __webpack_require__(181);
+	exports.Settingsbar = __webpack_require__(183);
 
-	exports.ToolPanel = __webpack_require__(186);
+	exports.ToolPanel = __webpack_require__(192);
 
 /***/ },
 /* 1 */
@@ -22748,15 +22749,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsChartsPageCharts2 = _interopRequireDefault(_componentsChartsPageCharts);
 
-	var _componentsDataSourcePageDataSource = __webpack_require__(183);
+	var _componentsDataSourcePageDataSource = __webpack_require__(189);
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(184);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(190);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(185);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(191);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -22898,8 +22899,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Navbar = ReactBootstrap.Navbar;
 	var NavItem = ReactBootstrap.NavItem;
 	var NavDropdown = ReactBootstrap.NavDropdown;
+
 	var Nav = __webpack_require__(1);
 	var Layout = __webpack_require__(181);
+	var Settings = __webpack_require__(183);
+	var Content = __webpack_require__(188);
 
 	var Charts = (function (_React$Component) {
 	    _inherits(Charts, _React$Component);
@@ -23039,7 +23043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        )
 	                    )
 	                ),
-	                _react2['default'].createElement(Layout, null)
+	                _react2['default'].createElement(Content, null)
 	            );
 	        }
 	    }]);
@@ -23094,7 +23098,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(Layout, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            //this.tools.addGroupedCallback(this,this._updateState );
 	            this.tools.childListCallbacks.addImmediateCallback(this, this._updateState);
 	        }
 	    }, {
@@ -23143,6 +23146,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	})(React.Component);
 
 	module.exports = Layout;
+	/*< div className = {
+	            'layout ' + moveClass + this.props.alignment
+	        } >*/
 
 /***/ },
 /* 182 */
@@ -23178,9 +23184,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, ToolPanel);
 
 	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
-	        this.tool = props.sessionedTool;
 
 	        this._closePanel = this._closePanel.bind(this);
+	        this._openSettings = this._openSettings.bind(this);
 	    }
 
 	    _createClass(ToolPanel, [{
@@ -23195,6 +23201,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var tools = window.NavigationHashMap.getObject("tools");
 	            var name = tools.getName(this.props.sessionedTool);
 	            tools.removeObject(name);
+	        }
+	    }, {
+	        key: '_openSettings',
+	        value: function _openSettings() {
+	            var tools = window.NavigationHashMap.getObject("tools");
+	            var name = tools.getName(this.props.sessionedTool);
+	            var activetool = window.NavigationHashMap.getObject("activeTool");
+	            activetool.value = name;
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -23216,13 +23230,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            ' ',
 	                            React.createElement(
 	                                'i',
-	                                { className: 'fa fa-wrench fa-fw' },
+	                                { className: 'fa fa-wrench fa-fw fa-pointer',
+	                                    onClick: this._openSettings },
 	                                ' '
 	                            ),
 	                            '   ',
 	                            React.createElement(
 	                                'i',
-	                                { className: 'fa fa-times fa-fw fa-pointer',
+	                                { className: 'fa fa-trash-o fa-fw fa-pointer',
 	                                    onClick: this._closePanel },
 	                                ' '
 	                            ),
@@ -23244,6 +23259,495 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var _componentsSideBar = __webpack_require__(184);
+
+	var _componentsSideBar2 = _interopRequireDefault(_componentsSideBar);
+
+	var Label = ReactBootstrap.Label;
+	var Panel = ReactBootstrap.Panel;
+
+	var Settingsbar = (function (_React$Component) {
+	    _inherits(Settingsbar, _React$Component);
+
+	    function Settingsbar(props) {
+	        _classCallCheck(this, Settingsbar);
+
+	        _get(Object.getPrototypeOf(Settingsbar.prototype), 'constructor', this).call(this, props);
+	        this.tools = window.NavigationHashMap.getObject("tools");
+	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	        this._close = this._close.bind(this);
+	    }
+
+	    _createClass(Settingsbar, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {}
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_close',
+	        value: function _close() {
+	            this.activeTool.value = "";
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            return React.createElement(
+	                _componentsSideBar2['default'],
+	                { isOpen: this.props.isOpen,
+	                    style: this.props.style },
+	                React.createElement(
+	                    Panel,
+	                    { header: React.createElement(
+	                            'div',
+	                            null,
+	                            ' Settings ',
+	                            React.createElement(
+	                                'span',
+	                                { className: 'pull-right' },
+	                                ' ',
+	                                React.createElement(
+	                                    'i',
+	                                    { className: 'fa fa-times fa-fw fa-pointer',
+	                                        onClick: this._close },
+	                                    ' '
+	                                ),
+	                                '  '
+	                            ),
+	                            ' '
+	                        ) },
+	                    this.activeTool.value
+	                ),
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return Settingsbar;
+	})(React.Component);
+
+	module.exports = Settingsbar;
+
+	/*< div className = "sideBar" >
+	            < div className = {
+	                (this.state.isOpen ? "visible " : "") + this.props.alignment
+	            } >
+	            < /div > < /div >*/
+
+	/*< Menu pageWrapId = {
+	    "page-wrap"
+	}
+	outerContainerId = {
+	        "outer-container"
+	    } >
+
+	    < Panel header = { < div > Settings < span className = "pull-right" > < i className = "fa fa-times fa-fw fa-pointer"
+	        onClick = {
+	            this._close
+	        } > < /i>  < /span > < /div >
+	    } >
+
+	    {
+	        toolName
+	    }
+
+	< /Panel > < /Menu >*/
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utilsStyles = __webpack_require__(185);
+
+	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
+
+	var SideBar = (function (_React$Component) {
+	    _inherits(SideBar, _React$Component);
+
+	    function SideBar(props) {
+	        _classCallCheck(this, SideBar);
+
+	        _get(Object.getPrototypeOf(SideBar.prototype), 'constructor', this).call(this, props);
+
+	        this.toggleMenu = this.toggleMenu.bind(this);
+	        this.listenForClose = this.listenForClose.bind(this);
+	    }
+
+	    _createClass(SideBar, [{
+	        key: 'toggleMenu',
+	        value: function toggleMenu() {
+	            // Order important: handle wrappers before setting sidebar state.
+	            this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	            if (this.activeTool.value.length > 0) this.activeTool.value = '';
+	        }
+	    }, {
+	        key: 'listenForClose',
+	        value: function listenForClose(e) {
+	            e = e || window.event;
+
+	            if (this.props.isOpen && (e.key === 'Escape' || e.keyCode === 27)) {
+	                this.toggleMenu();
+	            }
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            window.onkeydown = this.listenForClose;
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            window.onkeydown = null;
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2['default'].createElement(
+	                'div',
+	                null,
+	                _react2['default'].createElement(
+	                    'div',
+	                    { id: this.props.id,
+	                        style: _utilsStyles2['default'].menuWrap(this.props.isOpen) },
+	                    _react2['default'].createElement(
+	                        'div',
+	                        { className: 'bm-menu',
+	                            style: _utilsStyles2['default'].menu(this.props.isOpen) },
+	                        ' ',
+	                        this.props.children,
+	                        ' '
+	                    ),
+	                    '    '
+	                ),
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return SideBar;
+	})(_react2['default'].Component);
+
+	module.exports = SideBar;
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var _appendVendorPrefix = __webpack_require__(186);
+
+	var _appendVendorPrefix2 = _interopRequireDefault(_appendVendorPrefix);
+
+	var Styles = (function () {
+	    function Styles() {
+	        _classCallCheck(this, Styles);
+	    }
+
+	    _createClass(Styles, null, [{
+	        key: 'menuWrap',
+	        value: function menuWrap(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: 'fixed',
+	                zIndex: 2,
+	                width: 300,
+	                height: '100%',
+	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
+	                transition: 'all 0.5s',
+	                background: '#f4f4f4'
+	            });
+	        }
+	    }, {
+	        key: 'menu',
+	        value: function menu() {
+	            return (0, _appendVendorPrefix2['default'])({
+	                height: '100%'
+	            });
+	        }
+	    }, {
+	        key: 'overlay',
+	        value: function overlay(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: 'fixed',
+	                width: '100%',
+	                height: '100%',
+	                background: 'rgba(0, 0, 0, 0.3)',
+	                opacity: isOpen ? 1 : 0,
+	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
+	                transition: isOpen ? 'opacity 0.5s' : 'opacity 0.5s, transform 0.1s 0.5s',
+	                zIndex: 1
+	            });
+	        }
+	    }, {
+	        key: 'pageWrap',
+	        value: function pageWrap(isOpen, type) {
+	            var transform, overflow;
+	            if (type === 'scaleRotate') {
+	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(100px, 0, -600px) rotateY(-20deg)';
+	            } else if (type === 'scaleDown') {
+	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
+	            }
+
+	            return (0, _appendVendorPrefix2['default'])({
+	                transform: transform,
+	                transformStyle: 'preserve-3d',
+	                transition: 'all 0.5s',
+	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }, {
+	        key: 'outerContainer',
+	        value: function outerContainer(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                perspective: '1500px',
+	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }]);
+
+	    return Styles;
+	})();
+
+	exports['default'] = Styles;
+	module.exports = exports['default'];
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var getVendorPropertyName = __webpack_require__(187);
+
+	module.exports = function (target, sources) {
+	    var to = Object(target);
+	    var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+	    for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+	        var nextSource = arguments[nextIndex];
+	        if (nextSource == null) {
+	            continue;
+	        }
+
+	        var from = Object(nextSource);
+
+	        for (var key in from) {
+	            if (hasOwnProperty.call(from, key)) {
+	                to[key] = from[key];
+	            }
+	        }
+	    }
+
+	    var prefixed = {};
+	    for (var key in to) {
+	        prefixed[getVendorPropertyName(key)] = to[key];
+	    }
+
+	    return prefixed;
+	};
+
+/***/ },
+/* 187 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var div = document.createElement('div');
+	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
+	var domVendorPrefix;
+
+	// Helper function to get the proper vendor property name. (transition => WebkitTransition)
+	module.exports = function (prop) {
+
+	    if (prop in div.style) return prop;
+
+	    var prop = prop.charAt(0).toUpperCase() + prop.substr(1);
+	    if (domVendorPrefix) {
+	        return domVendorPrefix + prop;
+	    } else {
+	        for (var i = 0; i < prefixes.length; ++i) {
+	            var vendorProp = prefixes[i] + prop;
+	            if (vendorProp in div.style) {
+	                domVendorPrefix = prefixes[i];
+	                return vendorProp;
+	            }
+	        }
+	    }
+	};
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var _utilsAppendVendorPrefix = __webpack_require__(186);
+
+	var _utilsAppendVendorPrefix2 = _interopRequireDefault(_utilsAppendVendorPrefix);
+
+	var _utilsStyles = __webpack_require__(185);
+
+	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
+
+	var Layout = __webpack_require__(181);
+	var Settings = __webpack_require__(183);
+
+	var ChartContent = (function (_React$Component) {
+	    _inherits(ChartContent, _React$Component);
+
+	    function ChartContent(props) {
+	        _classCallCheck(this, ChartContent);
+
+	        _get(Object.getPrototypeOf(ChartContent.prototype), 'constructor', this).call(this, props);
+	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	        this.slideBarStyle = window.NavigationHashMap.getObject("slideBarStyle");
+	        this._updateState = this._updateState.bind(this);
+	        this._toggleMenu = this._toggleMenu.bind(this);
+	        this.state = {
+	            isOpen: this.activeTool.value.length > 0,
+	            style: this.slideBarStyle.value
+	        };
+	    }
+
+	    _createClass(ChartContent, [{
+	        key: '_updateState',
+	        value: function _updateState() {
+	            this.setState({
+	                isOpen: this.activeTool.value.length > 0,
+	                style: this.slideBarStyle.value
+	            });
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.activeTool.addImmediateCallback(this, this._updateState);
+	            this.slideBarStyle.addImmediateCallback(this, this._updateState);
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.activeTool.removeCallback(this, this._updateState);
+	            this.slideBarStyle.removeCallback(this, this._updateState);
+	        }
+	    }, {
+	        key: '_toggleMenu',
+	        value: function _toggleMenu() {
+
+	            if (this.activeTool.value.length > 0) this.activeTool.value = '';
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2['default'].createElement(
+	                'div',
+	                { id: 'outer-container',
+	                    style: _utilsStyles2['default'].outerContainer(!this.state.isOpen, this.state.style) },
+	                _react2['default'].createElement(Settings, { isOpen: this.state.isOpen,
+	                    style: this.state.style
+	                }),
+	                '   ',
+	                _react2['default'].createElement('div', {
+
+	                    onClick: this._toggleMenu,
+	                    style: _utilsStyles2['default'].overlay(this.state.isOpen, this.state.style) }),
+	                ' ',
+	                _react2['default'].createElement(
+	                    'div',
+	                    { id: 'page-wrap',
+	                        style: _utilsStyles2['default'].pageWrap(!this.state.isOpen, this.state.style) },
+	                    ' ',
+	                    _react2['default'].createElement(Layout, { alignment: 'left' }),
+	                    ' '
+	                ),
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return ChartContent;
+	})(_react2['default'].Component);
+
+	module.exports = ChartContent;
+
+/***/ },
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23293,13 +23797,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 184 */
+/* 190 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 185 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23349,7 +23853,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 186 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23382,9 +23886,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, ToolPanel);
 
 	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
-	        this.tool = props.sessionedTool;
 
 	        this._closePanel = this._closePanel.bind(this);
+	        this._openSettings = this._openSettings.bind(this);
 	    }
 
 	    _createClass(ToolPanel, [{
@@ -23399,6 +23903,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var tools = window.NavigationHashMap.getObject("tools");
 	            var name = tools.getName(this.props.sessionedTool);
 	            tools.removeObject(name);
+	        }
+	    }, {
+	        key: '_openSettings',
+	        value: function _openSettings() {
+	            var tools = window.NavigationHashMap.getObject("tools");
+	            var name = tools.getName(this.props.sessionedTool);
+	            var activetool = window.NavigationHashMap.getObject("activeTool");
+	            activetool.value = name;
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -23420,13 +23932,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            ' ',
 	                            React.createElement(
 	                                'i',
-	                                { className: 'fa fa-wrench fa-fw' },
+	                                { className: 'fa fa-wrench fa-fw fa-pointer',
+	                                    onClick: this._openSettings },
 	                                ' '
 	                            ),
 	                            '   ',
 	                            React.createElement(
 	                                'i',
-	                                { className: 'fa fa-times fa-fw fa-pointer',
+	                                { className: 'fa fa-trash-o fa-fw fa-pointer',
 	                                    onClick: this._closePanel },
 	                                ' '
 	                            ),

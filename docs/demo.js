@@ -1,6 +1,7 @@
 'use strict';
 import * as React from "react";
 import Asme from 'src/';
+import 'weavecore';
 
 window.NavigationHashMap = new weavecore.LinkableHashMap();
 var activePage = window.NavigationHashMap.requestObject("activePage", weavecore.LinkableString);
@@ -24,5 +25,16 @@ function locationHashChanged() {
     }
 }
 
-React.render( < Navigation / > , document.getElementById('Menu'));
-React.render( < Content / > , document.getElementById('App'));
+d3.csv("data/testCereal.csv", function (d, i) {
+    d.index = i;
+    return d;
+}, function (error, rows) {
+    console.log('rows: ', rows)
+    adapter.weaveInteractionPeer = new adapter.peer.WeaveJSInterface();
+    WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(rows);
+    React.render( < Navigation / > , document.getElementById('Menu'));
+    React.render( < Content / > , document.getElementById('App'));
+    //renderPage();
+    WeaveAPI.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+
+});

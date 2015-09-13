@@ -10,7 +10,7 @@ class Layout extends React.Component {
 
         constructor(props) {
             super(props)
-            this.tools = window.NavigationHashMap.getObject("tools");
+            this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
             this.state = {
                 names: this.tools.getNames()
@@ -39,17 +39,64 @@ class Layout extends React.Component {
 
         render() {
             var children = [];
+            //var toolName = "";
             if (this.state.names) {
                 for (var i = 0; i < this.state.names.length; i++) {
-                    var ls = this.state.names[i];
-                    var tool = this.tools.getObject(ls)
-                    var toolName = tool.value;
-                    var toolContent = "Sessioned Chart Component will be tied up insted of " + toolName;
+                    var toolName = this.state.names[i];
+                    var tool = this.tools.getObject(toolName);
+                    var padding = {
+                        top: 20,
+                        bottom: 40,
+                        left: 40,
+                        right: 20
+                    }
+                    tool.sessionData.xAxis.value = 'index';
+                    tool.sessionData.yAxis.value = 'sodium';
+
+                    tool.createUI(padding, {}, {
+                        onProbe: {
+                            showToolTip: true,
+                            callback: function (d) {
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                adapter.weaveInteractionPeer.doProbe(d);
+                            }
+                        },
+                        onSelect: {
+                            callback: function (keys) {
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                adapter.weaveInteractionPeer.doSelection(keys);
+                            }
+                        }
+
+                    });
+
+
+                    tool.createUI(padding, {}, {
+                        onProbe: {
+                            showToolTip: true,
+                            callback: function (data) {
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                adapter.weaveInteractionPeer.doProbe(data.index);
+                            }
+                        },
+                        onSelect: {
+                            callback: function (keys) {
+                                keys = this.selected();
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                if (keys.constructor === Array)
+                                    adapter.weaveInteractionPeer.doSelection(keys.map(function (key) {
+                                        return key.index;
+                                    }), true);
+                                else
+                                    adapter.weaveInteractionPeer.doSelection([keys.index], true);
+                            }
+                        }
+                    });
                     children.push( < ToolPanel title = {
                             toolName
                         }
                         content = {
-                            toolContent
+                            tool.ui
                         }
                         sessionedTool = {
                             tool

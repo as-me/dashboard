@@ -1,0 +1,89 @@
+{
+    "name": "asme-adapter",
+    "version": "0.1.0",
+    "description": "Adpater Interface for visualization frameworks",
+    "main": "build/dist/asme-adapter.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/as-me/Adapter.git"
+    },
+    "keywords": [
+    "adapter",
+    "interface"
+  ],
+    "author": "Sanjay Krishna Anbalagan",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/as-me/Adapter/issues"
+    },
+    "homepage": "https://github.com/as-me/Adapter#readme",
+    "devDependencies": {
+        "autoprefixer-loader": "^2.0.0",
+        "babel-core": "^5.8.22",
+        "babel-loader": "^5.3.2",
+        "babelify": "^6.1.3",
+        "bootstrap": "^3.3.5",
+        "browser-sync": "^2.8.2",
+        "browserify": "^11.0.1",
+        "css-loader": "^0.16.0",
+        "del": "^1.2.1",
+        "file-loader": "^0.8.4",
+        "fs": "0.0.2",
+        "gulp": "^3.9.0",
+        "gulp-autoprefixer": "^2.3.1",
+        "gulp-babel": "^5.2.0",
+        "gulp-browserify": "^0.5.1",
+        "gulp-compass": "^2.1.0",
+        "gulp-concat-css": "^2.2.0",
+        "gulp-eslint": "^1.0.0",
+        "gulp-filter": "^3.0.1",
+        "gulp-gh-pages": "^0.5.2",
+        "gulp-if": "^1.2.5",
+        "gulp-jscs": "^2.0.0",
+        "gulp-jshint": "^1.11.2",
+        "gulp-livereload": "^3.8.0",
+        "gulp-minify-css": "^1.2.0",
+        "gulp-notify": "^2.2.0",
+        "gulp-rename": "^1.2.2",
+        "gulp-replace": "^0.5.4",
+        "gulp-sass": "^2.0.4",
+        "gulp-sourcemaps": "^1.5.2",
+        "gulp-streamify": "^1.0.0",
+        "gulp-uglify": "^1.2.0",
+        "gulp-util": "^3.0.6",
+        "html-loader": "^0.3.0",
+        "jquery": "^2.1.4",
+        "json-format": "0.0.1",
+        "karma": "^0.13.9",
+        "karma-chrome-launcher": "^0.2.0",
+        "karma-mocha": "^0.2.0",
+        "karma-webpack": "^1.7.0",
+        "mocha": "^2.2.5",
+        "node-sass": "^3.2.0",
+        "path": "^0.11.14",
+        "reactify": "^1.1.1",
+        "remarkable-loader": "^0.1.0",
+        "require-dir": "^0.3.0",
+        "sass-loader": "^2.0.1",
+        "style-loader": "^0.12.3",
+        "url-loader": "^0.5.6",
+        "vinyl-source-stream": "^1.1.0",
+        "watchify": "^3.3.1",
+        "webpack": "^1.11.0",
+        "webpack-dev-server": "^1.10.1"
+    },
+    "dependencies": {
+        "c3": "^0.4.10",
+        "d3": "^3.5.6",
+        "d3chart": "git+https://github.com/sanjay1909/D3Chart.git",
+        "react": "^0.13.3",
+        "react-tap-event-plugin": "^0.1.7",
+        "weavecore": "git+https://github.com/sanjay1909/WeaveCoreJS.git"
+    },
+    "directories": {
+        "doc": "docs"
+    }
+}

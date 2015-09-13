@@ -24,13 +24,13 @@ class ToolPanel extends React.Component {
     }
 
     _closePanel() {
-        var tools = window.NavigationHashMap.getObject("tools");
+        var tools = WeaveAPI.globalHashMap.getObject("hooks");
         var name = tools.getName(this.props.sessionedTool)
         tools.removeObject(name);
     }
 
     _openSettings() {
-        var tools = window.NavigationHashMap.getObject("tools");
+        var tools = WeaveAPI.globalHashMap.getObject("hooks");
         var name = tools.getName(this.props.sessionedTool);
         var activetool = window.NavigationHashMap.getObject("activeTool");
         activetool.value = name;

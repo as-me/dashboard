@@ -49,6 +49,8 @@ gulp.task("docs", ["build"], function (cb) {
 
     gulp.src(["./docs/data/*"])
         .pipe(gulp.dest("build/data"));
+    gulp.src(["./bower_components/**/build/dist/*.js", "./bower_components/**/build/dist/*.js.map"])
+        .pipe(gulp.dest("build/libs"));
 
     build(myConfig, cb);
 });

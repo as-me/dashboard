@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>AS~ME Adapter - Reference</title>
+
+    <!-- custom:jsinclude //code.jquery.com/jquery-2.1.4.min.js -->
+    <!-- custom:jsinclude //maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js -->
+
+    <!-- custom:jsinclude //cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.min.js -->
+    <!-- custom:jsinclude //cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js -->
+    <!-- custom:jsinclude //cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.js -->
+    <!-- custom:jsinclude //sanjay1909.github.io/WeaveCoreJS/build/weavecore.js -->
+    <!-- custom:jsinclude //sanjay1909.github.io/D3Chart/d3Chart.js -->
+
+
+
+    <!-- custom:remove -->
+    <script src="jquery/dist/jquery.js"></script>
+    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="d3/d3.js"></script>
+    <script src="c3/c3.js"></script>
+    <script src="react/dist/react.js"></script>
+    <script src="weavecore/build/weavecore.js"></script>
+    <script src="d3chart/d3chart.js"></script>
+    <!-- endcustom -->
+
+    <!-- <script src="react/dist/react-with-addons.js"></script> -->
+
+
+    <!-- custom:cssinclude https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css -->
+    <!-- custom:cssinclude //cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/default.min.css -->
+    <!-- custom:cssinclude //cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.css -->
+
+
+
+    <!-- custom:remove -->
+    <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="remarkable-loader/node_modules/highlight.js/styles/default.css" rel="stylesheet">
+    <link href="c3/c3.css" rel="stylesheet">
+    <!-- endcustom -->
+
+    <style>
+        body {
+            padding-top: 50px;
+        }
+    </style>
+    <!--<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61247721-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>-->
+</head>
+
+<body>
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <div id="chart-goes-here"></div>
+    <!-- custom:jsinclude    dist/asme-adapter-docs-core.js   -->
+    <!-- custom:jsinclude    dist/asme-adapter-documentation.js   -->
+
+    <!-- custom:remove -->
+    <script type="text/javascript" src="http://localhost:8090/js/asme-adapter-docs-core.js"></script>
+    <script type="text/javascript" src="http://localhost:8090/js/asme-adapter-documentation.js"></script>
+    <script type="text/javascript" src="http://localhost:8090/webpack-dev-server.js"></script>
+    <!-- endcustom -->
+</body>
+
+</html>

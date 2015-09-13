@@ -41,6 +41,9 @@ module.exports = {
     externals: {
         "react": "React",
         "react-bootstrap": "ReactBootstrap",
+        "d3": "d3",
+        "c3": "c3",
+        "d3Chart": "d3Chart",
         "weavecore": ["weavecore", "WeaveAPI"]
     },
     resolve: {

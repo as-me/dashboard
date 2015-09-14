@@ -22912,7 +22912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Charts);
 
 	        _get(Object.getPrototypeOf(Charts.prototype), 'constructor', this).call(this, props);
-	        this.tools = window.NavigationHashMap.getObject("tools");
+	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
 	        this._onToolSelection = this._onToolSelection.bind(this);
 	        this.counter = 0;
@@ -22929,13 +22929,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function componentWillUnmount() {}
 	    }, {
 	        key: '_onToolSelection',
-	        value: function _onToolSelection(toolsName, eventKey, href, target) {
-	            var ls = this.tools.requestObject(toolsName + this.counter++, weavecore.LinkableString);
-	            ls.value = toolsName;
+	        value: function _onToolSelection(tool, toolName, eventKey, href, target) {
+
+	            var chart = this.tools.requestObject(toolName + this.counter++, tool);
+	            console.log('_onToolSelection', chart);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            //to-do transform this to function so that in th future we can have menu extracted externally
+	            var libs = Object.getOwnPropertyNames(adapter.libs);
+	            console.log('libs', libs);
+
+	            var libsMenu = libs.map((function (libName) {
+	                var libCharts = Object.getOwnPropertyNames(adapter.libs[libName]);
+	                console.log("libCharts: ", libCharts);
+	                var chartMenus = libCharts.map((function (chartName, index) {
+	                    var toolName = libName + '-' + chartName;
+	                    var tool = adapter.libs[libName][chartName];
+	                    return _react2['default'].createElement(
+	                        MenuItem,
+	                        { eventKey: index, onSelect: this._onToolSelection.bind(this, tool, toolName) },
+	                        _react2['default'].createElement(
+	                            'span',
+	                            { className: 'asmeMenu' },
+	                            ' ',
+	                            chartName
+	                        )
+	                    );
+	                }).bind(this));
+
+	                return _react2['default'].createElement(
+	                    NavDropdown,
+	                    { title: _react2['default'].createElement(
+	                            'span',
+	                            { className: 'asmeMenu' },
+	                            ' ',
+	                            libName
+	                        ), id: 'nav-brand-dropdown' },
+	                    chartMenus
+	                );
+	            }).bind(this));
+
 	            return _react2['default'].createElement(
 	                'div',
 	                null,
@@ -22989,58 +23024,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                )
 	                            )
 	                        ),
-	                        _react2['default'].createElement(
-	                            NavDropdown,
-	                            { eventKey: 3, title: _react2['default'].createElement(
-	                                    'span',
-	                                    { className: 'asmeMenu' },
-	                                    _react2['default'].createElement(
-	                                        'i',
-	                                        null,
-	                                        ' Tools '
-	                                    )
-	                                ), id: 'nav-brand-dropdown' },
-	                            _react2['default'].createElement(
-	                                MenuItem,
-	                                { eventKey: '1', onSelect: this._onToolSelection.bind(this, "d3ScatterPlotTool"), target: 'd3ScatterPlotTool' },
-	                                _react2['default'].createElement(
-	                                    'span',
-	                                    { className: 'asmeMenu' },
-	                                    _react2['default'].createElement(
-	                                        'i',
-	                                        null,
-	                                        ' ScatterPlot-D3 '
-	                                    )
-	                                )
-	                            ),
-	                            _react2['default'].createElement(
-	                                MenuItem,
-	                                { eventKey: '2', onSelect: this._onToolSelection.bind(this, "c3ScatterPlotTool"), target: 'c3ScatterPlotTool' },
-	                                _react2['default'].createElement(
-	                                    'span',
-	                                    { className: 'asmeMenu' },
-	                                    _react2['default'].createElement(
-	                                        'i',
-	                                        null,
-	                                        ' ScatterPlot-C3 '
-	                                    )
-	                                )
-	                            ),
-	                            _react2['default'].createElement(MenuItem, { divider: true }),
-	                            _react2['default'].createElement(
-	                                MenuItem,
-	                                { eventKey: '4', onSelect: this._onToolSelection.bind(this, "BarchartTool"), target: 'BarchartTool' },
-	                                _react2['default'].createElement(
-	                                    'span',
-	                                    { className: 'asmeMenu' },
-	                                    _react2['default'].createElement(
-	                                        'i',
-	                                        null,
-	                                        ' BarChart '
-	                                    )
-	                                )
-	                            )
-	                        )
+	                        libsMenu
 	                    )
 	                ),
 	                _react2['default'].createElement(Content, null)
@@ -23087,7 +23071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Layout);
 
 	        _get(Object.getPrototypeOf(Layout.prototype), 'constructor', this).call(this, props);
-	        this.tools = window.NavigationHashMap.getObject("tools");
+	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
 	        this.state = {
 	            names: this.tools.getNames()
@@ -23119,14 +23103,63 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'render',
 	        value: function render() {
 	            var children = [];
+	            //var toolName = "";
 	            if (this.state.names) {
 	                for (var i = 0; i < this.state.names.length; i++) {
-	                    var ls = this.state.names[i];
-	                    var tool = this.tools.getObject(ls);
-	                    var toolName = tool.value;
-	                    var toolContent = "Sessioned Chart Component will be tied up insted of " + toolName;
+	                    var toolName = this.state.names[i];
+	                    var tool = this.tools.getObject(toolName);
+	                    var padding = {
+	                        top: 20,
+	                        bottom: 40,
+	                        left: 40,
+	                        right: 20
+	                    };
+	                    //d3 tool
+	                    tool.sessionData.xAxis.value = 'index';
+	                    tool.sessionData.yAxis.value = 'sodium';
+
+	                    var interaction = {};
+	                    if (tool.library === 'd3') {
+	                        interaction = {
+	                            onProbe: {
+	                                showToolTip: true,
+	                                callback: function callback(d) {
+	                                    adapter.weaveInteractionPeer.activeHook = this;
+	                                    adapter.weaveInteractionPeer.doProbe(d);
+	                                }
+	                            },
+	                            onSelect: {
+	                                callback: function callback(keys) {
+	                                    adapter.weaveInteractionPeer.activeHook = this;
+	                                    adapter.weaveInteractionPeer.doSelection(keys);
+	                                }
+	                            }
+	                        };
+	                    } else if (tool.library === 'c3') {
+	                        interaction = {
+	                            onProbe: {
+	                                showToolTip: true,
+	                                callback: function callback(data) {
+	                                    adapter.weaveInteractionPeer.activeHook = this;
+	                                    adapter.weaveInteractionPeer.doProbe(data.index);
+	                                }
+	                            },
+	                            onSelect: {
+	                                callback: function callback(keys) {
+	                                    keys = this.selected();
+	                                    adapter.weaveInteractionPeer.activeHook = this;
+	                                    if (keys.constructor === Array) adapter.weaveInteractionPeer.doSelection(keys.map(function (key) {
+	                                        return key.index;
+	                                    }), true);else adapter.weaveInteractionPeer.doSelection([keys.index], true);
+	                                }
+	                            }
+	                        };
+	                    }
+
+	                    tool.createUI(padding, {}, interaction);
+
 	                    children.push(React.createElement(ToolPanel, { title: toolName,
-	                        content: toolContent,
+	                        content: tool.ui,
 	                        sessionedTool: tool
 	                    }));
 	                }
@@ -23198,14 +23231,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_closePanel',
 	        value: function _closePanel() {
-	            var tools = window.NavigationHashMap.getObject("tools");
+	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
 	            var name = tools.getName(this.props.sessionedTool);
 	            tools.removeObject(name);
 	        }
 	    }, {
 	        key: '_openSettings',
 	        value: function _openSettings() {
-	            var tools = window.NavigationHashMap.getObject("tools");
+	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
 	            var name = tools.getName(this.props.sessionedTool);
 	            var activetool = window.NavigationHashMap.getObject("activeTool");
 	            activetool.value = name;
@@ -23289,6 +23322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Label = ReactBootstrap.Label;
 	var Panel = ReactBootstrap.Panel;
+	var Input = ReactBootstrap.Input;
 
 	var Settingsbar = (function (_React$Component) {
 	    _inherits(Settingsbar, _React$Component);
@@ -23297,9 +23331,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Settingsbar);
 
 	        _get(Object.getPrototypeOf(Settingsbar.prototype), 'constructor', this).call(this, props);
-	        this.tools = window.NavigationHashMap.getObject("tools");
 	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 	        this._close = this._close.bind(this);
+	        this._handleChange = this._handleChange.bind(this);
 	    }
 
 	    _createClass(Settingsbar, [{
@@ -23314,11 +23349,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.activeTool.value = "";
 	        }
 	    }, {
+	        key: '_handleChange',
+	        value: function _handleChange(event) {
+	            // console.log(event.target, event.target.value);
+	            var property = event.target.id;
+	            var tool = this.tools.getObject(this.activeTool.value);
+	            tool.sessionData[property].value = event.target.value;
+	        }
+	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {}
 	    }, {
 	        key: 'render',
 	        value: function render() {
+
+	            var ui = React.createElement(
+	                Label,
+	                null,
+	                ' No Chart selected Yet '
+	            );
+	            if (this.activeTool.value.length > 0) {
+	                var tool = this.tools.getObject(this.activeTool.value);
+
+	                var columnProperties = tool.sessionData.getColumnProperties();
+	                var columns = window.NavigationHashMap.getObject("columns").getSessionState();
+	                ui = columnProperties.map((function (property, index) {
+	                    var options = columns.map(function (columnName, id) {
+	                        return React.createElement(
+	                            'option',
+	                            { value: columnName },
+	                            ' ',
+	                            columnName,
+	                            ' '
+	                        );
+	                    });
+
+	                    return React.createElement(
+	                        Input,
+	                        { type: 'select',
+	                            label: property,
+
+	                            id: property,
+	                            placeholder: 'select',
+
+	                            onChange: this._handleChange },
+	                        ' ',
+	                        options,
+	                        ' '
+	                    );
+	                }).bind(this));
+	            }
 
 	            return React.createElement(
 	                _componentsSideBar2['default'],
@@ -23329,7 +23409,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    { header: React.createElement(
 	                            'div',
 	                            null,
-	                            ' Settings ',
+	                            ' ',
+	                            this.activeTool.value,
+	                            ' ',
 	                            React.createElement(
 	                                'span',
 	                                { className: 'pull-right' },
@@ -23344,7 +23426,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            ),
 	                            ' '
 	                        ) },
-	                    this.activeTool.value
+	                    ui
 	                ),
 	                ' '
 	            );
@@ -23525,7 +23607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                position: 'fixed',
 	                width: '100%',
 	                height: '100%',
-	                background: 'rgba(0, 0, 0, 0.3)',
+	                background: 'rgba(0, 0, 0, 0.1)',
 	                opacity: isOpen ? 1 : 0,
 	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
 	                transition: isOpen ? 'opacity 0.5s' : 'opacity 0.5s, transform 0.1s 0.5s',
@@ -23900,14 +23982,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_closePanel',
 	        value: function _closePanel() {
-	            var tools = window.NavigationHashMap.getObject("tools");
+	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
 	            var name = tools.getName(this.props.sessionedTool);
 	            tools.removeObject(name);
 	        }
 	    }, {
 	        key: '_openSettings',
 	        value: function _openSettings() {
-	            var tools = window.NavigationHashMap.getObject("tools");
+	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
 	            var name = tools.getName(this.props.sessionedTool);
 	            var activetool = window.NavigationHashMap.getObject("activeTool");
 	            activetool.value = name;

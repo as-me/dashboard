@@ -59,6 +59,16 @@ if (typeof window === 'undefined') {
 
         /**
          * @public
+         * @property library
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'library', {
+            value: 'c3'
+        });
+
+        /**
+         * @public
          * @property data
          * @readOnly
          * @type String

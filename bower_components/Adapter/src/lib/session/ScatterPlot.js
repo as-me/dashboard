@@ -88,6 +88,16 @@ if (typeof window === 'undefined') {
 
     };
 
+    // public methods:
+    /**
+     * @method getSessionStateValue
+     * @return {Object}
+     */
+    p.getColumnProperties = function () {
+        return ['xAxis', 'yAxis'];
+
+    };
+
 
     /**
      * @method getXAxisValue

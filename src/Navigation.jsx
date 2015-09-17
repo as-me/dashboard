@@ -8,10 +8,41 @@ var NavItem = ReactBootstrap.NavItem;
 var Nav = require('./Nav.js');
 
 
+
 class Navigation extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.mql = window.matchMedia(`(min-width: 800px)`);
+        this.state = {docked: this.mql.matches};
+        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+    }
+
+        componentDidMount() {
+
+
+        this.mql.addListener(this.mediaQueryChanged);
+        this.setState({ docked: this.mql.matches});
+      }
+
+      componentWillUnmount() {
+        this.mql.removeListener(this.mediaQueryChanged);
+      }
+
+      mediaQueryChanged() {
+        this.setState({docked: this.mql.matches});
+      }
+
+
     render() {
-        return (
-        <Navbar brand='As ~ Me' inverse={ true } fixedTop={true}  toggleNavKey={0}>
+
+        var NavigationLayout ;
+        if(!this.state.docked){
+        NavigationLayout = <div/>;
+        }
+        else{
+        //toggleNavKey={0}
+        NavigationLayout = <Navbar brand='As ~ Me' inverse={ true } fixedTop={true}  >
                         <Nav right={ true } eventKey={0}>
                             <NavItem href={ '#charts' }>
                                 <span>< i className = "fa fa-fw fa-bar-chart-o" > < /i>Charts</span>
@@ -20,9 +51,9 @@ class Navigation extends React.Component {
                                 <span>< i className = "fa fa-fw fa-database" > < /i >DataSources</span>
                             </NavItem>
                         </Nav>
-                </Navbar>
-
-            );
+                </Navbar>;
+        }
+        return NavigationLayout;
         }
 }
 

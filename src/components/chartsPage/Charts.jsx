@@ -12,11 +12,17 @@ var NavDropdown = ReactBootstrap.NavDropdown;
 var Nav = require('../../Nav.js');
 var Layout = require('../../Layout.js');
 var Settings = require('../../Settingsbar.js');
+var Slider = require('../SessionSlider.js');
 var Content = require('./ChartContent.js');
 
  class Charts extends React.Component {
+
   constructor(props) {
-        super(props)
+        super(props);
+        this.mql = window.matchMedia(`(min-width: 800px)`);
+        this.state = {isDesktop: this.mql.matches};
+        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+
         this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
         this._onToolSelection = this._onToolSelection.bind(this);
@@ -24,14 +30,19 @@ var Content = require('./ChartContent.js');
     }
 
     componentDidMount() {
-
+        this.mql.addListener(this.mediaQueryChanged);
+        this.setState({ isDesktop: this.mql.matches});
     }
 
     componentDidUpdate(prevProps, prevState) {
     }
 
-    componentWillUnmount() {
+    mediaQueryChanged() {
+        this.setState({isDesktop: this.mql.matches});
+    }
 
+    componentWillUnmount() {
+        this.mql.removeListener(this.mediaQueryChanged);
     }
 
     _onToolSelection(tool,toolName, eventKey, href, target){
@@ -61,8 +72,10 @@ var Content = require('./ChartContent.js');
                    </NavDropdown>
         }.bind(this));
 
-        return   (<div>
-                        <Navbar brand={<span className="asmeMenu"><i> Charts < /i></span>}  staticTop  toggleNavKey={0}>
+        var title = this.state.isDesktop?"Charts":< span > < a href = "#" > < i className = "fa fa-chevron-left" > < /i> Charts< /a > < /span>;
+
+        return   (<div  className={this.state.isDesktop ?"desktop":""}>
+        <Navbar brand={<span className="asmeMenu">{title}</span>}  staticTop  toggleNavKey={0}>
                                 <Nav right={ true } eventKey={0}>
                                     <NavItem>
                                         <span className="asmeMenu">< i className = "fa fa-fw fa-folder-open-o" > < /i><i> Open</i></span>
@@ -75,6 +88,11 @@ var Content = require('./ChartContent.js');
                         </Navbar>
 
                         <Content/>
+
+                        <Navbar   fixedBottom  >
+
+                            <Slider/>
+                        </Navbar>
                 </div>
             );
       }

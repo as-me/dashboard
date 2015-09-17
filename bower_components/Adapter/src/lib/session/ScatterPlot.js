@@ -36,15 +36,7 @@ if (typeof window === 'undefined') {
             value: true
         });
 
-        /**
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'adapter.session'
-        });
+
 
         /**
          * @public
@@ -63,7 +55,7 @@ if (typeof window === 'undefined') {
          * @type weavecore.LinkableString
          */
         Object.defineProperty(this, 'yAxis', {
-            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString('yAxis'))
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString())
         });
 
         // since c3 creates charts with default config need to set at the time of creation.

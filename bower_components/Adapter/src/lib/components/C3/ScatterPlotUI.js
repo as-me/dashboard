@@ -67,8 +67,8 @@ class C3ScatterPlot extends React.Component {
         this.sessionData.chart = c3.generate(config);
         this.props.hook.setChart(this.sessionData.chart);
 
-        this.sessionData.xAxis.addGroupedCallback(this, this._setReactState);
-        this.sessionData.yAxis.addGroupedCallback(this, this._setReactState);
+        this.sessionData.xAxis.addImmediateCallback(this, this._setReactState);
+        this.sessionData.yAxis.addImmediateCallback(this, this._setReactState);
 
 
     }

@@ -42,6 +42,9 @@ if (typeof window === 'undefined') {
             value: WeaveAPI.globalHashMap.requestObject('hooks', weavecore.LinkableHashMap, false)
         });
 
+        this.selectionKeys.setSessionState([]);
+        this.probeKeys.setSessionState(null);
+
         this.selectionKeys.addImmediateCallback(this, renderSelection.bind(this));
         this.probeKeys.addImmediateCallback(this, renderProbe.bind(this));
     }
@@ -81,6 +84,7 @@ if (typeof window === 'undefined') {
      * @param {Array} keys We need to give the index value or Keys associated with that record [0,3,5].
      */
     p.doSelection = function (keys) {
+        keys = keys.length > 0 ? keys : [];
         this.selectionKeys.setSessionState(keys);
     }
 
@@ -90,6 +94,7 @@ if (typeof window === 'undefined') {
      * @param {Object} key We need to give the index value or Key associated with that record.
      */
     p.doProbe = function (key) {
+        key = key !== undefined ? key : null;
         this.probeKeys.setSessionState(key);
     }
 

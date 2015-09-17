@@ -16,6 +16,8 @@ class Layout extends React.Component {
                 names: this.tools.getNames()
             };
             this._updateState = this._updateState.bind(this);
+
+            this.columns = window.NavigationHashMap.getObject("columns").getSessionState();
         }
 
         componentDidMount() {
@@ -44,6 +46,10 @@ class Layout extends React.Component {
                 for (var i = 0; i < this.state.names.length; i++) {
                     var toolName = this.state.names[i];
                     var tool = this.tools.getObject(toolName);
+                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value);
+                    tool.sessionData.xAxis.value = tool.sessionData.xAxis.value ? tool.sessionData.xAxis.value : this.columns[0];
+                    tool.sessionData.yAxis.value = tool.sessionData.yAxis.value ? tool.sessionData.yAxis.value : this.columns[4];
+                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value, this.columns);
                     var padding = {
                             top: 20,
                             bottom: 40,
@@ -51,8 +57,7 @@ class Layout extends React.Component {
                             right: 20
                         }
                         //d3 tool
-                    tool.sessionData.xAxis.value = 'index';
-                    tool.sessionData.yAxis.value = 'sodium';
+
 
                     var interaction = {};
                     if (tool.library === 'd3') {

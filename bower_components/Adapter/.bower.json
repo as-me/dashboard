@@ -1,11 +1,11 @@
 {
   "name": "Adapter",
   "homepage": "https://github.com/as-me/Adapter",
-  "_release": "f70cbb4eff",
+  "_release": "5e93a0a32b",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "f70cbb4eff15f4972a1c1bb2396ed5c3399e1550"
+    "commit": "5e93a0a32b61ed1eeea9324d4db42c6801de2747"
   },
   "_source": "https://github.com/as-me/Adapter.git",
   "_target": "*",

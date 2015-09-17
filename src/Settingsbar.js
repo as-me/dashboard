@@ -70,6 +70,10 @@ class Settingsbar extends React.Component {
                 id = {
                     property
                 }
+
+                value = {
+                    tool.sessionData[property].value
+                }
                 placeholder = "select"
 
                 onChange = {

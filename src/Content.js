@@ -6,35 +6,37 @@ import NotFoundPage from './components/notFoundPage/NotFoundPage.jsx';
 import ErrorPage from './components/errorPage/ErrorPage.jsx';
 
 class Content extends React.Component {
+
     constructor(props) {
         super(props)
         this.activePage = window.NavigationHashMap.getObject("activePage");
         this.routes = {
             undefined: < Home / > ,
             '/': < Home / > ,
+            'home': < Home / > ,
             'charts': < Charts / > ,
             'dataSources': < DataSource / > ,
             'error': < ErrorPage / >
         };
 
+
         this.state = {
             page: this.activePage.value
         };
+
+
         this._updateState = this._updateState.bind(this);
     }
 
     componentDidMount() {
         this.activePage.addImmediateCallback(this, this._updateState, true);
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-
 
     }
+
+
 
     _updateState() {
-        //this wil call render function which in turn calls componentDidUpdate
-        console.log('updateState called')
+        console.log("page changed");
         this.setState({
             page: this.activePage.value
         });
@@ -45,9 +47,12 @@ class Content extends React.Component {
     }
 
     render() {
-        var pageComponent = this.routes[this.state.page];
 
+        var pageComponent = this.routes[this.state.page];
+        console.log(pageComponent);
         return pageComponent;
+
+
 
     }
 

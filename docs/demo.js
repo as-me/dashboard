@@ -8,7 +8,7 @@ var activePage = window.NavigationHashMap.requestObject("activePage", weavecore.
 var activeTool = window.NavigationHashMap.requestObject("activeTool", weavecore.LinkableString);
 var slideBarStyle = window.NavigationHashMap.requestObject("slideBarStyle", weavecore.LinkableString);
 var tools = window.NavigationHashMap.requestObject("tools", weavecore.LinkableHashMap);
-activePage.value = 'charts';
+locationHashChanged();
 activeTool.value = "";
 slideBarStyle.value = 'scaleRotate';
 
@@ -21,8 +21,10 @@ function locationHashChanged() {
     try {
         activePage.value = window.location.hash.substr(1) || '/';
     } catch (err) {
+        console.log("LocationHashchange - error: ", err);
         activePage.value = 'error';
     }
+    console.log("LocationHashchange: ", activePage.value);
 }
 
 d3.csv("data/testCereal.csv", function (d, i) {
@@ -36,7 +38,5 @@ d3.csv("data/testCereal.csv", function (d, i) {
     WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(rows);
     React.render( < Navigation / > , document.getElementById('Menu'));
     React.render( < Content / > , document.getElementById('App'));
-    //renderPage();
-    WeaveAPI.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
 
 });

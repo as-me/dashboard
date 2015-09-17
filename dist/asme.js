@@ -63,7 +63,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Layout = __webpack_require__(181);
 	exports.Settingsbar = __webpack_require__(183);
 
-	exports.ToolPanel = __webpack_require__(192);
+	exports.ToolPanel = __webpack_require__(193);
 
 /***/ },
 /* 1 */
@@ -22660,51 +22660,79 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Navigation = (function (_React$Component) {
 	    _inherits(Navigation, _React$Component);
 
-	    function Navigation() {
+	    function Navigation(props) {
 	        _classCallCheck(this, Navigation);
 
-	        _get(Object.getPrototypeOf(Navigation.prototype), 'constructor', this).apply(this, arguments);
+	        _get(Object.getPrototypeOf(Navigation.prototype), 'constructor', this).call(this, props);
+	        this.mql = window.matchMedia('(min-width: 800px)');
+	        this.state = { docked: this.mql.matches };
+	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
 	    }
 
 	    _createClass(Navigation, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+
+	            this.mql.addListener(this.mediaQueryChanged);
+	            this.setState({ docked: this.mql.matches });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.mql.removeListener(this.mediaQueryChanged);
+	        }
+	    }, {
+	        key: 'mediaQueryChanged',
+	        value: function mediaQueryChanged() {
+	            this.setState({ docked: this.mql.matches });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return React.createElement(
-	                Navbar,
-	                { brand: 'As ~ Me', inverse: true, fixedTop: true, toggleNavKey: 0 },
-	                React.createElement(
-	                    Nav,
-	                    { right: true, eventKey: 0 },
+
+	            var NavigationLayout;
+	            if (!this.state.docked) {
+	                NavigationLayout = React.createElement('div', null);
+	            } else {
+	                //toggleNavKey={0}
+	                NavigationLayout = React.createElement(
+	                    Navbar,
+	                    { brand: 'As ~ Me', inverse: true, fixedTop: true },
 	                    React.createElement(
-	                        NavItem,
-	                        { href: '#charts' },
+	                        Nav,
+	                        { right: true, eventKey: 0 },
 	                        React.createElement(
-	                            'span',
-	                            null,
+	                            NavItem,
+	                            { href: '#charts' },
 	                            React.createElement(
-	                                'i',
-	                                { className: 'fa fa-fw fa-bar-chart-o' },
-	                                ' '
-	                            ),
-	                            'Charts'
-	                        )
-	                    ),
-	                    React.createElement(
-	                        NavItem,
-	                        { href: '#dataSources' },
+	                                'span',
+	                                null,
+	                                React.createElement(
+	                                    'i',
+	                                    { className: 'fa fa-fw fa-bar-chart-o' },
+	                                    ' '
+	                                ),
+	                                'Charts'
+	                            )
+	                        ),
 	                        React.createElement(
-	                            'span',
-	                            null,
+	                            NavItem,
+	                            { href: '#dataSources' },
 	                            React.createElement(
-	                                'i',
-	                                { className: 'fa fa-fw fa-database' },
-	                                ' '
-	                            ),
-	                            'DataSources'
+	                                'span',
+	                                null,
+	                                React.createElement(
+	                                    'i',
+	                                    { className: 'fa fa-fw fa-database' },
+	                                    ' '
+	                                ),
+	                                'DataSources'
+	                            )
 	                        )
 	                    )
-	                )
-	            );
+	                );
+	            }
+	            return NavigationLayout;
 	        }
 	    }]);
 
@@ -22749,15 +22777,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsChartsPageCharts2 = _interopRequireDefault(_componentsChartsPageCharts);
 
-	var _componentsDataSourcePageDataSource = __webpack_require__(189);
+	var _componentsDataSourcePageDataSource = __webpack_require__(190);
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(190);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(191);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(191);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(192);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -22772,6 +22800,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.routes = {
 	            undefined: React.createElement(_componentsHomePageHome2['default'], null),
 	            '/': React.createElement(_componentsHomePageHome2['default'], null),
+	            'home': React.createElement(_componentsHomePageHome2['default'], null),
 	            'charts': React.createElement(_componentsChartsPageCharts2['default'], null),
 	            'dataSources': React.createElement(_componentsDataSourcePageDataSource2['default'], null),
 	            'error': React.createElement(_componentsErrorPageErrorPageJsx2['default'], null)
@@ -22780,6 +22809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.state = {
 	            page: this.activePage.value
 	        };
+
 	        this._updateState = this._updateState.bind(this);
 	    }
 
@@ -22789,13 +22819,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.activePage.addImmediateCallback(this, this._updateState, true);
 	        }
 	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {}
-	    }, {
 	        key: '_updateState',
 	        value: function _updateState() {
-	            //this wil call render function which in turn calls componentDidUpdate
-	            console.log('updateState called');
+	            console.log("page changed");
 	            this.setState({
 	                page: this.activePage.value
 	            });
@@ -22808,8 +22834,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var pageComponent = this.routes[this.state.page];
 
+	            var pageComponent = this.routes[this.state.page];
+	            console.log(pageComponent);
 	            return pageComponent;
 	        }
 	    }]);
@@ -22826,12 +22853,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
-	  value: true
+	    value: true
 	});
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -22843,27 +22872,100 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Navbar = ReactBootstrap.Navbar;
+
 	var Home = (function (_React$Component) {
-	  _inherits(Home, _React$Component);
+	    _inherits(Home, _React$Component);
 
-	  function Home() {
-	    _classCallCheck(this, Home);
+	    function Home(props) {
+	        _classCallCheck(this, Home);
 
-	    _get(Object.getPrototypeOf(Home.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(Home, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'h1',
-	        null,
-	        'Home'
-	      );
+	        _get(Object.getPrototypeOf(Home.prototype), 'constructor', this).call(this, props);
+	        this.mql = window.matchMedia('(min-width: 800px)');
+	        this.state = { isDesktop: this.mql.matches };
+	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
 	    }
-	  }]);
 
-	  return Home;
+	    _createClass(Home, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+
+	            this.mql.addListener(this.mediaQueryChanged);
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.mql.removeListener(this.mediaQueryChanged);
+	        }
+	    }, {
+	        key: 'mediaQueryChanged',
+	        value: function mediaQueryChanged() {
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var content = this.state.isDesktop ? _react2['default'].createElement('div', { className: 'desktop' }) : _react2['default'].createElement(
+	                'div',
+	                null,
+	                _react2['default'].createElement(Navbar, { brand: 'As ~ Me', inverse: true
+	                }),
+	                _react2['default'].createElement(
+	                    'div',
+	                    { className: 'content' },
+	                    _react2['default'].createElement(
+	                        'ul',
+	                        { className: 'table-view' },
+	                        _react2['default'].createElement(
+	                            'li',
+	                            { className: 'table-view-cell media' },
+	                            _react2['default'].createElement(
+	                                'a',
+	                                { href: '#charts' },
+	                                _react2['default'].createElement(
+	                                    'span',
+	                                    null,
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        { className: 'fa fa-fw fa-bar-chart-o' },
+	                                        ' '
+	                                    ),
+	                                    'Charts'
+	                                )
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            'li',
+	                            { className: 'table-view-cell media' },
+	                            _react2['default'].createElement(
+	                                'a',
+	                                { href: '#dataSources' },
+	                                _react2['default'].createElement(
+	                                    'span',
+	                                    null,
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        { className: 'fa fa-fw fa-database' },
+	                                        ' '
+	                                    ),
+	                                    'DataSources'
+	                                )
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+
+	            return content;
+	        }
+	    }]);
+
+	    return Home;
 	})(_react2['default'].Component);
 
 	exports['default'] = Home;
@@ -22903,7 +23005,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Nav = __webpack_require__(1);
 	var Layout = __webpack_require__(181);
 	var Settings = __webpack_require__(183);
-	var Content = __webpack_require__(188);
+	var Slider = __webpack_require__(188);
+	var Content = __webpack_require__(189);
 
 	var Charts = (function (_React$Component) {
 	    _inherits(Charts, _React$Component);
@@ -22912,6 +23015,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Charts);
 
 	        _get(Object.getPrototypeOf(Charts.prototype), 'constructor', this).call(this, props);
+	        this.mql = window.matchMedia('(min-width: 800px)');
+	        this.state = { isDesktop: this.mql.matches };
+	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+
 	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
 	        this._onToolSelection = this._onToolSelection.bind(this);
@@ -22920,13 +23027,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _createClass(Charts, [{
 	        key: 'componentDidMount',
-	        value: function componentDidMount() {}
+	        value: function componentDidMount() {
+	            this.mql.addListener(this.mediaQueryChanged);
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {}
 	    }, {
+	        key: 'mediaQueryChanged',
+	        value: function mediaQueryChanged() {
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
+	    }, {
 	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {}
+	        value: function componentWillUnmount() {
+	            this.mql.removeListener(this.mediaQueryChanged);
+	        }
 	    }, {
 	        key: '_onToolSelection',
 	        value: function _onToolSelection(tool, toolName, eventKey, href, target) {
@@ -22971,19 +23088,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	                );
 	            }).bind(this));
 
+	            var title = this.state.isDesktop ? "Charts" : _react2['default'].createElement(
+	                'span',
+	                null,
+	                ' ',
+	                _react2['default'].createElement(
+	                    'a',
+	                    { href: '#' },
+	                    ' ',
+	                    _react2['default'].createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-left' },
+	                        ' '
+	                    ),
+	                    ' Charts'
+	                ),
+	                ' '
+	            );
+
 	            return _react2['default'].createElement(
 	                'div',
-	                null,
+	                { className: this.state.isDesktop ? "desktop" : "" },
 	                _react2['default'].createElement(
 	                    Navbar,
 	                    { brand: _react2['default'].createElement(
 	                            'span',
 	                            { className: 'asmeMenu' },
-	                            _react2['default'].createElement(
-	                                'i',
-	                                null,
-	                                ' Charts '
-	                            )
+	                            title
 	                        ), staticTop: true, toggleNavKey: 0 },
 	                    _react2['default'].createElement(
 	                        Nav,
@@ -23027,7 +23158,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        libsMenu
 	                    )
 	                ),
-	                _react2['default'].createElement(Content, null)
+	                _react2['default'].createElement(Content, null),
+	                _react2['default'].createElement(
+	                    Navbar,
+	                    { fixedBottom: true },
+	                    _react2['default'].createElement(Slider, null)
+	                )
 	            );
 	        }
 	    }]);
@@ -23077,6 +23213,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            names: this.tools.getNames()
 	        };
 	        this._updateState = this._updateState.bind(this);
+
+	        this.columns = window.NavigationHashMap.getObject("columns").getSessionState();
 	    }
 
 	    _createClass(Layout, [{
@@ -23108,6 +23246,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                for (var i = 0; i < this.state.names.length; i++) {
 	                    var toolName = this.state.names[i];
 	                    var tool = this.tools.getObject(toolName);
+	                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value);
+	                    tool.sessionData.xAxis.value = tool.sessionData.xAxis.value ? tool.sessionData.xAxis.value : this.columns[0];
+	                    tool.sessionData.yAxis.value = tool.sessionData.yAxis.value ? tool.sessionData.yAxis.value : this.columns[4];
+	                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value, this.columns);
 	                    var padding = {
 	                        top: 20,
 	                        bottom: 40,
@@ -23115,8 +23257,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        right: 20
 	                    };
 	                    //d3 tool
-	                    tool.sessionData.xAxis.value = 'index';
-	                    tool.sessionData.yAxis.value = 'sodium';
 
 	                    var interaction = {};
 	                    if (tool.library === 'd3') {
@@ -23390,6 +23530,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            label: property,
 
 	                            id: property,
+
+	                            value: tool.sessionData[property].value,
 	                            placeholder: 'select',
 
 	                            onChange: this._handleChange },
@@ -23723,6 +23865,93 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var SessionSlider = (function (_React$Component) {
+	    _inherits(SessionSlider, _React$Component);
+
+	    function SessionSlider(props) {
+	        _classCallCheck(this, SessionSlider);
+
+	        _get(Object.getPrototypeOf(SessionSlider.prototype), 'constructor', this).call(this, props);
+	        this.log = WeaveAPI.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+
+	        this.state = {
+	            max: 1,
+	            value: 0
+	        };
+
+	        this._runLog = this._runLog.bind(this);
+	        this._setReactState = this._setReactState.bind(this);
+	    }
+
+	    _createClass(SessionSlider, [{
+	        key: '_setReactState',
+	        value: function _setReactState() {
+
+	            console.log('UpdateSlider State called');
+	            this.setState({
+	                max: this.log._undoHistory.length + this.log._redoHistory.length,
+	                value: this.log._undoHistory.length
+	            });
+	        }
+	    }, {
+	        key: '_runLog',
+	        value: function _runLog(e, value) {
+	            var delta = value - this.log.undoHistory.length;
+	            if (delta < 0) this.log.undo(-delta);else this.log.redo(delta);
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var cc = WeaveAPI.SessionManager.getCallbackCollection(this.log);
+	            cc.addGroupedCallback(this, this._setReactState, true);
+	        }
+
+	        // Unbind change listener
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            var cc = WeaveAPI.SessionManager.getCallbackCollection(this.log);
+	            cc.removeCallback(this._setReactState);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            console.log(this.state.max, this.state.value);
+	            return React.createElement('input', { type: 'range',
+	                min: 0,
+	                max: this.state.max,
+	                value: this.state.value,
+	                onInput: this._runLog
+	            });
+	        }
+	    }]);
+
+	    return SessionSlider;
+	})(React.Component);
+
+	module.exports = SessionSlider;
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -23829,7 +24058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ChartContent;
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23842,6 +24071,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -23852,22 +24083,66 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Navbar = ReactBootstrap.Navbar;
+
 	var DataSource = (function (_React$Component) {
 	  _inherits(DataSource, _React$Component);
 
-	  function DataSource() {
+	  function DataSource(props) {
 	    _classCallCheck(this, DataSource);
 
-	    _get(Object.getPrototypeOf(DataSource.prototype), 'constructor', this).apply(this, arguments);
+	    _get(Object.getPrototypeOf(DataSource.prototype), 'constructor', this).call(this, props);
+	    this.mql = window.matchMedia('(min-width: 800px)');
+	    this.state = { isDesktop: this.mql.matches };
+	    this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
 	  }
 
 	  _createClass(DataSource, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+
+	      this.mql.addListener(this.mediaQueryChanged);
+	      this.setState({ isDesktop: this.mql.matches });
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.mql.removeListener(this.mediaQueryChanged);
+	    }
+	  }, {
+	    key: 'mediaQueryChanged',
+	    value: function mediaQueryChanged() {
+	      this.setState({ isDesktop: this.mql.matches });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2['default'].createElement(
-	        'h1',
+	      var title = this.state.isDesktop ? "Data Source" : _react2['default'].createElement(
+	        'span',
 	        null,
-	        'DataSource'
+	        ' ',
+	        _react2['default'].createElement(
+	          'a',
+	          { href: '#home' },
+	          ' ',
+	          _react2['default'].createElement(
+	            'i',
+	            { className: 'fa fa-chevron-left' },
+	            ' '
+	          ),
+	          'Data Source '
+	        )
+	      );
+
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: this.state.isDesktop ? "desktop" : "" },
+	        _react2['default'].createElement(Navbar, { brand: title
+	        })
 	      );
 	    }
 	  }]);
@@ -23879,13 +24154,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23935,7 +24210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

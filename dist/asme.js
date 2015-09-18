@@ -23159,11 +23159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    )
 	                ),
 	                _react2['default'].createElement(Content, null),
-	                _react2['default'].createElement(
-	                    Navbar,
-	                    { fixedBottom: true },
-	                    _react2['default'].createElement(Slider, null)
-	                )
+	                _react2['default'].createElement(Slider, null)
 	            );
 	        }
 	    }]);
@@ -23580,31 +23576,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = Settingsbar;
 
-	/*< div className = "sideBar" >
-	            < div className = {
-	                (this.state.isOpen ? "visible " : "") + this.props.alignment
-	            } >
-	            < /div > < /div >*/
-
-	/*< Menu pageWrapId = {
-	    "page-wrap"
-	}
-	outerContainerId = {
-	        "outer-container"
-	    } >
-
-	    < Panel header = { < div > Settings < span className = "pull-right" > < i className = "fa fa-times fa-fw fa-pointer"
-	        onClick = {
-	            this._close
-	        } > < /i>  < /span > < /div >
-	    } >
-
-	    {
-	        toolName
-	    }
-
-	< /Panel > < /Menu >*/
-
 /***/ },
 /* 184 */
 /***/ function(module, exports, __webpack_require__) {
@@ -23873,6 +23844,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React = _interopRequireWildcard(_react);
 
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Panel = ReactBootstrap.Panel;
+
+	var Button = ReactBootstrap.Button;
+
 	var SessionSlider = (function (_React$Component) {
 	    _inherits(SessionSlider, _React$Component);
 
@@ -23884,7 +23863,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.state = {
 	            max: 1,
-	            value: 0
+	            value: 0,
+	            open: true
 	        };
 
 	        this._runLog = this._runLog.bind(this);
@@ -23904,7 +23884,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_runLog',
 	        value: function _runLog(e, value) {
-	            var delta = value - this.log.undoHistory.length;
+	            console.log(e.target.value);
+	            var delta = e.target.value - this.log.undoHistory.length;
 	            if (delta < 0) this.log.undo(-delta);else this.log.redo(delta);
 	        }
 	    }, {
@@ -23924,14 +23905,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this = this;
 
-	            console.log(this.state.max, this.state.value);
-	            return React.createElement('input', { type: 'range',
-	                min: 0,
-	                max: this.state.max,
-	                value: this.state.value,
-	                onInput: this._runLog
-	            });
+	            console.log("max: ", this.state.max, "value: ", this.state.value);
+
+	            return React.createElement(
+	                'div',
+	                { className: 'slider' },
+	                React.createElement(
+	                    Button,
+	                    { className: 'sliderBtn',
+	                        bsSize: 'small',
+	                        onClick: function () {
+	                            return _this.setState({
+	                                open: !_this.state.open
+	                            });
+	                        } },
+	                    ' ',
+	                    this.state.open ? React.createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-circle-down' },
+	                        ' '
+	                    ) : React.createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-circle-up' },
+	                        ' '
+	                    ),
+	                    ' '
+	                ),
+	                React.createElement(
+	                    Panel,
+	                    { collapsible: true, expanded: this.state.open },
+	                    ' ',
+	                    React.createElement('input', { type: 'range',
+	                        min: 0,
+	                        max: this.state.max,
+
+	                        value: this.state.value,
+	                        onChange: this._runLog
+
+	                    })
+	                )
+	            );
 	        }
 	    }]);
 

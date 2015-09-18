@@ -90,6 +90,14 @@ class Styles {
             overflow: isOpen ? '' : 'hidden'
         });
     }
+
+    static introText(isDesktop) {
+        return appendVendorPrefix({
+            position: "fixed",
+            bottom: 120,
+            right: 120
+        });
+    }
 }
 
 

@@ -9,6 +9,7 @@ var NavDropdown = ReactBootstrap.NavDropdown;
 
 
 
+
 var Nav = require('../../Nav.js');
 var Layout = require('../../Layout.js');
 var Settings = require('../../Settingsbar.js');
@@ -89,10 +90,9 @@ var Content = require('./ChartContent.js');
 
                         <Content/>
 
-                        <Navbar   fixedBottom  >
+
 
                             <Slider/>
-                        </Navbar>
                 </div>
             );
       }

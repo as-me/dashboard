@@ -1,4 +1,9 @@
 import * as React from 'react';
+import * as ReactBootstrap from 'react-bootstrap';
+
+var Panel = ReactBootstrap.Panel;
+
+var Button = ReactBootstrap.Button;
 
 
 
@@ -9,7 +14,8 @@ class SessionSlider extends React.Component {
 
         this.state = {
             max: 1,
-            value: 0
+            value: 0,
+            open: true
         };
 
         this._runLog = this._runLog.bind(this);
@@ -26,7 +32,8 @@ class SessionSlider extends React.Component {
     }
 
     _runLog(e, value) {
-        var delta = value - this.log.undoHistory.length;
+        console.log(e.target.value);
+        var delta = e.target.value - this.log.undoHistory.length;
         if (delta < 0)
             this.log.undo(-delta);
         else
@@ -48,21 +55,42 @@ class SessionSlider extends React.Component {
 
     render() {
 
-        console.log(this.state.max, this.state.value);
-        return ( < input type = "range"
+        console.log("max: ", this.state.max, "value: ", this.state.value);
+
+        return ( < div className = "slider" >
+
+
+            < Button className = "sliderBtn"
+            bsSize = "small"
+            onClick = {
+                () => this.setState({
+                    open: !this.state.open
+                })
+            } > {
+                this.state.open ? < i className = "fa fa-chevron-circle-down" > < /i>:< i className = "fa fa-chevron-circle-up" > < /i >
+            } < /Button >
+
+
+
+            < Panel collapsible expanded = {
+                this.state.open
+            } > < input type = "range"
             min = {
                 0
             }
             max = {
                 this.state.max
             }
+
             value = {
                 this.state.value
             }
-            onInput = {
+            onChange = {
                 this._runLog
             }
-            / >
+
+            / ></Panel >
+            < /div >
 
         );
     }

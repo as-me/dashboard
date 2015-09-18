@@ -28,7 +28,8 @@ constructor(props) {
       }
 
        render() {
-       var content = this.state.isDesktop ?<div className="desktop"/>:<div >
+       var intro = <div className="intro"><div>Few Seconds of <b><span className="big"> Connection , Integration </span></b></div><div>&</div> <div><span className="big"><b>Visualization</b></span> </div><div>is worth a days of </div><div><span className="big"><b>Cure</b></span>.......</div></div>
+       var content = this.state.isDesktop ?<div className="desktop">{intro }</div>:<div >
                  < Navbar brand = 'As ~ Me' inverse={ true }
             />
                 <div className="content">
@@ -36,6 +37,7 @@ constructor(props) {
                         <li className="table-view-cell media"><a href="#charts"><span>< i className = "fa fa-fw fa-bar-chart-o" > < /i>Charts</span></a></li>
                         <li className="table-view-cell media"><a href="#dataSources"><span>< i className = "fa fa-fw fa-database" > < /i >DataSources</span></a></li>
                     </ul>
+                    {intro}
                 </div>
             </div>;
 

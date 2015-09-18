@@ -33,9 +33,11 @@ constructor(props) {
 
                 Data Source < /a >< /span >;
 
-                    return <div className={this.state.isDesktop ?"desktop":""}>
-  < Navbar brand = { title
+        return <div className={this.state.isDesktop ?"desktop":""}>
+            < Navbar brand = { title
             }
-            /></div>;
+            />
+
+            <img id='connect-health-data-btn' src='https://connect.humanapi.co/assets/button/blue.png'/></div>;
   }
 }

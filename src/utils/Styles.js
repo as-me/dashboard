@@ -20,6 +20,19 @@ class Styles {
         });
     }
 
+    static rightMenuWrap(isOpen) {
+        return appendVendorPrefix({
+            position: 'fixed',
+            zIndex: 2,
+            width: 200,
+            right: -200,
+            height: '100%',
+            transform: isOpen ? 'translate3d(-100%, 0, 0)' : 'translate3d(0, 0, 0)',
+            transition: 'all 0.5s',
+            background: '#f4f4f4'
+        });
+    }
+
     static menu() {
         return appendVendorPrefix({
             height: '100%'
@@ -43,6 +56,22 @@ class Styles {
         var transform, overflow;
         if (type === 'scaleRotate') {
             transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(100px, 0, -600px) rotateY(-20deg)';
+        } else if (type === 'scaleDown') {
+            transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
+        }
+
+        return appendVendorPrefix({
+            transform: transform,
+            transformStyle: 'preserve-3d',
+            transition: 'all 0.5s',
+            overflow: isOpen ? '' : 'hidden'
+        });
+    }
+
+    static rightPageWrap(isOpen, type) {
+        var transform, overflow;
+        if (type === 'scaleRotate') {
+            transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100px, 0, -600px) rotateY(20deg)';
         } else if (type === 'scaleDown') {
             transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
         }

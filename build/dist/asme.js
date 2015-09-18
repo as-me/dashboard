@@ -23907,7 +23907,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function render() {
 	            var _this = this;
 
-	            console.log("max: ", this.state.max, "value: ", this.state.value);
+	            var options = [];
+	            for (var i = 0; i <= this.state.max; i++) {
+	                var option = React.createElement(
+	                    'option',
+	                    null,
+	                    ' ',
+	                    i,
+	                    ' '
+	                );
+	                options.push(option);
+	            }
 
 	            return React.createElement(
 	                'div',
@@ -23937,15 +23947,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    Panel,
 	                    { collapsible: true, expanded: this.state.open },
 	                    ' ',
-	                    React.createElement('input', { type: 'range',
-	                        min: 0,
-	                        max: this.state.max,
+	                    React.createElement(
+	                        'input',
+	                        { type: 'range',
+	                            min: 0,
+	                            max: this.state.max,
 
-	                        value: this.state.value,
-	                        onChange: this._runLog
+	                            value: this.state.value,
+	                            onChange: this._runLog,
 
-	                    })
-	                )
+	                            list: 'steplist'
+
+	                        },
+	                        ' ',
+	                        React.createElement(
+	                            'datalist',
+	                            { id: 'steplist' },
+	                            ' ',
+	                            options,
+	                            ' '
+	                        )
+	                    ),
+	                    ' '
+	                ),
+	                ' '
 	            );
 	        }
 	    }]);

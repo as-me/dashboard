@@ -55,7 +55,13 @@ class SessionSlider extends React.Component {
 
     render() {
 
-        console.log("max: ", this.state.max, "value: ", this.state.value);
+        var options = [];
+        for (var i = 0; i <= this.state.max; i++) {
+            var option = < option > {
+                i
+            } < /option>
+            options.push(option);
+        }
 
         return ( < div className = "slider" >
 
@@ -89,8 +95,11 @@ class SessionSlider extends React.Component {
                 this._runLog
             }
 
-            / ></Panel >
-            < /div >
+            list = "steplist"
+
+            > < datalist id = "steplist" > {
+                options
+            } < /datalist></input > < /Panel > < /div >
 
         );
     }

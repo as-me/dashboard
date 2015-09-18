@@ -22923,7 +22923,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        _react2['default'].createElement(
 	                            'span',
 	                            { className: 'big' },
-	                            ' Connection , Integration '
+	                            ' Connection , Integration '
 	                        )
 	                    )
 	                ),
@@ -23843,6 +23843,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return (0, _appendVendorPrefix2['default'])({
 	                perspective: '1500px',
 	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }, {
+	        key: 'introText',
+	        value: function introText(isDesktop) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: "fixed",
+	                bottom: 120,
+	                right: 120
 	            });
 	        }
 	    }]);

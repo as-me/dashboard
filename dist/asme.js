@@ -22910,7 +22910,68 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var content = this.state.isDesktop ? _react2['default'].createElement('div', { className: 'desktop' }) : _react2['default'].createElement(
+	            var intro = _react2['default'].createElement(
+	                'div',
+	                { className: 'intro' },
+	                _react2['default'].createElement(
+	                    'div',
+	                    null,
+	                    'Few Seconds of ',
+	                    _react2['default'].createElement(
+	                        'b',
+	                        null,
+	                        _react2['default'].createElement(
+	                            'span',
+	                            { className: 'big' },
+	                            ' Connection , Integration '
+	                        )
+	                    )
+	                ),
+	                _react2['default'].createElement(
+	                    'div',
+	                    null,
+	                    '&'
+	                ),
+	                ' ',
+	                _react2['default'].createElement(
+	                    'div',
+	                    null,
+	                    _react2['default'].createElement(
+	                        'span',
+	                        { className: 'big' },
+	                        _react2['default'].createElement(
+	                            'b',
+	                            null,
+	                            'Visualization'
+	                        )
+	                    ),
+	                    ' '
+	                ),
+	                _react2['default'].createElement(
+	                    'div',
+	                    null,
+	                    'is worth a days of '
+	                ),
+	                _react2['default'].createElement(
+	                    'div',
+	                    null,
+	                    _react2['default'].createElement(
+	                        'span',
+	                        { className: 'big' },
+	                        _react2['default'].createElement(
+	                            'b',
+	                            null,
+	                            'Cure'
+	                        )
+	                    ),
+	                    '.......'
+	                )
+	            );
+	            var content = this.state.isDesktop ? _react2['default'].createElement(
+	                'div',
+	                { className: 'desktop' },
+	                intro
+	            ) : _react2['default'].createElement(
 	                'div',
 	                null,
 	                _react2['default'].createElement(Navbar, { brand: 'As ~ Me', inverse: true
@@ -22957,7 +23018,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                )
 	                            )
 	                        )
-	                    )
+	                    ),
+	                    intro
 	                )
 	            );
 
@@ -23707,6 +23769,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 	    }, {
+	        key: 'rightMenuWrap',
+	        value: function rightMenuWrap(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: 'fixed',
+	                zIndex: 2,
+	                width: 200,
+	                right: -200,
+	                height: '100%',
+	                transform: isOpen ? 'translate3d(-100%, 0, 0)' : 'translate3d(0, 0, 0)',
+	                transition: 'all 0.5s',
+	                background: '#f4f4f4'
+	            });
+	        }
+	    }, {
 	        key: 'menu',
 	        value: function menu() {
 	            return (0, _appendVendorPrefix2['default'])({
@@ -23733,6 +23809,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var transform, overflow;
 	            if (type === 'scaleRotate') {
 	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(100px, 0, -600px) rotateY(-20deg)';
+	            } else if (type === 'scaleDown') {
+	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
+	            }
+
+	            return (0, _appendVendorPrefix2['default'])({
+	                transform: transform,
+	                transformStyle: 'preserve-3d',
+	                transition: 'all 0.5s',
+	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }, {
+	        key: 'rightPageWrap',
+	        value: function rightPageWrap(isOpen, type) {
+	            var transform, overflow;
+	            if (type === 'scaleRotate') {
+	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100px, 0, -600px) rotateY(20deg)';
 	            } else if (type === 'scaleDown') {
 	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
 	            }
@@ -24182,7 +24275,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'div',
 	        { className: this.state.isDesktop ? "desktop" : "" },
 	        _react2['default'].createElement(Navbar, { brand: title
-	        })
+	        }),
+	        _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png' })
 	      );
 	    }
 	  }]);

@@ -15,6 +15,7 @@ var Layout = require('../../Layout.js');
 var Settings = require('../../Settingsbar.js');
 var Slider = require('../SessionSlider.js');
 var Content = require('./ChartContent.js');
+var Archive = require('../../services/Archive.js');
 
  class Charts extends React.Component {
 
@@ -82,7 +83,9 @@ var Content = require('./ChartContent.js');
                                         <span className="asmeMenu">< i className = "fa fa-fw fa-folder-open-o" > < /i><i> Open</i></span>
                                     </NavItem>
                                     <NavItem>
-                                        <span className="asmeMenu">< i className = "fa fa-fw fa-floppy-o" > < /i ><i> Save</i></span>
+                                        <span className="asmeMenu">< i className = "fa fa-fw fa-floppy-o" onClick = {
+                                                                                                                Archive.createFileContent
+                                                                                                            } > < /i ><i> Save</i></span>
                                     </NavItem>
                                     {libsMenu}
                                 </Nav>

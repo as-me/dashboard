@@ -20,7 +20,6 @@ myConfig.module.loaders = myConfig.module.loaders.concat([
 	]);
 
 myConfig.entry = {
-    "asme-demo": "./docs/demo.js",
     "asme-home": "./docs/index.js",
     "asme-documentation": "./docs/documentation.js"
 };

@@ -63,7 +63,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Layout = __webpack_require__(181);
 	exports.Settingsbar = __webpack_require__(183);
 
-	exports.ToolPanel = __webpack_require__(193);
+	exports.ToolPanel = __webpack_require__(197);
+
+	/*exports.DataSource = require('./Components/dataSourcePage/DataSource.jsx');
+	exports.Charts = require('./Components/dataSourcePage/Charts.jsx');*/
+
+	exports.Servlet = __webpack_require__(193);
+	exports.Archive = __webpack_require__(190);
+	exports.HumanAPIServices = __webpack_require__(192);
+	exports.HumanConnectSession = __webpack_require__(194);
 
 /***/ },
 /* 1 */
@@ -22777,15 +22785,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsChartsPageCharts2 = _interopRequireDefault(_componentsChartsPageCharts);
 
-	var _componentsDataSourcePageDataSource = __webpack_require__(190);
+	var _componentsDataSourcePageDataSource = __webpack_require__(191);
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(191);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(195);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(192);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(196);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -23069,6 +23077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Settings = __webpack_require__(183);
 	var Slider = __webpack_require__(188);
 	var Content = __webpack_require__(189);
+	var Archive = __webpack_require__(190);
 
 	var Charts = (function (_React$Component) {
 	    _inherits(Charts, _React$Component);
@@ -23207,7 +23216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                { className: 'asmeMenu' },
 	                                _react2['default'].createElement(
 	                                    'i',
-	                                    { className: 'fa fa-fw fa-floppy-o' },
+	                                    { className: 'fa fa-fw fa-floppy-o', onClick: Archive.createFileContent },
 	                                    ' '
 	                                ),
 	                                _react2['default'].createElement(
@@ -24203,10 +24212,180 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @module Asme
+	 */
+
+	'use strict';
+
+	(function () {
+	    "use strict";
+
+	    /**
+	     * @static
+	     * @public
+	     * @property ARCHIVE_HISTORY_JSON
+	     * @readOnly
+	     * @type String
+	     */
+	    Object.defineProperty(Archive, 'ARCHIVE_HISTORY_JSON', {
+	        value: 'history.json'
+	    });
+
+	    /**
+	     * @static
+	     * @public
+	     * @property ARCHIVE_SCREENSHOT_PNG
+	     * @readOnly
+	     * @type String
+	     */
+	    Object.defineProperty(Archive, 'ARCHIVE_SCREENSHOT_PNG', {
+	        value: 'screenshot.png'
+	    });
+	    /**
+	     * @static
+	     * @public
+	     * @property HISTORY_SYNC_DELAY
+	     * @readOnly
+	     * @type Number
+	     */
+	    Object.defineProperty(Archive, 'HISTORY_SYNC_DELAY', {
+	        value: 100
+	    });
+	    /**
+	     * @static
+	     * @public
+	     * @property THUMBNAIL_SIZE
+	     * @readOnly
+	     * @type Number
+	     */
+	    Object.defineProperty(Archive, 'THUMBNAIL_SIZE', {
+	        value: 200
+	    });
+	    /**
+	     * @static
+	     * @public
+	     * @property ARCHIVE_THUMBNAIL_PNG
+	     * @readOnly
+	     * @type String
+	     */
+	    Object.defineProperty(Archive, 'ARCHIVE_THUMBNAIL_PNG', {
+	        value: 'thumbnail.png'
+	    });
+
+	    Archive._history = null;
+
+	    /**
+	     * @public
+	     * @property history
+	     * @readOnly
+	     * @type JSON
+	     */
+	    Object.defineProperty(Archive, 'history', {
+	        get: function get() {
+	            if (!Archive._history) Archive._history = new weavecore.SessionStateLog(WeaveAPI.globalHashMap, Archive.HISTORY_SYNC_DELAY);
+	            return Archive._history;
+	        },
+	        set: function set(history) {
+	            Archive._history = history;
+	        }
+	    });
+
+	    /**
+	     * @public
+	     * @property zip
+	     * @readOnly
+	     * @type JSZip
+	     */
+	    Object.defineProperty(Archive, 'zip', {
+	        value: new JSZip()
+	    });
+
+	    // constructor:
+	    /**
+	     * An object that implements this empty interface has an associated CallbackCollection and session state,
+	     * accessible through the global functions in the WeaveAPI Object. In order for an ILinkableObject to
+	     * be created dynamically at runtime, it must not require any constructor parameters.
+	     * @class Archive
+	     * @constructor
+	     */
+	    function Archive(input) {
+
+	        /**
+	         * This is a dynamic object containing all the amf objects stored in the archive.
+	         * The property names used in this object must be valid filenames or serialize() will fail.
+	         * @public
+	         * @property zip
+	         * @readOnly
+	         * @type JSZip
+	         */
+	        Object.defineProperty(this, 'objects', {
+	            value: {}
+	        });
+
+	        if (input) {
+	            this._readArchive(input);
+	        }
+	    }
+
+	    Archive.createScreenshot = function (thumbnailSize) {};
+
+	    Archive.updateLocalThumbnailAndScreenshot = function (saveScreenshot) {};
+
+	    /**
+	     * This function will create an object that can be saved to a file and recalled later with loadWeaveFileContent().
+	     */
+	    Archive.createFileContent = function (saveScreenshot) {
+	        var output = new Asme.Archive();
+
+	        //thumbnail should go first in the stream because we will often just want to extract the thumbnail and nothing
+	        //Archive.updateLocalThumbnailAndScreenshot(saveScreenshot);
+
+	        // session history
+	        var _history = Archive.history;
+	        output.objects[Archive.ARCHIVE_HISTORY_JSON] = _history;
+
+	        // TEMPORARY SOLUTION - url cache
+	        //if (WeaveAPI.URLRequestUtils['saveCache'])
+	        //output.objects[ARCHIVE_URL_CACHE_AMF] = WeaveAPI.URLRequestUtils.getCache();
+
+	        return output.serialize();
+	    };
+
+	    var p = Archive.prototype;
+
+	    p.serialize = function () {
+	        var name;
+	        var copy = {};
+	        for (name in this.objects) copy[name] = this.objects[name];
+	        return Archive.zip.generate(copy);
+	    };
+
+	    p._readArchive = function (fileData) {
+	        var zip = Archive.zip.load(fileData);
+	        for (var path in zip) {
+	            var fileName = path.substr(path.indexOf('/') + 1);
+	            objects[fileName] = zip[path];
+	        }
+	    };
+
+	    if (true) {
+	        module.exports = Archive;
+	    } else {
+	        console.log('window is used: HumanConnect');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.Archive = Archive;
+	    }
+	})();
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
-	  value: true
+	    value: true
 	});
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -24229,81 +24408,413 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
+	var _servicesHumanAPIServicesJs = __webpack_require__(192);
+
+	var HumanAPIServices = _interopRequireWildcard(_servicesHumanAPIServicesJs);
+
+	var HumanConnectSession = __webpack_require__(194);
 	var Navbar = ReactBootstrap.Navbar;
 
 	var DataSource = (function (_React$Component) {
-	  _inherits(DataSource, _React$Component);
+	    _inherits(DataSource, _React$Component);
 
-	  function DataSource(props) {
-	    _classCallCheck(this, DataSource);
+	    function DataSource(props) {
+	        _classCallCheck(this, DataSource);
 
-	    _get(Object.getPrototypeOf(DataSource.prototype), 'constructor', this).call(this, props);
-	    this.mql = window.matchMedia('(min-width: 800px)');
-	    this.state = { isDesktop: this.mql.matches };
-	    this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
-	  }
+	        _get(Object.getPrototypeOf(DataSource.prototype), 'constructor', this).call(this, props);
+	        this.mql = window.matchMedia('(min-width: 800px)');
+	        this.state = { isDesktop: this.mql.matches };
+	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+	        this.clickListener = this.clickListener.bind(this);
 
-	  _createClass(DataSource, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-
-	      this.mql.addListener(this.mediaQueryChanged);
-	      this.setState({ isDesktop: this.mql.matches });
+	        this.hc = WeaveAPI.globalHashMap.requestObject("humanConnect", HumanConnectSession);
+	        this._promise = WeaveAPI.SessionManager.registerLinkableChild(this.hc, new weavecore.LinkablePromise(this._getInfo.bind(this), this._describePromise.bind(this), false));
 	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      this.mql.removeListener(this.mediaQueryChanged);
-	    }
-	  }, {
-	    key: 'mediaQueryChanged',
-	    value: function mediaQueryChanged() {
-	      this.setState({ isDesktop: this.mql.matches });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var title = this.state.isDesktop ? "Data Source" : _react2['default'].createElement(
-	        'span',
-	        null,
-	        ' ',
-	        _react2['default'].createElement(
-	          'a',
-	          { href: '#home' },
-	          ' ',
-	          _react2['default'].createElement(
-	            'i',
-	            { className: 'fa fa-chevron-left' },
-	            ' '
-	          ),
-	          'Data Source '
-	        )
-	      );
 
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: this.state.isDesktop ? "desktop" : "" },
-	        _react2['default'].createElement(Navbar, { brand: title
-	        }),
-	        _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png' })
-	      );
-	    }
-	  }]);
+	    _createClass(DataSource, [{
+	        key: '_describePromise',
+	        value: function _describePromise() {
+	            console.log('Promise call initiated');
+	        }
+	    }, {
+	        key: '_getInfo',
+	        value: function _getInfo() {
+	            if (this.hc.accessToken.value) {
+	                var dataService = new HumanAPIServices.DataService('AsmeDataService');
+	                return dataService.getInfo(this.hc.accessToken.value);
+	            } else return null;
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.mql.addListener(this.mediaQueryChanged);
+	            this.setState({ isDesktop: this.mql.matches });
+	            this._promise.depend(this.hc.accessToken);
+	            WeaveAPI.SessionManager.getCallbackCollection(this._promise).addImmediateCallback(null, this._setReactState.bind(this));
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.mql.removeListener(this.mediaQueryChanged);
+	            WeaveAPI.SessionManager.getCallbackCollection(this._promise).removeCallback(this._setReactState.bind(this));
+	            this._promise.dispose();
+	        }
+	    }, {
+	        key: '_setReactState',
+	        value: function _setReactState() {
+	            if (this._promise.result) console.log(this._promise.result);else console.log(this._promise.fault);
+	        }
+	    }, {
+	        key: 'clickListener',
+	        value: function clickListener(e) {
+	            this.hc.userID.value = "1909sanjay@gmail.com";
+	            var inst = this;
+	            var options = {
+	                modal: 1,
+	                clientUserId: encodeURIComponent(this.hc.userID.value), // can be email
+	                clientId: '9f9e4c03e02ab9e4ac8f264e65005b77e962cf8d', // found in Developer Portal
+	                finish: function finish(err, sessionTokenObject) {
+	                    console.log(sessionTokenObject);
+	                    // callback that would be called after user finishes
+	                    // connecting data.
 
-	  return DataSource;
+	                    var auth = new HumanAPIServices.AuthService('AsmeServlet');
+
+	                    var prom = auth.getToken(sessionTokenObject);
+	                    prom.then(function (response) {
+	                        inst.hc.humanID.value = response['humanId'];
+	                        inst.hc.publicToken.value = response['publicToken'];
+	                        inst.hc.accessToken.value = response['accessToken'];
+	                    }, function (error) {
+	                        console.log('failed');
+	                    });
+	                },
+	                close: function close() {
+	                    // optional callback that will be called if the user
+	                    // closes the popup without connecting any data sources.
+	                },
+	                error: function error(err) {
+	                    console.log(err);
+	                    // optional callback that will be called if an error occurs while
+	                    // loading the popup.
+	                    // `err` is an object with the fields: `code`, `message`, `detailedMessage`
+	                }
+	            };
+	            if (this.hc.publicToken.value) {
+	                options.publicToken = this.hc.publicToken.value;
+	            }
+	            HumanConnect.open(options);
+	        }
+	    }, {
+	        key: 'mediaQueryChanged',
+	        value: function mediaQueryChanged() {
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var title = this.state.isDesktop ? "Data Source" : _react2['default'].createElement(
+	                'span',
+	                null,
+	                ' ',
+	                _react2['default'].createElement(
+	                    'a',
+	                    { href: '#home' },
+	                    ' ',
+	                    _react2['default'].createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-left' },
+	                        ' '
+	                    ),
+	                    'Data Source '
+	                )
+	            );
+
+	            return _react2['default'].createElement(
+	                'div',
+	                { className: this.state.isDesktop ? "desktop" : "" },
+	                _react2['default'].createElement(Navbar, { brand: title
+	                }),
+	                _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png', onClick: this.clickListener })
+	            );
+	        }
+	    }]);
+
+	    return DataSource;
 	})(_react2['default'].Component);
 
 	exports['default'] = DataSource;
 	module.exports = exports['default'];
 
 /***/ },
-/* 191 */
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Servlet = __webpack_require__(193);
+
+	(function () {
+	    'use strict';
+
+	    var API_URL = 'http://localhost:8080/AsmeHealthDataService';
+
+	    var HumanAPIServices = function HumanAPIServices() {
+
+	        this.getAuth = function (servlet) {
+	            return new HumanAPIServices.Auth(servlet);
+	        };
+	    };
+
+	    // User API
+	    // =======
+
+	    HumanAPIServices.AuthService = function (servlet) {
+	        this.servlet = '/' + servlet;
+
+	        /*function (err, res) {
+	            cb(err, res);
+	        }*/
+	        this.getToken = function (sessionTokenObject) {
+
+	            //return _request("POST", this.servlet, sessionTokenObject);
+	            return Servlet.queryService(API_URL + this.servlet, 'getToken', [sessionTokenObject], null, 'getToken');
+	        };
+	    };
+
+	    // User API
+	    // =======
+
+	    HumanAPIServices.DataService = function (servlet) {
+	        this.servlet = '/' + servlet;
+
+	        /*function (err, res) {
+	            cb(err, res);
+	        }*/
+	        this.getInfo = function (accessToken) {
+
+	            return Servlet.queryService(API_URL + this.servlet, 'getInfo', [accessToken], null, 'getInfo');
+	        };
+	    };
+
+	    if (true) {
+	        module.exports = HumanAPIServices;
+	    } else {
+	        console.log('window is used: HumanConnect');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.HumanAPIServices = HumanAPIServices;
+	    }
+	}).call(undefined);
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	//idead of referencing the promise's resolve and reject take from weave - weaveClient Project
+	/**
+	 * Queries a JSON RPC 2.0 service.
+	 * @param {string} url The URL of the service.
+	 * @param {string} method Name of the method to call on the server.
+	 * @param {?Array|Object} params Parameters for the server method.
+	 * @param {Function} resultHandler Optional Function to call when the RPC call returns.  This function will be passed the result of the method as the first parameter.
+	 * @param {string|number=} queryId Optional id to be associated with this RPC call.  This will be passed as the second parameter to the resultHandler function.
+	 * @return A Promise.
+	 */
+	"use strict";
+
+	var Servlet = {
+	    queryService: function queryService(url, method, params, resultHandler, queryId) {
+
+	        var data = {
+	            jsonrpc: "2.0",
+	            id: queryId || "no_id",
+	            method: method,
+	            params: params
+	        };
+
+	        var client = new XMLHttpRequest();
+	        client.open('POST', url, true);
+	        client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	        client.onload = function (e) {
+	            if (client.readyState === 4) {
+	                if (client.status === 200) {
+	                    _handleResponse(client.response);
+	                } else {
+	                    _handleResponse(client.statusText);
+	                }
+	            }
+	        };
+	        client.onerror = function (e) {
+	            _handleResponse(client.statusText);
+	        };
+
+	        client.send(JSON.stringify(data));
+
+	        var promise, resolve, reject;
+	        if (window.Promise) {
+	            promise = new Promise(function (_resolve, _reject) {
+	                resolve = _resolve;
+	                reject = _reject;
+	            });
+	        }
+
+	        function _handleResponse(response) {
+	            var jsonResponse = JSON.parse(response);
+	            try {
+	                if (jsonResponse.error) {
+	                    if (promise) reject(jsonResponse.error);else console.error(response);
+	                } else {
+	                    if (resultHandler) resultHandler(jsonResponse.result, queryId);
+	                    if (promise) // which calls the function attached with then
+	                        resolve(jsonResponse.result);
+	                }
+	            } catch (e) {
+	                if (promise) reject(e);else console.error(e);
+	            }
+	        }
+
+	        return promise;
+	    },
+
+	    /**
+	     * Makes a batch request to a JSON RPC 2.0 service.
+	     * @param {string} url The URL of the service.
+	     * @param {string} method Name of the method to call on the server for each entry in the queryIdToParams mapping.
+	     * @param {Array|Object} queryIdToParams A mapping from queryId to RPC parameters.
+	     * @param {function(Array|Object)} resultsHandler Optional Function to receive a mapping from queryId to RPC result.
+	     * @return A Promise.
+	     */
+	    bulkQueryService: function bulkQueryService(url, method, queryIdToParams, resultsHandler) {
+	        var batch = [];
+	        for (var queryId in queryIdToParams) {
+	            var m = typeof method === 'string' ? method : method[queryId];
+	            batch.push({
+	                jsonrpc: "2.0",
+	                id: queryId,
+	                method: m,
+	                params: queryIdToParams[queryId]
+	            });
+	        }
+	        if (batch.length) {
+	            var client = new XMLHttpRequest();
+	            client.open('POST', servletURL, true);
+	            client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	            client.onload = function (e) {
+	                if (client.readyState === 4) {
+	                    if (client.status === 200) {
+	                        handleBatch(client.responseText);
+	                    } else {
+	                        handleBatch(client.statusText);
+	                    }
+	                }
+	            };
+	            client.onerror = function (e) {
+	                handleBatch(client.statusText);
+	            };
+
+	            client.send(JSON.stringify(batch));
+	        } else setTimeout(handleBatch, 0);
+
+	        var promise, resolve, reject;
+	        if (window.Promise) {
+	            promise = new Promise(function (_resolve, _reject) {
+	                resolve = _resolve;
+	                reject = _reject;
+	            });
+	        }
+
+	        function handleBatch(batchResponse) {
+	            try {
+	                var results = Array.isArray(queryIdToParams) ? [] : {};
+	                var foundError = false;
+	                for (var i in batchResponse) {
+	                    var response = batchResponse[i];
+	                    if (response.error) {
+	                        results[response.id] = response.error;
+	                        foundError = true;
+	                    } else {
+	                        results[response.id] = response.result;
+	                    }
+	                }
+	                if (foundError) {
+	                    if (promise) reject(results);else console.error(JSON.stringify(results, null, 3));
+	                } else {
+	                    if (resultsHandler) resultsHandler(results);
+	                    if (promise) resolve(results);
+	                }
+	            } catch (e) {
+	                if (promise) reject(e);else console.error(e);
+	            }
+	        }
+
+	        return promise;
+	    }
+
+	};
+
+	if (true) {
+	    module.exports = Servlet;
+	} else {
+	    console.log('window is used');
+	    window.Asme = window.Asme ? window.Asme : {};
+	    window.Asme.Servlet = Servlet;
+	}
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	(function () {
+	    Object.defineProperty(HumanConnectSession, 'NS', {
+	        value: 'Asme'
+	    });
+
+	    Object.defineProperty(HumanConnectSession, 'CLASS_NAME', {
+	        value: 'HumanConnectSession'
+	    });
+
+	    function HumanConnectSession() {
+	        Object.defineProperty(this, 'sessionable', {
+	            value: true
+	        });
+
+	        Object.defineProperty(this, 'userID', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+
+	        Object.defineProperty(this, 'humanID', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+
+	        Object.defineProperty(this, 'publicToken', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+	        Object.defineProperty(this, 'accessToken', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+	    }
+
+	    var p = HumanConnectSession.prototype;
+
+	    if (true) {
+	        module.exports = HumanConnectSession;
+	    } else {
+	        console.log('window is used');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.HumanConnectSession = HumanConnectSession;
+	    }
+	})();
+
+/***/ },
+/* 195 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 192 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24353,7 +24864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 193 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

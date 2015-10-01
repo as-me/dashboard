@@ -2,128 +2,135 @@ import * as React from 'react';
 import * as ReactBootstrap from 'react-bootstrap';
 
 var Grid = ReactBootstrap.Grid;
+var Row = ReactBootstrap.Row;
+var Col = ReactBootstrap.Col;
 var ToolPanel = require('./components/ToolPanel.js');
 
 
 
 class Layout extends React.Component {
 
-        constructor(props) {
-            super(props)
-            this.tools = WeaveAPI.globalHashMap.getObject("hooks");
+    constructor(props) {
+        super(props)
+        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
-            this.state = {
-                names: this.tools.getNames()
-            };
-            this._updateState = this._updateState.bind(this);
+        this.state = {
+            names: this.tools.getNames()
+        };
+        this._updateState = this._updateState.bind(this);
 
-            this.columns = window.NavigationHashMap.getObject("columns").getSessionState();
-        }
+        this.columns = window.NavigationHashMap.getObject("columns").getSessionState();
+    }
 
-        componentDidMount() {
-            this.tools.childListCallbacks.addImmediateCallback(this, this._updateState)
-        }
+    componentDidMount() {
+        this.tools.childListCallbacks.addImmediateCallback(this, this._updateState)
+    }
 
-        componentDidUpdate(prevProps, prevState) {
-
-
-        }
-
-        _updateState() {
-            this.setState({
-                names: this.tools.getNames()
-            });
-        }
-
-        componentWillUnmount() {
-            this.tools.childListCallbacks.removeCallback(this, this._updateState)
-        }
-
-        render() {
-            var children = [];
-            //var toolName = "";
-            if (this.state.names) {
-                for (var i = 0; i < this.state.names.length; i++) {
-                    var toolName = this.state.names[i];
-                    var tool = this.tools.getObject(toolName);
-                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value);
-                    tool.sessionData.xAxis.value = tool.sessionData.xAxis.value ? tool.sessionData.xAxis.value : this.columns[0];
-                    tool.sessionData.yAxis.value = tool.sessionData.yAxis.value ? tool.sessionData.yAxis.value : this.columns[4];
-                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value, this.columns);
-                    var padding = {
-                            top: 20,
-                            bottom: 40,
-                            left: 40,
-                            right: 20
-                        }
-                        //d3 tool
+    componentDidUpdate(prevProps, prevState) {
 
 
-                    var interaction = {};
-                    if (tool.library === 'd3') {
-                        interaction = {
-                            onProbe: {
-                                showToolTip: true,
-                                callback: function (d) {
-                                    adapter.weaveInteractionPeer.activeHook = this;
-                                    adapter.weaveInteractionPeer.doProbe(d);
-                                }
-                            },
-                            onSelect: {
-                                callback: function (keys) {
-                                    adapter.weaveInteractionPeer.activeHook = this;
-                                    adapter.weaveInteractionPeer.doSelection(keys);
-                                }
+    }
+
+    _updateState() {
+        this.setState({
+            names: this.tools.getNames()
+        });
+    }
+
+    componentWillUnmount() {
+        this.tools.childListCallbacks.removeCallback(this, this._updateState)
+    }
+
+    render() {
+        var children = [];
+        //var toolName = "";
+        if (this.state.names) {
+            for (var i = 0; i < this.state.names.length; i++) {
+                var toolName = this.state.names[i];
+                var tool = this.tools.getObject(toolName);
+                console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value);
+                tool.sessionData.xAxis.value = tool.sessionData.xAxis.value ? tool.sessionData.xAxis.value : this.columns[0];
+                tool.sessionData.yAxis.value = tool.sessionData.yAxis.value ? tool.sessionData.yAxis.value : this.columns[4];
+                console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value, this.columns);
+                var padding = {
+                        top: 20,
+                        bottom: 40,
+                        left: 40,
+                        right: 20
+                    }
+                    //d3 tool
+
+
+                var interaction = {};
+                if (tool.library === 'd3') {
+                    interaction = {
+                        onProbe: {
+                            showToolTip: true,
+                            callback: function (d) {
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                adapter.weaveInteractionPeer.doProbe(d);
                             }
-                        }
-                    } else if (tool.library === 'c3') {
-                        interaction = {
-                            onProbe: {
-                                showToolTip: true,
-                                callback: function (data) {
-                                    adapter.weaveInteractionPeer.activeHook = this;
-                                    adapter.weaveInteractionPeer.doProbe(data.index);
-                                }
-                            },
-                            onSelect: {
-                                callback: function (keys) {
-                                    keys = this.selected();
-                                    adapter.weaveInteractionPeer.activeHook = this;
-                                    if (keys.constructor === Array)
-                                        adapter.weaveInteractionPeer.doSelection(keys.map(function (key) {
-                                            return key.index;
-                                        }), true);
-                                    else
-                                        adapter.weaveInteractionPeer.doSelection([keys.index], true);
-                                }
+                        },
+                        onSelect: {
+                            callback: function (keys) {
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                adapter.weaveInteractionPeer.doSelection(keys);
                             }
                         }
                     }
-
-                    tool.createUI(padding, {}, interaction);
-
-
-                    children.push( < ToolPanel title = {
-                            toolName
+                } else if (tool.library === 'c3') {
+                    interaction = {
+                        onProbe: {
+                            showToolTip: true,
+                            callback: function (data) {
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                adapter.weaveInteractionPeer.doProbe(data.index);
+                            }
+                        },
+                        onSelect: {
+                            callback: function (keys) {
+                                keys = this.selected();
+                                adapter.weaveInteractionPeer.activeHook = this;
+                                if (keys.constructor === Array)
+                                    adapter.weaveInteractionPeer.doSelection(keys.map(function (key) {
+                                        return key.index;
+                                    }), true);
+                                else
+                                    adapter.weaveInteractionPeer.doSelection([keys.index], true);
+                            }
                         }
-                        content = {
-                            tool.ui
-                        }
-                        sessionedTool = {
-                            tool
-                        }
-                        />
-                    );
+                    }
                 }
-            }
 
-            return ( < Grid > {
-                    children
-                } < /Grid> );
+                tool.createUI(padding, {}, interaction);
+                var columnCount = 6;
+                //var columnCount = this.state.names.length === 1 ? 12 : 6
+                children.push( < Col xs = {
+                        12
+                    }
+                    md = {
+                        columnCount
+                    } > < ToolPanel title = {
+                        toolName
+                    }
+                    content = {
+                        tool.ui
+                    }
+                    sessionedTool = {
+                        tool
+                    }
+                    /></Col >
+                );
             }
         }
 
-        module.exports = Layout;
-        /*< div className = {
-                    'layout ' + moveClass + this.props.alignment
-                } >*/
+        return ( < Grid > < Row > {
+            children
+        } < /Row>< /Grid > );
+    }
+}
+
+module.exports = Layout;
+/*< div className = {
+            'layout ' + moveClass + this.props.alignment
+        } >*/

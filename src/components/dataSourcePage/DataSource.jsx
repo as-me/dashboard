@@ -53,10 +53,24 @@ export default class DataSource extends React.Component {
 
     }
 
+    demoDataClickListener(e){
+
+        var dataService = new HumanAPIServices.DataService('AsmeDataService');
+        var prom =  dataService.getDemoData();
+        prom.then(function(response){
+           console.log(response);
+        },function(error){
+            console.log('failed')
+        });
+    }
 
 
     clickListener(e){
-        this.hc.userID.value = "1909sanjay@gmail.com";
+        if(!this.hc.userID.value){
+            this.hc.userID.value = "1909sanjay1909@gmail.com";
+            //this.hc.publicToken.value = '2f5b89ce4085b4f13cae2770c3410aae';
+        }
+
         var inst = this;
         var options = {
               modal :1,
@@ -115,6 +129,7 @@ export default class DataSource extends React.Component {
         }
         />
 
-        <img id='connect-health-data-btn' src='https://connect.humanapi.co/assets/button/blue.png' onClick ={this.clickListener}/></div>;
+        <img id='connect-health-data-btn' src='https://connect.humanapi.co/assets/button/blue.png' onClick ={this.clickListener}/>
+        <input type='button' value='HumanAPI - demo Data' onClick ={this.demoDataClickListener}/></div>;
     }
 }

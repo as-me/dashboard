@@ -6,6 +6,7 @@ exports.Layout = require('./Layout.js');
 exports.Settingsbar = require('./Settingsbar.js');
 
 exports.ToolPanel = require('./components/ToolPanel.js');
+exports.FileReaderButton = require('./components/FileReaderButton.jsx');
 
 
 

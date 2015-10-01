@@ -16,11 +16,11 @@
     /**
      * @static
      * @public
-     * @property ARCHIVE_HISTORY_JSON
+     * @property ARCHIVE_HISTORY
      * @readOnly
      * @type String
      */
-    Object.defineProperty(Archive, 'ARCHIVE_HISTORY_JSON', {
+    Object.defineProperty(Archive, 'ARCHIVE_HISTORY', {
         value: 'history.json'
     });
 
@@ -85,15 +85,7 @@
         }
     });
 
-    /**
-     * @public
-     * @property zip
-     * @readOnly
-     * @type JSZip
-     */
-    Object.defineProperty(Archive, 'zip', {
-        value: new JSZip()
-    });
+
 
 
 
@@ -151,8 +143,9 @@
 
 
         // session history
-        var _history = Archive.history;
-        output.objects[Archive.ARCHIVE_HISTORY_JSON] = _history;
+        var _history = Archive.history.getSessionState();
+        output.objects[Archive.ARCHIVE_HISTORY] = _history;
+
 
         // TEMPORARY SOLUTION - url cache
         //if (WeaveAPI.URLRequestUtils['saveCache'])
@@ -161,6 +154,50 @@
         return output.serialize();
     }
 
+    Archive.string2binary = function (str) {
+        var result = "";
+        for (var i = 0; i < str.length; i++) {
+            result += String.fromCharCode(str.charCodeAt(i) & 0xff);
+        }
+        return result;
+    }
+
+    Archive.openFile = function (files) {
+        const selectedfile = files[0];
+
+
+        // Build Promise List, each promise resolved by FileReader.onload.
+
+        new Promise(function (resolve, reject) {
+                let reader = new FileReader();
+
+                reader.onload = function (event) {
+                    // Resolve both the FileReader result and its original file.
+                    resolve([event, selectedfile]);
+                };
+
+                // Read the fil.
+                reader.readAsArrayBuffer(selectedfile);
+            })
+            .then(function (zippedResults) {
+                // Run the callback after all files have been read.
+                console.log(zippedResults);
+                var e = zippedResults[0];
+                // read the content of the file with JSZip
+                var zip = new JSZip(e.target.result);
+                var zipObject = zip.files['history.json'];
+                var jsonContent = JSON.parse(zipObject.asText());
+                console.log(jsonContent);
+                Archive.history.setSessionState(jsonContent);
+
+            });
+
+
+    }
+
+
+
+
 
 
 
@@ -168,10 +205,23 @@
 
     p.serialize = function () {
         var name;
-        var copy = {};
-        for (name in this.objects)
-            copy[name] = this.objects[name];
-        return Archive.zip.generate(copy);
+
+        var zip = new JSZip();
+        //support datatypes
+        // "string","array","nodebuffer","uint8array","arraybuffer"
+
+
+        for (name in this.objects) {
+            //copy[name] = this.objects[name];
+            zip.file(name, JSON.stringify(this.objects[name]))
+
+        }
+
+        //TO-DO: temp solution , need to find bext way to create array buffer
+        // var zip = new JSZip(JSON.stringify(test));
+        return zip.generate({
+            type: "blob"
+        });
     }
 
     p._readArchive = function (fileData) {

@@ -18,6 +18,11 @@ class Settingsbar extends React.Component {
         this.tools = WeaveAPI.globalHashMap.getObject("hooks")
         this._close = this._close.bind(this);
         this._handleChange = this._handleChange.bind(this);
+        //hack to make ui render the selected value
+        // to-do: find a better solution
+        this.state = {
+            changed: false
+        }
     }
 
     componentDidMount() {
@@ -38,6 +43,11 @@ class Settingsbar extends React.Component {
         var property = event.target.id;
         var tool = this.tools.getObject(this.activeTool.value);
         tool.sessionData[property].value = event.target.value;
+        this.setState({
+            changed: !this.state.changed
+        });
+
+
     }
 
 
@@ -50,39 +60,41 @@ class Settingsbar extends React.Component {
         var ui = < Label > No Chart selected Yet < /Label>;
         if (this.activeTool.value.length > 0) {
             var tool = this.tools.getObject(this.activeTool.value);
+            if (tool) {
+                var columnProperties = tool.sessionData.getColumnProperties();
+                var columns = window.NavigationHashMap.getObject("columns").getSessionState();
+                ui = columnProperties.map(function (property, index) {
+                    var options = columns.map(function (columnName, id) {
+                        return <option value = {
+                            columnName
+                        } > {
+                            columnName
+                        } < /option>
+                    });
 
-            var columnProperties = tool.sessionData.getColumnProperties();
-            var columns = window.NavigationHashMap.getObject("columns").getSessionState();
-            ui = columnProperties.map(function (property, index) {
-                var options = columns.map(function (columnName, id) {
-                    return <option value = {
-                        columnName
+                    return <Input type = "select"
+                    label = {
+                        property
+                    }
+
+                    id = {
+                        property
+                    }
+
+                    value = {
+                        tool.sessionData[property].value
+                    }
+                    placeholder = "select"
+
+                    onChange = {
+                        this._handleChange
                     } > {
-                        columnName
-                    } < /option>
-                });
+                        options
+                    } < /Input>
 
-                return <Input type = "select"
-                label = {
-                    property
-                }
+                }.bind(this));
+            }
 
-                id = {
-                    property
-                }
-
-                value = {
-                    tool.sessionData[property].value
-                }
-                placeholder = "select"
-
-                onChange = {
-                    this._handleChange
-                } > {
-                    options
-                } < /Input>
-
-            }.bind(this));
         }
 
 
@@ -94,7 +106,8 @@ class Settingsbar extends React.Component {
                 this.props.style
             } >
 
-            < Panel header = { < div > {
+            < Panel className = "settingsBar"
+            header = { < div > {
                     this.activeTool.value
                 } < span className = "pull-right" > < i className = "fa fa-times fa-fw fa-pointer"
                 onClick = {

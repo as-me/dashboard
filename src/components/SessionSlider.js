@@ -4,18 +4,19 @@ import * as ReactBootstrap from 'react-bootstrap';
 var Panel = ReactBootstrap.Panel;
 
 var Button = ReactBootstrap.Button;
+var Archive = require('../services/Archive.js');
 
 
 
 class SessionSlider extends React.Component {
     constructor(props) {
         super(props)
-        this.log = WeaveAPI.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+        this.log = Archive.history;
 
         this.state = {
             max: 1,
             value: 0,
-            open: true
+            open: this.props.open
         };
 
         this._runLog = this._runLog.bind(this);
@@ -24,7 +25,6 @@ class SessionSlider extends React.Component {
 
     _setReactState() {
 
-        console.log('UpdateSlider State called');
         this.setState({
             max: this.log._undoHistory.length + this.log._redoHistory.length,
             value: this.log._undoHistory.length

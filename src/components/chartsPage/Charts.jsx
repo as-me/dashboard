@@ -11,6 +11,7 @@ var NavDropdown = ReactBootstrap.NavDropdown;
 
 
 var Nav = require('../../Nav.js');
+var FileReaderInput = require('../FileReaderButton.jsx');
 var Layout = require('../../Layout.js');
 var Settings = require('../../Settingsbar.js');
 var Slider = require('../SessionSlider.js');
@@ -19,8 +20,14 @@ var Archive = require('../../services/Archive.js');
 
  class Charts extends React.Component {
 
+
+
   constructor(props) {
         super(props);
+        const win = window;
+        if (!win.File || !win.FileReader || !win.FileList || !win.Blob) {
+            console.warn(' Some file APIs detected as not supported.' + ' File reader functionality may not fully work.');
+        }
         this.mql = window.matchMedia(`(min-width: 800px)`);
         this.state = {isDesktop: this.mql.matches};
         this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
@@ -28,7 +35,25 @@ var Archive = require('../../services/Archive.js');
         this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
         this._onToolSelection = this._onToolSelection.bind(this);
+
+        this.triggerInput = this.triggerInput.bind(this);
+        this.saveAsmeLocal = this.saveAsmeLocal.bind(this);
+        this.openAsmeLocal = this.openAsmeLocal.bind(this);
+
         this.counter = 0;
+    }
+
+    saveAsmeLocal(){
+        window.saveAs( Archive.createFileContent(), "example.zip");
+    }
+
+    triggerInput(e) {
+        React.findDOMNode(this.refs.fileButton).click();
+    }
+
+    openAsmeLocal(evt){
+       var files = this.refs.fileButton.getDOMNode().files;
+       Archive.openFile(files);
     }
 
     componentDidMount() {
@@ -54,6 +79,8 @@ var Archive = require('../../services/Archive.js');
     }
 
     render() {
+
+
         //to-do transform this to function so that in th future we can have menu extracted externally
         var libs = Object.getOwnPropertyNames(adapter.libs);
         console.log('libs' ,libs);
@@ -78,16 +105,21 @@ var Archive = require('../../services/Archive.js');
 
         return   (<div  className={this.state.isDesktop ?"desktop":""}>
         <Navbar brand={<span className="asmeMenu">{title}</span>}  staticTop  toggleNavKey={0}>
-                                <Nav right={ true } eventKey={0}>
-                                    <NavItem>
-                                        <span className="asmeMenu">< i className = "fa fa-fw fa-folder-open-o" > < /i><i> Open</i></span>
-                                    </NavItem>
-                                    <NavItem>
-                                        <span className="asmeMenu">< i className = "fa fa-fw fa-floppy-o" onClick = {
-                                                                                                                Archive.createFileContent
-                                                                                                            } > < /i ><i> Save</i></span>
-                                    </NavItem>
+                                <Nav className="chartMenu" right={ true } eventKey={0}>
+
                                     {libsMenu}
+                                    <div className="btn-group-sm btngrp pull-right" role="group" aria-label="...">
+                                        <span className="btn btn-default btn-file" >
+                                            <input onChange={this.openAsmeLocal} type='file' ref="fileButton">
+                                                < i className = "fa fa-fw fa-folder-open-o"  > < /i >
+                                            </input >
+                                        </span>
+
+
+                                        <button className="btn btn-default" onClick={this.saveAsmeLocal}>
+                                            < i className = "fa fa-fw fa-floppy-o"  > < /i >
+                                        </button >
+                                    </div>
                                 </Nav>
                         </Navbar>
 
@@ -95,7 +127,7 @@ var Archive = require('../../services/Archive.js');
 
 
 
-                            <Slider/>
+                            <Slider open={false}/>
                 </div>
             );
       }

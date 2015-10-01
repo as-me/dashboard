@@ -1,0 +1,14 @@
+{
+  "name": "struct.js",
+  "homepage": "https://github.com/firejune/struct.js",
+  "_release": "f942c1816b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f942c1816b26f6cbb24dc6e91d98036b0ac10bb3"
+  },
+  "_source": "https://github.com/firejune/struct.js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/firejune/struct.js.git",
+  "_direct": true
+}

@@ -18,6 +18,7 @@
     <!-- custom:jsinclude //sanjay1909.github.io/WeaveCoreJS/build/weavecore.js -->
     <!-- custom:jsinclude libs/Adapter/build/dist/asme-adapter.js -->
     <!-- custom:jsinclude libs/jszip/dist/jszip.js -->
+    <!-- custom:jsinclude libs/file-saver.js/FileSaver.js -->
 
     <!-- custom:jsinclude https://connect.humanapi.co/connect.js -->
 
@@ -85,6 +86,59 @@
 
         .big {
             font-size: 150%;
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+
+        .chartMenu .btngrp {
+            margin-top: 4px;
+        }
+
+        .chartMenu .btn {
+            border-radius: 2%;
+            background: rgba(211, 211, 211, 0);
+            border: 0px solid #696867;
+            font-size: 20px;
+            cursor: pointer;
+            color: #8f9091;
+        }
+
+        .settingsBar i.fa-times {
+            border: 1px solid #696867;
+            border-radius: 50%;
+            font-size: 12px;
+            color: #818383;
+            width: 18px;
+            height: 18px;
+            padding-top: 2px;
+            cursor: pointer;
+        }
+
+        .settingsBar {
+            margin-left: 8px;
+            margin-top: 8px;
+            margin-right: 8px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
         }
     </style>
 

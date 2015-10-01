@@ -44,7 +44,7 @@ gulp.task("demo", ["build"], function (cb) {
     gulp.src(["./docs/data/*"])
         .pipe(gulp.dest("build/data"));
 
-    gulp.src(["./bower_components/**/build/dist/*.js", "./bower_components/**/dist/*.js", "./bower_components/**/build/dist/*.js.map"])
+    gulp.src(["./bower_components/**/build/dist/*.js", "./bower_components/**/dist/*.js", "./bower_components/**/*.js", "./bower_components/**/build/dist/*.js.map"])
         .pipe(gulp.dest("build/libs"));
 
 

@@ -59,19 +59,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Nav = __webpack_require__(1);
 	exports.Navigation = __webpack_require__(176);
 
-	exports.Content = __webpack_require__(178);
-	exports.Layout = __webpack_require__(181);
-	exports.Settingsbar = __webpack_require__(183);
+	exports.Content = __webpack_require__(179);
+	exports.Layout = __webpack_require__(183);
+	exports.Settingsbar = __webpack_require__(185);
 
-	exports.ToolPanel = __webpack_require__(197);
+	exports.ToolPanel = __webpack_require__(184);
+	exports.FileReaderButton = __webpack_require__(182);
 
-	/*exports.DataSource = require('./Components/dataSourcePage/DataSource.jsx');
-	exports.Charts = require('./Components/dataSourcePage/Charts.jsx');*/
-
-	exports.Servlet = __webpack_require__(193);
-	exports.Archive = __webpack_require__(190);
-	exports.HumanAPIServices = __webpack_require__(192);
-	exports.HumanConnectSession = __webpack_require__(194);
+	exports.Servlet = __webpack_require__(194);
+	exports.Archive = __webpack_require__(178);
+	exports.HumanAPIServices = __webpack_require__(193);
+	exports.HumanConnectSession = __webpack_require__(195);
 
 /***/ },
 /* 1 */
@@ -22664,6 +22662,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Navbar = ReactBootstrap.Navbar;
 	var NavItem = ReactBootstrap.NavItem;
 	var Nav = __webpack_require__(1);
+	var Archive = __webpack_require__(178);
 
 	var Navigation = (function (_React$Component) {
 	    _inherits(Navigation, _React$Component);
@@ -22675,12 +22674,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.mql = window.matchMedia('(min-width: 800px)');
 	        this.state = { docked: this.mql.matches };
 	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+
+	        this.triggerInput = this.triggerInput.bind(this);
+	        this.saveAsmeLocal = this.saveAsmeLocal.bind(this);
+	        this.openAsmeLocal = this.openAsmeLocal.bind(this);
 	    }
 
 	    _createClass(Navigation, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-
 	            this.mql.addListener(this.mediaQueryChanged);
 	            this.setState({ docked: this.mql.matches });
 	        }
@@ -22693,6 +22695,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'mediaQueryChanged',
 	        value: function mediaQueryChanged() {
 	            this.setState({ docked: this.mql.matches });
+	        }
+	    }, {
+	        key: 'saveAsmeLocal',
+	        value: function saveAsmeLocal() {
+	            window.saveAs(Archive.createFileContent(), "example.zip");
+	        }
+	    }, {
+	        key: 'triggerInput',
+	        value: function triggerInput(e) {
+	            React.findDOMNode(this.refs.fileButton).click();
+	        }
+	    }, {
+	        key: 'openAsmeLocal',
+	        value: function openAsmeLocal(evt) {
+	            Archive.openFile(evt);
 	        }
 	    }, {
 	        key: 'render',
@@ -22759,6 +22776,214 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @module Asme
+	 */
+
+	'use strict';
+
+	(function () {
+	    "use strict";
+
+	    /**
+	     * @static
+	     * @public
+	     * @property ARCHIVE_HISTORY
+	     * @readOnly
+	     * @type String
+	     */
+	    Object.defineProperty(Archive, 'ARCHIVE_HISTORY', {
+	        value: 'history.json'
+	    });
+
+	    /**
+	     * @static
+	     * @public
+	     * @property ARCHIVE_SCREENSHOT_PNG
+	     * @readOnly
+	     * @type String
+	     */
+	    Object.defineProperty(Archive, 'ARCHIVE_SCREENSHOT_PNG', {
+	        value: 'screenshot.png'
+	    });
+	    /**
+	     * @static
+	     * @public
+	     * @property HISTORY_SYNC_DELAY
+	     * @readOnly
+	     * @type Number
+	     */
+	    Object.defineProperty(Archive, 'HISTORY_SYNC_DELAY', {
+	        value: 100
+	    });
+	    /**
+	     * @static
+	     * @public
+	     * @property THUMBNAIL_SIZE
+	     * @readOnly
+	     * @type Number
+	     */
+	    Object.defineProperty(Archive, 'THUMBNAIL_SIZE', {
+	        value: 200
+	    });
+	    /**
+	     * @static
+	     * @public
+	     * @property ARCHIVE_THUMBNAIL_PNG
+	     * @readOnly
+	     * @type String
+	     */
+	    Object.defineProperty(Archive, 'ARCHIVE_THUMBNAIL_PNG', {
+	        value: 'thumbnail.png'
+	    });
+
+	    Archive._history = null;
+
+	    /**
+	     * @public
+	     * @property history
+	     * @readOnly
+	     * @type JSON
+	     */
+	    Object.defineProperty(Archive, 'history', {
+	        get: function get() {
+	            if (!Archive._history) Archive._history = new weavecore.SessionStateLog(WeaveAPI.globalHashMap, Archive.HISTORY_SYNC_DELAY);
+	            return Archive._history;
+	        },
+	        set: function set(history) {
+	            Archive._history = history;
+	        }
+	    });
+
+	    // constructor:
+	    /**
+	     * An object that implements this empty interface has an associated CallbackCollection and session state,
+	     * accessible through the global functions in the WeaveAPI Object. In order for an ILinkableObject to
+	     * be created dynamically at runtime, it must not require any constructor parameters.
+	     * @class Archive
+	     * @constructor
+	     */
+	    function Archive(input) {
+
+	        /**
+	         * This is a dynamic object containing all the amf objects stored in the archive.
+	         * The property names used in this object must be valid filenames or serialize() will fail.
+	         * @public
+	         * @property zip
+	         * @readOnly
+	         * @type JSZip
+	         */
+	        Object.defineProperty(this, 'objects', {
+	            value: {}
+	        });
+
+	        if (input) {
+	            this._readArchive(input);
+	        }
+	    }
+
+	    Archive.createScreenshot = function (thumbnailSize) {};
+
+	    Archive.updateLocalThumbnailAndScreenshot = function (saveScreenshot) {};
+
+	    /**
+	     * This function will create an object that can be saved to a file and recalled later with loadWeaveFileContent().
+	     */
+	    Archive.createFileContent = function (saveScreenshot) {
+	        var output = new Asme.Archive();
+
+	        //thumbnail should go first in the stream because we will often just want to extract the thumbnail and nothing
+	        //Archive.updateLocalThumbnailAndScreenshot(saveScreenshot);
+
+	        // session history
+	        var _history = Archive.history.getSessionState();
+	        output.objects[Archive.ARCHIVE_HISTORY] = _history;
+
+	        // TEMPORARY SOLUTION - url cache
+	        //if (WeaveAPI.URLRequestUtils['saveCache'])
+	        //output.objects[ARCHIVE_URL_CACHE_AMF] = WeaveAPI.URLRequestUtils.getCache();
+
+	        return output.serialize();
+	    };
+
+	    Archive.string2binary = function (str) {
+	        var result = "";
+	        for (var i = 0; i < str.length; i++) {
+	            result += String.fromCharCode(str.charCodeAt(i) & 0xff);
+	        }
+	        return result;
+	    };
+
+	    Archive.openFile = function (files) {
+	        var selectedfile = files[0];
+
+	        // Build Promise List, each promise resolved by FileReader.onload.
+
+	        new Promise(function (resolve, reject) {
+	            var reader = new FileReader();
+
+	            reader.onload = function (event) {
+	                // Resolve both the FileReader result and its original file.
+	                resolve([event, selectedfile]);
+	            };
+
+	            // Read the fil.
+	            reader.readAsArrayBuffer(selectedfile);
+	        }).then(function (zippedResults) {
+	            // Run the callback after all files have been read.
+	            console.log(zippedResults);
+	            var e = zippedResults[0];
+	            // read the content of the file with JSZip
+	            var zip = new JSZip(e.target.result);
+	            var zipObject = zip.files['history.json'];
+	            var jsonContent = JSON.parse(zipObject.asText());
+	            console.log(jsonContent);
+	            Archive.history.setSessionState(jsonContent);
+	        });
+	    };
+
+	    var p = Archive.prototype;
+
+	    p.serialize = function () {
+	        var name;
+
+	        var zip = new JSZip();
+	        //support datatypes
+	        // "string","array","nodebuffer","uint8array","arraybuffer"
+
+	        for (name in this.objects) {
+	            //copy[name] = this.objects[name];
+	            zip.file(name, JSON.stringify(this.objects[name]));
+	        }
+
+	        //TO-DO: temp solution , need to find bext way to create array buffer
+	        // var zip = new JSZip(JSON.stringify(test));
+	        return zip.generate({
+	            type: "blob"
+	        });
+	    };
+
+	    p._readArchive = function (fileData) {
+	        var zip = Archive.zip.load(fileData);
+	        for (var path in zip) {
+	            var fileName = path.substr(path.indexOf('/') + 1);
+	            objects[fileName] = zip[path];
+	        }
+	    };
+
+	    if (true) {
+	        module.exports = Archive;
+	    } else {
+	        console.log('window is used: HumanConnect');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.Archive = Archive;
+	    }
+	})();
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -22777,23 +23002,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React = _interopRequireWildcard(_react);
 
-	var _componentsHomePageHome = __webpack_require__(179);
+	var _componentsHomePageHome = __webpack_require__(180);
 
 	var _componentsHomePageHome2 = _interopRequireDefault(_componentsHomePageHome);
 
-	var _componentsChartsPageCharts = __webpack_require__(180);
+	var _componentsChartsPageCharts = __webpack_require__(181);
 
 	var _componentsChartsPageCharts2 = _interopRequireDefault(_componentsChartsPageCharts);
 
-	var _componentsDataSourcePageDataSource = __webpack_require__(191);
+	var _componentsDataSourcePageDataSource = __webpack_require__(192);
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(195);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(196);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(196);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(197);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -22855,7 +23080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Content;
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23042,7 +23267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23073,11 +23298,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var NavDropdown = ReactBootstrap.NavDropdown;
 
 	var Nav = __webpack_require__(1);
-	var Layout = __webpack_require__(181);
-	var Settings = __webpack_require__(183);
-	var Slider = __webpack_require__(188);
-	var Content = __webpack_require__(189);
-	var Archive = __webpack_require__(190);
+	var FileReaderInput = __webpack_require__(182);
+	var Layout = __webpack_require__(183);
+	var Settings = __webpack_require__(185);
+	var Slider = __webpack_require__(190);
+	var Content = __webpack_require__(191);
+	var Archive = __webpack_require__(178);
 
 	var Charts = (function (_React$Component) {
 	    _inherits(Charts, _React$Component);
@@ -23086,6 +23312,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Charts);
 
 	        _get(Object.getPrototypeOf(Charts.prototype), 'constructor', this).call(this, props);
+	        var win = window;
+	        if (!win.File || !win.FileReader || !win.FileList || !win.Blob) {
+	            console.warn(' Some file APIs detected as not supported.' + ' File reader functionality may not fully work.');
+	        }
 	        this.mql = window.matchMedia('(min-width: 800px)');
 	        this.state = { isDesktop: this.mql.matches };
 	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
@@ -23093,10 +23323,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
 	        this._onToolSelection = this._onToolSelection.bind(this);
+
+	        this.triggerInput = this.triggerInput.bind(this);
+	        this.saveAsmeLocal = this.saveAsmeLocal.bind(this);
+	        this.openAsmeLocal = this.openAsmeLocal.bind(this);
+
 	        this.counter = 0;
 	    }
 
 	    _createClass(Charts, [{
+	        key: 'saveAsmeLocal',
+	        value: function saveAsmeLocal() {
+	            window.saveAs(Archive.createFileContent(), "example.zip");
+	        }
+	    }, {
+	        key: 'triggerInput',
+	        value: function triggerInput(e) {
+	            _react2['default'].findDOMNode(this.refs.fileButton).click();
+	        }
+	    }, {
+	        key: 'openAsmeLocal',
+	        value: function openAsmeLocal(evt) {
+	            var files = this.refs.fileButton.getDOMNode().files;
+	            Archive.openFile(files);
+	        }
+	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            this.mql.addListener(this.mediaQueryChanged);
@@ -23125,6 +23376,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'render',
 	        value: function render() {
+
 	            //to-do transform this to function so that in th future we can have menu extracted externally
 	            var libs = Object.getOwnPropertyNames(adapter.libs);
 	            console.log('libs', libs);
@@ -23189,48 +23441,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        ), staticTop: true, toggleNavKey: 0 },
 	                    _react2['default'].createElement(
 	                        Nav,
-	                        { right: true, eventKey: 0 },
+	                        { className: 'chartMenu', right: true, eventKey: 0 },
+	                        libsMenu,
 	                        _react2['default'].createElement(
-	                            NavItem,
-	                            null,
+	                            'div',
+	                            { className: 'btn-group-sm btngrp pull-right', role: 'group', 'aria-label': '...' },
 	                            _react2['default'].createElement(
 	                                'span',
-	                                { className: 'asmeMenu' },
+	                                { className: 'btn btn-default btn-file' },
 	                                _react2['default'].createElement(
-	                                    'i',
-	                                    { className: 'fa fa-fw fa-folder-open-o' },
-	                                    ' '
-	                                ),
-	                                _react2['default'].createElement(
-	                                    'i',
-	                                    null,
-	                                    ' Open'
+	                                    'input',
+	                                    { onChange: this.openAsmeLocal, type: 'file', ref: 'fileButton' },
+	                                    _react2['default'].createElement(
+	                                        'i',
+	                                        { className: 'fa fa-fw fa-folder-open-o' },
+	                                        ' '
+	                                    )
 	                                )
-	                            )
-	                        ),
-	                        _react2['default'].createElement(
-	                            NavItem,
-	                            null,
+	                            ),
 	                            _react2['default'].createElement(
-	                                'span',
-	                                { className: 'asmeMenu' },
+	                                'button',
+	                                { className: 'btn btn-default', onClick: this.saveAsmeLocal },
 	                                _react2['default'].createElement(
 	                                    'i',
-	                                    { className: 'fa fa-fw fa-floppy-o', onClick: Archive.createFileContent },
+	                                    { className: 'fa fa-fw fa-floppy-o' },
 	                                    ' '
-	                                ),
-	                                _react2['default'].createElement(
-	                                    'i',
-	                                    null,
-	                                    ' Save'
 	                                )
 	                            )
-	                        ),
-	                        libsMenu
+	                        )
 	                    )
 	                ),
 	                _react2['default'].createElement(Content, null),
-	                _react2['default'].createElement(Slider, null)
+	                _react2['default'].createElement(Slider, { open: false })
 	            );
 	        }
 	    }]);
@@ -23241,7 +23483,136 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Charts;
 
 /***/ },
-/* 181 */
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var FileReaderButton = (function (_React$Component) {
+	    _inherits(FileReaderButton, _React$Component);
+
+	    function FileReaderButton(props) {
+	        _classCallCheck(this, FileReaderButton);
+
+	        // FileReader compatibility warning.
+	        _get(Object.getPrototypeOf(FileReaderButton.prototype), 'constructor', this).call(this, props);
+
+	        var win = window;
+	        if (!win.File || !win.FileReader || !win.FileList || !win.Blob) {
+	            console.warn('[react-file-reader-input] Some file APIs detected as not supported.' + ' File reader functionality may not fully work.');
+	        }
+	    }
+
+	    _createClass(FileReaderButton, [{
+	        key: 'handleChange',
+	        value: function handleChange(e) {
+	            var _this = this;
+
+	            var files = [];
+	            for (var i = 0; i < e.target.files.length; i++) {
+	                // Convert to Array.
+	                files.push(e.target.files[i]);
+	            }
+
+	            // Build Promise List, each promise resolved by FileReader.onload.
+	            Promise.all(files.map(function (file) {
+	                return new Promise(function (resolve, reject) {
+	                    var reader = new FileReader();
+
+	                    reader.onload = function (result) {
+	                        // Resolve both the FileReader result and its original file.
+	                        resolve([result, file]);
+	                    };
+
+	                    // Read the file with format based on this.props.as.
+	                    switch ((_this.props.as || 'url').toLowerCase()) {
+	                        case 'binary':
+	                            {
+	                                reader.readAsBinaryString(file);
+	                                break;
+	                            }
+	                        case 'buffer':
+	                            {
+	                                reader.readAsArrayBuffer(file);
+	                                break;
+	                            }
+	                        case 'text':
+	                            {
+	                                reader.readAsText(file);
+	                                break;
+	                            }
+	                        case 'url':
+	                            {
+	                                reader.readAsDataURL(file);
+	                                break;
+	                            }
+	                    }
+	                });
+	            })).then(function (zippedResults) {
+	                // Run the callback after all files have been read.
+	                _this.props.onChange(e, zippedResults);
+	            });
+	        }
+	    }, {
+	        key: 'triggerInput',
+	        value: function triggerInput(e) {
+	            _react2['default'].findDOMNode(this.refs._reactFileReaderInput).click();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var hiddenInputStyle = this.props.children ? {
+	                // If user passes in children, display children and hide input.
+	                position: 'absolute',
+	                top: '-9999px'
+	            } : {};
+
+	            return _react2['default'].createElement(
+	                'div',
+	                { className: '_react-file-reader-input',
+	                    onClick: this.triggerInput },
+	                _react2['default'].createElement('input', _extends({}, this.props, {
+	                    children: '',
+	                    type: 'file',
+	                    onChange: this.handleChange,
+	                    ref: '_reactFileReaderInput',
+	                    style: hiddenInputStyle
+	                })),
+	                this.props.children,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return FileReaderButton;
+	})(_react2['default'].Component);
+
+	FileReaderButton.propTypes = {
+	    as: _react2['default'].PropTypes.oneOf(['binary', 'buffer', 'text', 'url']),
+	    children: _react2['default'].PropTypes.any,
+	    onChange: _react2['default'].PropTypes.func
+	};
+
+	module.exports = FileReaderButton;
+
+/***/ },
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23265,7 +23636,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
 	var Grid = ReactBootstrap.Grid;
-	var ToolPanel = __webpack_require__(182);
+	var Row = ReactBootstrap.Row;
+	var Col = ReactBootstrap.Col;
+	var ToolPanel = __webpack_require__(184);
 
 	var Layout = (function (_React$Component) {
 	    _inherits(Layout, _React$Component);
@@ -23364,11 +23737,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 
 	                    tool.createUI(padding, {}, interaction);
-
-	                    children.push(React.createElement(ToolPanel, { title: toolName,
-	                        content: tool.ui,
-	                        sessionedTool: tool
-	                    }));
+	                    var columnCount = 6;
+	                    //var columnCount = this.state.names.length === 1 ? 12 : 6
+	                    children.push(React.createElement(
+	                        Col,
+	                        { xs: 12,
+	                            md: columnCount },
+	                        ' ',
+	                        React.createElement(ToolPanel, { title: toolName,
+	                            content: tool.ui,
+	                            sessionedTool: tool
+	                        })
+	                    ));
 	                }
 	            }
 
@@ -23376,8 +23756,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                Grid,
 	                null,
 	                ' ',
-	                children,
-	                ' '
+	                React.createElement(
+	                    Row,
+	                    null,
+	                    ' ',
+	                    children,
+	                    ' '
+	                )
 	            );
 	        }
 	    }]);
@@ -23391,7 +23776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } >*/
 
 /***/ },
-/* 182 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23498,7 +23883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ToolPanel;
 
 /***/ },
-/* 183 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23523,7 +23908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
-	var _componentsSideBar = __webpack_require__(184);
+	var _componentsSideBar = __webpack_require__(186);
 
 	var _componentsSideBar2 = _interopRequireDefault(_componentsSideBar);
 
@@ -23542,6 +23927,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 	        this._close = this._close.bind(this);
 	        this._handleChange = this._handleChange.bind(this);
+	        //hack to make ui render the selected value
+	        // to-do: find a better solution
+	        this.state = {
+	            changed: false
+	        };
 	    }
 
 	    _createClass(Settingsbar, [{
@@ -23562,6 +23952,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var property = event.target.id;
 	            var tool = this.tools.getObject(this.activeTool.value);
 	            tool.sessionData[property].value = event.target.value;
+	            this.setState({
+	                changed: !this.state.changed
+	            });
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -23577,36 +23970,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	            );
 	            if (this.activeTool.value.length > 0) {
 	                var tool = this.tools.getObject(this.activeTool.value);
+	                if (tool) {
+	                    var columnProperties = tool.sessionData.getColumnProperties();
+	                    var columns = window.NavigationHashMap.getObject("columns").getSessionState();
+	                    ui = columnProperties.map((function (property, index) {
+	                        var options = columns.map(function (columnName, id) {
+	                            return React.createElement(
+	                                'option',
+	                                { value: columnName },
+	                                ' ',
+	                                columnName,
+	                                ' '
+	                            );
+	                        });
 
-	                var columnProperties = tool.sessionData.getColumnProperties();
-	                var columns = window.NavigationHashMap.getObject("columns").getSessionState();
-	                ui = columnProperties.map((function (property, index) {
-	                    var options = columns.map(function (columnName, id) {
 	                        return React.createElement(
-	                            'option',
-	                            { value: columnName },
+	                            Input,
+	                            { type: 'select',
+	                                label: property,
+
+	                                id: property,
+
+	                                value: tool.sessionData[property].value,
+	                                placeholder: 'select',
+
+	                                onChange: this._handleChange },
 	                            ' ',
-	                            columnName,
+	                            options,
 	                            ' '
 	                        );
-	                    });
-
-	                    return React.createElement(
-	                        Input,
-	                        { type: 'select',
-	                            label: property,
-
-	                            id: property,
-
-	                            value: tool.sessionData[property].value,
-	                            placeholder: 'select',
-
-	                            onChange: this._handleChange },
-	                        ' ',
-	                        options,
-	                        ' '
-	                    );
-	                }).bind(this));
+	                    }).bind(this));
+	                }
 	            }
 
 	            return React.createElement(
@@ -23615,7 +24009,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    style: this.props.style },
 	                React.createElement(
 	                    Panel,
-	                    { header: React.createElement(
+	                    { className: 'settingsBar',
+	                        header: React.createElement(
 	                            'div',
 	                            null,
 	                            ' ',
@@ -23648,7 +24043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Settingsbar;
 
 /***/ },
-/* 184 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23667,7 +24062,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _utilsStyles = __webpack_require__(185);
+	var _utilsStyles = __webpack_require__(187);
 
 	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
 
@@ -23740,7 +24135,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SideBar;
 
 /***/ },
-/* 185 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23755,7 +24150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _appendVendorPrefix = __webpack_require__(186);
+	var _appendVendorPrefix = __webpack_require__(188);
 
 	var _appendVendorPrefix2 = _interopRequireDefault(_appendVendorPrefix);
 
@@ -23872,12 +24267,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var getVendorPropertyName = __webpack_require__(187);
+	var getVendorPropertyName = __webpack_require__(189);
 
 	module.exports = function (target, sources) {
 	    var to = Object(target);
@@ -23907,7 +24302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 187 */
+/* 189 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23936,7 +24331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 188 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23962,6 +24357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Panel = ReactBootstrap.Panel;
 
 	var Button = ReactBootstrap.Button;
+	var Archive = __webpack_require__(178);
 
 	var SessionSlider = (function (_React$Component) {
 	    _inherits(SessionSlider, _React$Component);
@@ -23970,12 +24366,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, SessionSlider);
 
 	        _get(Object.getPrototypeOf(SessionSlider.prototype), 'constructor', this).call(this, props);
-	        this.log = WeaveAPI.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+	        this.log = Archive.history;
 
 	        this.state = {
 	            max: 1,
 	            value: 0,
-	            open: true
+	            open: this.props.open
 	        };
 
 	        this._runLog = this._runLog.bind(this);
@@ -23986,7 +24382,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: '_setReactState',
 	        value: function _setReactState() {
 
-	            console.log('UpdateSlider State called');
 	            this.setState({
 	                max: this.log._undoHistory.length + this.log._redoHistory.length,
 	                value: this.log._undoHistory.length
@@ -24092,7 +24487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SessionSlider;
 
 /***/ },
-/* 189 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24117,16 +24512,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
-	var _utilsAppendVendorPrefix = __webpack_require__(186);
+	var _utilsAppendVendorPrefix = __webpack_require__(188);
 
 	var _utilsAppendVendorPrefix2 = _interopRequireDefault(_utilsAppendVendorPrefix);
 
-	var _utilsStyles = __webpack_require__(185);
+	var _utilsStyles = __webpack_require__(187);
 
 	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
 
-	var Layout = __webpack_require__(181);
-	var Settings = __webpack_require__(183);
+	var Layout = __webpack_require__(183);
+	var Settings = __webpack_require__(185);
 
 	var ChartContent = (function (_React$Component) {
 	    _inherits(ChartContent, _React$Component);
@@ -24209,177 +24604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ChartContent;
 
 /***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @module Asme
-	 */
-
-	'use strict';
-
-	(function () {
-	    "use strict";
-
-	    /**
-	     * @static
-	     * @public
-	     * @property ARCHIVE_HISTORY_JSON
-	     * @readOnly
-	     * @type String
-	     */
-	    Object.defineProperty(Archive, 'ARCHIVE_HISTORY_JSON', {
-	        value: 'history.json'
-	    });
-
-	    /**
-	     * @static
-	     * @public
-	     * @property ARCHIVE_SCREENSHOT_PNG
-	     * @readOnly
-	     * @type String
-	     */
-	    Object.defineProperty(Archive, 'ARCHIVE_SCREENSHOT_PNG', {
-	        value: 'screenshot.png'
-	    });
-	    /**
-	     * @static
-	     * @public
-	     * @property HISTORY_SYNC_DELAY
-	     * @readOnly
-	     * @type Number
-	     */
-	    Object.defineProperty(Archive, 'HISTORY_SYNC_DELAY', {
-	        value: 100
-	    });
-	    /**
-	     * @static
-	     * @public
-	     * @property THUMBNAIL_SIZE
-	     * @readOnly
-	     * @type Number
-	     */
-	    Object.defineProperty(Archive, 'THUMBNAIL_SIZE', {
-	        value: 200
-	    });
-	    /**
-	     * @static
-	     * @public
-	     * @property ARCHIVE_THUMBNAIL_PNG
-	     * @readOnly
-	     * @type String
-	     */
-	    Object.defineProperty(Archive, 'ARCHIVE_THUMBNAIL_PNG', {
-	        value: 'thumbnail.png'
-	    });
-
-	    Archive._history = null;
-
-	    /**
-	     * @public
-	     * @property history
-	     * @readOnly
-	     * @type JSON
-	     */
-	    Object.defineProperty(Archive, 'history', {
-	        get: function get() {
-	            if (!Archive._history) Archive._history = new weavecore.SessionStateLog(WeaveAPI.globalHashMap, Archive.HISTORY_SYNC_DELAY);
-	            return Archive._history;
-	        },
-	        set: function set(history) {
-	            Archive._history = history;
-	        }
-	    });
-
-	    /**
-	     * @public
-	     * @property zip
-	     * @readOnly
-	     * @type JSZip
-	     */
-	    Object.defineProperty(Archive, 'zip', {
-	        value: new JSZip()
-	    });
-
-	    // constructor:
-	    /**
-	     * An object that implements this empty interface has an associated CallbackCollection and session state,
-	     * accessible through the global functions in the WeaveAPI Object. In order for an ILinkableObject to
-	     * be created dynamically at runtime, it must not require any constructor parameters.
-	     * @class Archive
-	     * @constructor
-	     */
-	    function Archive(input) {
-
-	        /**
-	         * This is a dynamic object containing all the amf objects stored in the archive.
-	         * The property names used in this object must be valid filenames or serialize() will fail.
-	         * @public
-	         * @property zip
-	         * @readOnly
-	         * @type JSZip
-	         */
-	        Object.defineProperty(this, 'objects', {
-	            value: {}
-	        });
-
-	        if (input) {
-	            this._readArchive(input);
-	        }
-	    }
-
-	    Archive.createScreenshot = function (thumbnailSize) {};
-
-	    Archive.updateLocalThumbnailAndScreenshot = function (saveScreenshot) {};
-
-	    /**
-	     * This function will create an object that can be saved to a file and recalled later with loadWeaveFileContent().
-	     */
-	    Archive.createFileContent = function (saveScreenshot) {
-	        var output = new Asme.Archive();
-
-	        //thumbnail should go first in the stream because we will often just want to extract the thumbnail and nothing
-	        //Archive.updateLocalThumbnailAndScreenshot(saveScreenshot);
-
-	        // session history
-	        var _history = Archive.history;
-	        output.objects[Archive.ARCHIVE_HISTORY_JSON] = _history;
-
-	        // TEMPORARY SOLUTION - url cache
-	        //if (WeaveAPI.URLRequestUtils['saveCache'])
-	        //output.objects[ARCHIVE_URL_CACHE_AMF] = WeaveAPI.URLRequestUtils.getCache();
-
-	        return output.serialize();
-	    };
-
-	    var p = Archive.prototype;
-
-	    p.serialize = function () {
-	        var name;
-	        var copy = {};
-	        for (name in this.objects) copy[name] = this.objects[name];
-	        return Archive.zip.generate(copy);
-	    };
-
-	    p._readArchive = function (fileData) {
-	        var zip = Archive.zip.load(fileData);
-	        for (var path in zip) {
-	            var fileName = path.substr(path.indexOf('/') + 1);
-	            objects[fileName] = zip[path];
-	        }
-	    };
-
-	    if (true) {
-	        module.exports = Archive;
-	    } else {
-	        console.log('window is used: HumanConnect');
-	        window.Asme = window.Asme ? window.Asme : {};
-	        window.Asme.Archive = Archive;
-	    }
-	})();
-
-/***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24408,11 +24633,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
 
-	var _servicesHumanAPIServicesJs = __webpack_require__(192);
+	var _servicesHumanAPIServicesJs = __webpack_require__(193);
 
 	var HumanAPIServices = _interopRequireWildcard(_servicesHumanAPIServicesJs);
 
-	var HumanConnectSession = __webpack_require__(194);
+	var HumanConnectSession = __webpack_require__(195);
 	var Navbar = ReactBootstrap.Navbar;
 
 	var DataSource = (function (_React$Component) {
@@ -24465,9 +24690,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (this._promise.result) console.log(this._promise.result);else console.log(this._promise.fault);
 	        }
 	    }, {
+	        key: 'demoDataClickListener',
+	        value: function demoDataClickListener(e) {
+
+	            var dataService = new HumanAPIServices.DataService('AsmeDataService');
+	            var prom = dataService.getDemoData();
+	            prom.then(function (response) {
+	                console.log(response);
+	            }, function (error) {
+	                console.log('failed');
+	            });
+	        }
+	    }, {
 	        key: 'clickListener',
 	        value: function clickListener(e) {
-	            this.hc.userID.value = "1909sanjay@gmail.com";
+	            if (!this.hc.userID.value) {
+	                this.hc.userID.value = "1909sanjay1909@gmail.com";
+	                //this.hc.publicToken.value = '2f5b89ce4085b4f13cae2770c3410aae';
+	            }
+
 	            var inst = this;
 	            var options = {
 	                modal: 1,
@@ -24535,7 +24776,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                { className: this.state.isDesktop ? "desktop" : "" },
 	                _react2['default'].createElement(Navbar, { brand: title
 	                }),
-	                _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png', onClick: this.clickListener })
+	                _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png', onClick: this.clickListener }),
+	                _react2['default'].createElement('input', { type: 'button', value: 'HumanAPI - demo Data', onClick: this.demoDataClickListener })
 	            );
 	        }
 	    }]);
@@ -24547,12 +24789,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Servlet = __webpack_require__(193);
+	var Servlet = __webpack_require__(194);
 
 	(function () {
 	    'use strict';
@@ -24595,6 +24837,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return Servlet.queryService(API_URL + this.servlet, 'getInfo', [accessToken], null, 'getInfo');
 	        };
+
+	        this.getDemoData = function () {
+
+	            return Servlet.queryService(API_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
+	        };
 	    };
 
 	    if (true) {
@@ -24607,7 +24854,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}).call(undefined);
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//idead of referencing the promise's resolve and reject take from weave - weaveClient Project
@@ -24761,7 +25008,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24808,13 +25055,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24862,113 +25109,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports['default'] = ErrorPage;
 	module.exports = exports['default'];
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var React = _interopRequireWildcard(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var Panel = ReactBootstrap.Panel;
-	var Button = ReactBootstrap.Button;
-
-	var ToolPanel = (function (_React$Component) {
-	    _inherits(ToolPanel, _React$Component);
-
-	    function ToolPanel(props) {
-	        _classCallCheck(this, ToolPanel);
-
-	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
-
-	        this._closePanel = this._closePanel.bind(this);
-	        this._openSettings = this._openSettings.bind(this);
-	    }
-
-	    _createClass(ToolPanel, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {}
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {}
-	    }, {
-	        key: '_closePanel',
-	        value: function _closePanel() {
-	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
-	            var name = tools.getName(this.props.sessionedTool);
-	            tools.removeObject(name);
-	        }
-	    }, {
-	        key: '_openSettings',
-	        value: function _openSettings() {
-	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
-	            var name = tools.getName(this.props.sessionedTool);
-	            var activetool = window.NavigationHashMap.getObject("activeTool");
-	            activetool.value = name;
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {}
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return React.createElement(
-	                Panel,
-	                { header: React.createElement(
-	                        'div',
-	                        null,
-	                        ' ',
-	                        this.props.title,
-	                        ' ',
-	                        React.createElement(
-	                            'span',
-	                            { className: 'pull-right' },
-	                            ' ',
-	                            React.createElement(
-	                                'i',
-	                                { className: 'fa fa-wrench fa-fw fa-pointer',
-	                                    onClick: this._openSettings },
-	                                ' '
-	                            ),
-	                            '   ',
-	                            React.createElement(
-	                                'i',
-	                                { className: 'fa fa-trash-o fa-fw fa-pointer',
-	                                    onClick: this._closePanel },
-	                                ' '
-	                            ),
-	                            '  '
-	                        ),
-	                        ' '
-	                    ) },
-	                ' ',
-	                this.props.content,
-	                ' '
-	            );
-	        }
-	    }]);
-
-	    return ToolPanel;
-	})(React.Component);
-
-	module.exports = ToolPanel;
 
 /***/ }
 /******/ ])

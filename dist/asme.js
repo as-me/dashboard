@@ -25300,18 +25300,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'getInfo',
 	        value: function getInfo() {
 	            console.log('Welcome!  Fetching your information.... ');
-	            FB.api('/me', function (response) {
+	            FB.api('/me', (function (response) {
 	                console.log(response);
 	                this.user.name.value = response.name;
 	                this.user.logged.value = true;
 
 	                console.log('Successful login for: ' + response.name);
 	                document.getElementById('status').innerHTML = 'Thanks for logging in, ' + response.name + '!';
-	            });
+	            }).bind(this));
 
-	            FB.api('/me/picture', function (response) {
+	            FB.api('/me/picture', (function (response) {
 	                console.log('Picture:', response);
-	            });
+	                this.user.profilePic.value = response.data.url;
+	            }).bind(this));
 	        }
 
 	        // This is called with the results from from FB.getLoginStatus().

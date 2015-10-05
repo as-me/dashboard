@@ -22723,7 +22723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var userPic;
 	            if (this.user.profilePic.value && this.user.profilePic.value.length > 0) {
-	                userPic = React.createElement('img', { src: this.user.profilePic.value });
+	                userPic = React.createElement('img', { className: 'pull-right', src: this.user.profilePic.value });
 	            } else {
 	                userPic = "";
 	            }
@@ -22778,9 +22778,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                ),
 	                                'Charts'
 	                            )
-	                        ),
-	                        userPic
-	                    )
+	                        )
+	                    ),
+	                    userPic
 	                );
 	            }
 	            return NavigationLayout;

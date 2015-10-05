@@ -57,6 +57,12 @@ var Servlet = require('./Servlet.js');
             return Servlet.queryService(API_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
         };
 
+        this.getActivities = function (accessToken) {
+
+            return Servlet.queryService(API_URL + this.servlet, 'getActivities', [], null, 'getActivties');
+        };
+
+
 
 
     };

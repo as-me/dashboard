@@ -31,6 +31,7 @@ d3.csv("data/testCereal.csv", function (d, i) {
     d.index = i;
     return d;
 }, function (error, rows) {
+    console.log(rows);
     var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
     columns.setSessionState(d3.keys(rows[0]));
     console.log('rows: ', rows)

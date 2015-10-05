@@ -2,6 +2,7 @@ import * as React from "react";
 import Home from './components/homePage/Home';
 import Charts from './components/chartsPage/Charts';
 import DataSource from './components/dataSourcePage/DataSource';
+import Users from './components/usersPage/Users';
 import NotFoundPage from './components/notFoundPage/NotFoundPage.jsx';
 import ErrorPage from './components/errorPage/ErrorPage.jsx';
 
@@ -16,6 +17,7 @@ class Content extends React.Component {
             'home': < Home / > ,
             'charts': < Charts / > ,
             'dataSources': < DataSource / > ,
+            'users': < Users / > ,
             'error': < ErrorPage / >
         };
 
@@ -51,8 +53,6 @@ class Content extends React.Component {
         var pageComponent = this.routes[this.state.page];
         console.log(pageComponent);
         return pageComponent;
-
-
 
     }
 

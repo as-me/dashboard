@@ -5,6 +5,7 @@ import * as ReactBootstrap from 'react-bootstrap';
 import * as HumanAPIServices from '../../services/HumanAPIServices.js';
 var HumanConnectSession = require('../../ExternalAPI/HumanConnectSession.js');
 var Navbar = ReactBootstrap.Navbar;
+import 'weavecore';
 
 export default class DataSource extends React.Component {
 
@@ -14,9 +15,10 @@ export default class DataSource extends React.Component {
         this.state = {isDesktop: this.mql.matches};
         this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
         this.clickListener = this.clickListener.bind(this);
-
+        this.activitesDataClickListener = this.activitesDataClickListener.bind(this);
+        this._setReactState = this._setReactState.bind(this);
         this.hc = WeaveAPI.globalHashMap.requestObject("humanConnect", HumanConnectSession);
-        this._promise = WeaveAPI.SessionManager.registerLinkableChild(this.hc, new weavecore.LinkablePromise(this._getInfo.bind(this), this._describePromise.bind(this), false));
+        this._promise = WeaveAPI.SessionManager.registerLinkableChild(this.hc, new weavecore.LinkablePromise(this._getActivities.bind(this), this._describePromise.bind(this), false));
 
     }
 
@@ -24,10 +26,10 @@ export default class DataSource extends React.Component {
         console.log('Promise call initiated');
     }
 
-    _getInfo(){
+    _getActivities(){
         if(this.hc.accessToken.value){
             var dataService = new HumanAPIServices.DataService('AsmeDataService');
-            return dataService.getInfo(this.hc.accessToken.value);
+            return dataService.getActivities(this.hc.accessToken.value);
         }
         else return null;
     }
@@ -46,20 +48,39 @@ export default class DataSource extends React.Component {
     }
 
     _setReactState(){
-        if(this._promise.result)
+        if(this._promise.result){
             console.log(this._promise.result);
+            var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
+            columns.setSessionState(d3.keys(this._promise.result[0]));
+            console.log('rows: ', this._promise.result)
+            WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(this._promise.result);
+        }
+
         else
-            console.log(this._promise.fault);
+            console.log(this._promise.error);
 
-    }
+        }
 
-    demoDataClickListener(e){
+
+
+    activitesDataClickListener(e){
 
         var dataService = new HumanAPIServices.DataService('AsmeDataService');
-        var prom =  dataService.getDemoData();
+        var prom;
+        if(this.hc.accessToken.value){
+            prom =  dataService.getActivities(this.hc.accessToken.value);
+        }
+        else{
+            prom =  dataService.getDemoData();
+        }
+
         prom.then(function(response){
-           console.log(response);
-        },function(error){
+           var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
+            columns.setSessionState(d3.keys(response[0]));
+            console.log('rows: ', response)
+            WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(response);
+
+        }.bind(this),function(error){
             console.log('failed')
         });
     }
@@ -67,8 +88,8 @@ export default class DataSource extends React.Component {
 
     clickListener(e){
         if(!this.hc.userID.value){
-            this.hc.userID.value = "1909sanjay1909@gmail.com";
-            //this.hc.publicToken.value = '2f5b89ce4085b4f13cae2770c3410aae';
+            this.hc.userID.value = "sanjay1909@gmail.com";
+            this.hc.publicToken.value = 'f262ac54dc73aaaa7034b5431ff99b6c';
         }
 
         var inst = this;
@@ -130,6 +151,6 @@ export default class DataSource extends React.Component {
         />
 
         <img id='connect-health-data-btn' src='https://connect.humanapi.co/assets/button/blue.png' onClick ={this.clickListener}/>
-        <input type='button' value='HumanAPI - demo Data' onClick ={this.demoDataClickListener}/></div>;
+        <input type='button' value='Get Activities Datas' onClick ={this.activitesDataClickListener}/></div>;
     }
 }

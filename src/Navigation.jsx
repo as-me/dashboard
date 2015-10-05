@@ -58,11 +58,15 @@ class Navigation extends React.Component {
             //toggleNavKey={0}
             NavigationLayout = <Navbar brand='As ~ Me' inverse={ true } fixedTop={true}  >
                         <Nav right={ true } eventKey={0}>
-                            <NavItem href={ '#charts' }>
-                                <span>< i className = "fa fa-fw fa-bar-chart-o" > < /i>Charts</span>
-                            </NavItem>
                             <NavItem href={ '#dataSources' }>
                                 <span>< i className = "fa fa-fw fa-database" > < /i >DataSources</span>
+                            </NavItem>
+
+                            <NavItem href={ '#users' }>
+                                <span>< i className = "fa fa-fw fa-users" > < /i >Users</span>
+                            </NavItem>
+                            <NavItem href={ '#charts' }>
+                                <span>< i className = "fa fa-fw fa-bar-chart-o" > < /i>Charts</span>
                             </NavItem>
 
 

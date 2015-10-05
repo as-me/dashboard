@@ -25247,6 +25247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._closePanel = this._closePanel.bind(this);
 	        this.handleClick = this.handleClick.bind(this);
+	        this.user = WeaveAPI.globalHashMap.requestObject("user", Asme.User);
 
 	        this.state = {
 	            showModal: true
@@ -25296,13 +25297,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Here we run a very simple test of the Graph API after login is
 	        // successful.  See statusChangeCallback() for when this call is made.
 	    }, {
-	        key: 'testAPI',
-	        value: function testAPI() {
+	        key: 'getInfo',
+	        value: function getInfo() {
 	            console.log('Welcome!  Fetching your information.... ');
 	            FB.api('/me', function (response) {
 	                console.log(response);
+	                this.user.name.value = response.name;
+	                this.user.logged.value = true;
+
 	                console.log('Successful login for: ' + response.name);
 	                document.getElementById('status').innerHTML = 'Thanks for logging in, ' + response.name + '!';
+	            });
+
+	            FB.api('/me/picture', function (response) {
+	                console.log('Picture:', response);
 	            });
 	        }
 
@@ -25418,6 +25426,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        Object.defineProperty(this, 'name', {
 	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+
+	        Object.defineProperty(this, 'logged', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false))
 	        });
 	    }
 

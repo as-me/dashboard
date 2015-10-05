@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("ReactBootstrap"), require("React"));
+		module.exports = factory(require("ReactBootstrap"), require("React"), require(undefined));
 	else if(typeof define === 'function' && define.amd)
-		define(["ReactBootstrap", "React"], factory);
+		define(["ReactBootstrap", "React", ], factory);
 	else if(typeof exports === 'object')
-		exports["Asme"] = factory(require("ReactBootstrap"), require("React"));
+		exports["Asme"] = factory(require("ReactBootstrap"), require("React"), require(undefined));
 	else
-		root["Asme"] = factory(root["ReactBootstrap"], root["React"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_175__, __WEBPACK_EXTERNAL_MODULE_177__) {
+		root["Asme"] = factory(root["ReactBootstrap"], root["React"], root[undefined]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_175__, __WEBPACK_EXTERNAL_MODULE_177__, __WEBPACK_EXTERNAL_MODULE_195__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Servlet = __webpack_require__(194);
 	exports.Archive = __webpack_require__(178);
 	exports.HumanAPIServices = __webpack_require__(193);
-	exports.HumanConnectSession = __webpack_require__(195);
+	exports.HumanConnectSession = __webpack_require__(196);
 
 /***/ },
 /* 1 */
@@ -22728,20 +22728,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        { right: true, eventKey: 0 },
 	                        React.createElement(
 	                            NavItem,
-	                            { href: '#charts' },
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                React.createElement(
-	                                    'i',
-	                                    { className: 'fa fa-fw fa-bar-chart-o' },
-	                                    ' '
-	                                ),
-	                                'Charts'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            NavItem,
 	                            { href: '#dataSources' },
 	                            React.createElement(
 	                                'span',
@@ -22752,6 +22738,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    ' '
 	                                ),
 	                                'DataSources'
+	                            )
+	                        ),
+	                        React.createElement(
+	                            NavItem,
+	                            { href: '#users' },
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                React.createElement(
+	                                    'i',
+	                                    { className: 'fa fa-fw fa-users' },
+	                                    ' '
+	                                ),
+	                                'Users'
+	                            )
+	                        ),
+	                        React.createElement(
+	                            NavItem,
+	                            { href: '#charts' },
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                React.createElement(
+	                                    'i',
+	                                    { className: 'fa fa-fw fa-bar-chart-o' },
+	                                    ' '
+	                                ),
+	                                'Charts'
 	                            )
 	                        )
 	                    )
@@ -23014,11 +23028,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(196);
+	var _componentsUsersPageUsers = __webpack_require__(197);
+
+	var _componentsUsersPageUsers2 = _interopRequireDefault(_componentsUsersPageUsers);
+
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(198);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(197);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(199);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -23036,6 +23054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'home': React.createElement(_componentsHomePageHome2['default'], null),
 	            'charts': React.createElement(_componentsChartsPageCharts2['default'], null),
 	            'dataSources': React.createElement(_componentsDataSourcePageDataSource2['default'], null),
+	            'users': React.createElement(_componentsUsersPageUsers2['default'], null),
 	            'error': React.createElement(_componentsErrorPageErrorPageJsx2['default'], null)
 	        };
 
@@ -24637,7 +24656,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var HumanAPIServices = _interopRequireWildcard(_servicesHumanAPIServicesJs);
 
-	var HumanConnectSession = __webpack_require__(195);
+	__webpack_require__(195);
+
+	var HumanConnectSession = __webpack_require__(196);
 	var Navbar = ReactBootstrap.Navbar;
 
 	var DataSource = (function (_React$Component) {
@@ -24651,9 +24672,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.state = { isDesktop: this.mql.matches };
 	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
 	        this.clickListener = this.clickListener.bind(this);
-
+	        this.activitesDataClickListener = this.activitesDataClickListener.bind(this);
+	        this._setReactState = this._setReactState.bind(this);
 	        this.hc = WeaveAPI.globalHashMap.requestObject("humanConnect", HumanConnectSession);
-	        this._promise = WeaveAPI.SessionManager.registerLinkableChild(this.hc, new weavecore.LinkablePromise(this._getInfo.bind(this), this._describePromise.bind(this), false));
+	        this._promise = WeaveAPI.SessionManager.registerLinkableChild(this.hc, new weavecore.LinkablePromise(this._getActivities.bind(this), this._describePromise.bind(this), false));
 	    }
 
 	    _createClass(DataSource, [{
@@ -24662,11 +24684,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            console.log('Promise call initiated');
 	        }
 	    }, {
-	        key: '_getInfo',
-	        value: function _getInfo() {
+	        key: '_getActivities',
+	        value: function _getActivities() {
 	            if (this.hc.accessToken.value) {
 	                var dataService = new HumanAPIServices.DataService('AsmeDataService');
-	                return dataService.getInfo(this.hc.accessToken.value);
+	                return dataService.getActivities(this.hc.accessToken.value);
 	            } else return null;
 	        }
 	    }, {
@@ -24687,17 +24709,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_setReactState',
 	        value: function _setReactState() {
-	            if (this._promise.result) console.log(this._promise.result);else console.log(this._promise.fault);
+	            if (this._promise.result) {
+	                console.log(this._promise.result);
+	                var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
+	                columns.setSessionState(d3.keys(this._promise.result[0]));
+	                console.log('rows: ', this._promise.result);
+	                WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(this._promise.result);
+	            } else console.log(this._promise.error);
 	        }
 	    }, {
-	        key: 'demoDataClickListener',
-	        value: function demoDataClickListener(e) {
+	        key: 'activitesDataClickListener',
+	        value: function activitesDataClickListener(e) {
 
 	            var dataService = new HumanAPIServices.DataService('AsmeDataService');
-	            var prom = dataService.getDemoData();
-	            prom.then(function (response) {
-	                console.log(response);
-	            }, function (error) {
+	            var prom;
+	            if (this.hc.accessToken.value) {
+	                prom = dataService.getActivities(this.hc.accessToken.value);
+	            } else {
+	                prom = dataService.getDemoData();
+	            }
+
+	            prom.then((function (response) {
+	                var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
+	                columns.setSessionState(d3.keys(response[0]));
+	                console.log('rows: ', response);
+	                WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(response);
+	            }).bind(this), function (error) {
 	                console.log('failed');
 	            });
 	        }
@@ -24705,8 +24742,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'clickListener',
 	        value: function clickListener(e) {
 	            if (!this.hc.userID.value) {
-	                this.hc.userID.value = "1909sanjay1909@gmail.com";
-	                //this.hc.publicToken.value = '2f5b89ce4085b4f13cae2770c3410aae';
+	                this.hc.userID.value = "sanjay1909@gmail.com";
+	                this.hc.publicToken.value = 'f262ac54dc73aaaa7034b5431ff99b6c';
 	            }
 
 	            var inst = this;
@@ -24777,7 +24814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _react2['default'].createElement(Navbar, { brand: title
 	                }),
 	                _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png', onClick: this.clickListener }),
-	                _react2['default'].createElement('input', { type: 'button', value: 'HumanAPI - demo Data', onClick: this.demoDataClickListener })
+	                _react2['default'].createElement('input', { type: 'button', value: 'Get Activities Datas', onClick: this.activitesDataClickListener })
 	            );
 	        }
 	    }]);
@@ -24841,6 +24878,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.getDemoData = function () {
 
 	            return Servlet.queryService(API_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
+	        };
+
+	        this.getActivities = function (accessToken) {
+
+	            return Servlet.queryService(API_URL + this.servlet, 'getActivities', [], null, 'getActivties');
 	        };
 	    };
 
@@ -25009,6 +25051,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 195 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_195__;
+
+/***/ },
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25055,13 +25103,63 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 196 */
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var Users = (function (_React$Component) {
+	  _inherits(Users, _React$Component);
+
+	  function Users() {
+	    _classCallCheck(this, Users);
+
+	    _get(Object.getPrototypeOf(Users.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(Users, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'h1',
+	        null,
+	        'Users - Under Development'
+	      );
+	    }
+	  }]);
+
+	  return Users;
+	})(_react2['default'].Component);
+
+	exports['default'] = Users;
+	module.exports = exports['default'];
+
+/***/ },
+/* 198 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

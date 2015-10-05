@@ -30,6 +30,8 @@ function locationHashChanged() {
     console.log("LocationHashchange: ", activePage.value);
 }
 
+var user;
+
 d3.csv("data/testCereal.csv", function (d, i) {
     d.index = i;
     return d;
@@ -40,13 +42,20 @@ d3.csv("data/testCereal.csv", function (d, i) {
     console.log('rows: ', rows)
     adapter.weaveInteractionPeer = new adapter.peer.WeaveJSInterface();
     WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(rows);
-    var user = WeaveAPI.globalHashMap.requestObject("user", weavecore.LinkableString);
-    if (!user.value)
+    user = WeaveAPI.globalHashMap.requestObject("user", Asme.User);
+    user.logged.addImmediateCallback(null, showApp, true)
+
+
+
+});
+
+
+function showApp() {
+    if (!user.logged.value)
+
         React.render( < LogIn / > , document.getElementById('App'));
     else {
         React.render( < Navigation / > , document.getElementById('Menu'));
         React.render( < Content / > , document.getElementById('App'));
     }
-
-
-});
+}

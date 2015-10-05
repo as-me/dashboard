@@ -15,6 +15,10 @@
         Object.defineProperty(this, 'name', {
             value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
         });
+
+        Object.defineProperty(this, 'logged', {
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false))
+        });
     }
 
     var p = User.prototype;

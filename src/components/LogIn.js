@@ -12,6 +12,7 @@ class LogIn extends React.Component {
 
         this._closePanel = this._closePanel.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.user = WeaveAPI.globalHashMap.requestObject("user", Asme.User);
 
         this.state = {
             showModal: true
@@ -58,13 +59,20 @@ class LogIn extends React.Component {
 
     // Here we run a very simple test of the Graph API after login is
     // successful.  See statusChangeCallback() for when this call is made.
-    testAPI() {
+    getInfo() {
         console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function (response) {
             console.log(response);
+            this.user.name.value = response.name;
+            this.user.logged.value = true;
+
             console.log('Successful login for: ' + response.name);
             document.getElementById('status').innerHTML =
                 'Thanks for logging in, ' + response.name + '!';
+        });
+
+        FB.api('/me/picture', function (response) {
+            console.log('Picture:', response);
         });
     }
 

@@ -22680,6 +22680,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.triggerInput = this.triggerInput.bind(this);
 	        this.saveAsmeLocal = this.saveAsmeLocal.bind(this);
 	        this.openAsmeLocal = this.openAsmeLocal.bind(this);
+
+	        this.user = WeaveAPI.globalHashMap.requestObject("user", Asme.User);
 	    }
 
 	    _createClass(Navigation, [{
@@ -22701,7 +22703,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'saveAsmeLocal',
 	        value: function saveAsmeLocal() {
-	            window.saveAs(Archive.createFileContent(), "example.zip");
+	            window.saveAs(Archive.createFileContent(), "AsMe.zip");
 	        }
 	    }, {
 	        key: 'triggerInput',
@@ -22718,6 +22720,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function render() {
 
 	            var NavigationLayout;
+
+	            var userPic;
+	            if (this.user.profilePic.value && this.user.profilePic.value.length > 0) {
+	                userPic = React.createElement('img', { src: this.user.profilePic.value });
+	            } else {
+	                userPic = "";
+	            }
 	            if (!this.state.docked) {
 	                NavigationLayout = React.createElement('div', null);
 	            } else {
@@ -22769,7 +22778,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                ),
 	                                'Charts'
 	                            )
-	                        )
+	                        ),
+	                        userPic
 	                    )
 	                );
 	            }
@@ -25431,6 +25441,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        Object.defineProperty(this, 'logged', {
 	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false))
+	        });
+
+	        Object.defineProperty(this, 'profilePic', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
 	        });
 	    }
 

@@ -65,11 +65,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.ToolPanel = __webpack_require__(184);
 	exports.FileReaderButton = __webpack_require__(182);
+	exports.LogIn = __webpack_require__(200);
 
 	exports.Servlet = __webpack_require__(194);
 	exports.Archive = __webpack_require__(178);
 	exports.HumanAPIServices = __webpack_require__(193);
 	exports.HumanConnectSession = __webpack_require__(196);
+	exports.User = __webpack_require__(201);
 
 /***/ },
 /* 1 */
@@ -25207,6 +25209,228 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports['default'] = ErrorPage;
 	module.exports = exports['default'];
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Modal = ReactBootstrap.Modal;
+	var Button = ReactBootstrap.Button;
+
+	var LogIn = (function (_React$Component) {
+	    _inherits(LogIn, _React$Component);
+
+	    function LogIn(props) {
+	        _classCallCheck(this, LogIn);
+
+	        _get(Object.getPrototypeOf(LogIn.prototype), 'constructor', this).call(this, props);
+
+	        this._closePanel = this._closePanel.bind(this);
+	        this.handleClick = this.handleClick.bind(this);
+
+	        this.state = {
+	            showModal: true
+	        };
+	    }
+
+	    _createClass(LogIn, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            window.fbAsyncInit = (function () {
+	                FB.init({
+	                    appId: '1911709119054983',
+	                    cookie: true, // enable cookies to allow the server to access
+	                    // the session
+	                    xfbml: true, // parse social plugins on this page
+	                    version: 'v2.1' // use version 2.1
+	                });
+
+	                // Now that we've initialized the JavaScript SDK, we call
+	                // FB.getLoginStatus().  This function gets the state of the
+	                // person visiting this page and can return one of three states to
+	                // the callback you provide.  They can be:
+	                //
+	                // 1. Logged into your app ('connected')
+	                // 2. Logged into Facebook, but not your app ('not_authorized')
+	                // 3. Not logged into Facebook and can't tell if they are logged into
+	                //    your app or not.
+	                //
+	                // These three cases are handled in the callback function.
+	                FB.getLoginStatus((function (response) {
+	                    this.statusChangeCallback(response);
+	                }).bind(this));
+	            }).bind(this);
+
+	            // Load the SDK asynchronously
+	            (function (d, s, id) {
+	                var js,
+	                    fjs = d.getElementsByTagName(s)[0];
+	                if (d.getElementById(id)) return;
+	                js = d.createElement(s);
+	                js.id = id;
+	                js.src = "//connect.facebook.net/en_US/sdk.js";
+	                fjs.parentNode.insertBefore(js, fjs);
+	            })(document, 'script', 'facebook-jssdk');
+	        }
+
+	        // Here we run a very simple test of the Graph API after login is
+	        // successful.  See statusChangeCallback() for when this call is made.
+	    }, {
+	        key: 'testAPI',
+	        value: function testAPI() {
+	            console.log('Welcome!  Fetching your information.... ');
+	            FB.api('/me', function (response) {
+	                console.log(response);
+	                console.log('Successful login for: ' + response.name);
+	                document.getElementById('status').innerHTML = 'Thanks for logging in, ' + response.name + '!';
+	            });
+	        }
+
+	        // This is called with the results from from FB.getLoginStatus().
+	    }, {
+	        key: 'statusChangeCallback',
+	        value: function statusChangeCallback(response) {
+	            console.log('statusChangeCallback');
+	            console.log(response);
+	            // The response object is returned with a status field that lets the
+	            // app know the current login status of the person.
+	            // Full docs on the response object can be found in the documentation
+	            // for FB.getLoginStatus().
+	            if (response.status === 'connected') {
+
+	                // Logged into your app and Facebook.
+	                this.testAPI();
+	            } else if (response.status === 'not_authorized') {
+	                // The person is logged into Facebook, but not your app.
+	                document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
+	            } else {
+	                // The person is not logged into Facebook, so we're not sure if
+	                // they are logged into this app or not.
+	                document.getElementById('status').innerHTML = 'Please log ' + 'into Facebook.';
+	            }
+	        }
+
+	        // This function is called when someone finishes with the Login
+	        // Button.  See the onlogin handler attached to it in the sample
+	        // code below.
+	    }, {
+	        key: 'checkLoginState',
+	        value: function checkLoginState() {
+	            FB.getLoginStatus((function (response) {
+	                this.statusChangeCallback(response);
+	            }).bind(this));
+	        }
+	    }, {
+	        key: 'handleClick',
+	        value: function handleClick() {
+	            FB.login(this.checkLoginState());
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_closePanel',
+	        value: function _closePanel() {
+	            this.setState({
+	                showModal: false
+	            });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                Modal,
+	                { show: this.state.showModal,
+	                    onHide: this._closePanel },
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        null,
+	                        ' As~Me '
+	                    ),
+	                    ' '
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    ' ',
+	                    React.createElement(
+	                        'a',
+	                        { href: '#',
+	                            onClick: this.handleClick },
+	                        ' Login '
+	                    ),
+	                    ' '
+	                )
+	            );
+	        }
+	    }]);
+
+	    return LogIn;
+	})(React.Component);
+
+	module.exports = LogIn;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	(function () {
+	    Object.defineProperty(User, 'NS', {
+	        value: 'Asme'
+	    });
+
+	    Object.defineProperty(User, 'CLASS_NAME', {
+	        value: 'User'
+	    });
+
+	    function User() {
+	        Object.defineProperty(this, 'sessionable', {
+	            value: true
+	        });
+
+	        Object.defineProperty(this, 'name', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+	    }
+
+	    var p = User.prototype;
+
+	    if (true) {
+	        module.exports = User;
+	    } else {
+	        console.log('window is used');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.User = User;
+	    }
+	})();
 
 /***/ }
 /******/ ])

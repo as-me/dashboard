@@ -14,6 +14,9 @@ slideBarStyle.value = 'scaleRotate';
 
 var Navigation = Asme.Navigation;
 var Content = Asme.Content;
+var LogIn = Asme.LogIn;
+
+
 
 window.addEventListener("hashchange", locationHashChanged, false);
 
@@ -37,7 +40,13 @@ d3.csv("data/testCereal.csv", function (d, i) {
     console.log('rows: ', rows)
     adapter.weaveInteractionPeer = new adapter.peer.WeaveJSInterface();
     WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(rows);
-    React.render( < Navigation / > , document.getElementById('Menu'));
-    React.render( < Content / > , document.getElementById('App'));
+    var user = WeaveAPI.globalHashMap.requestObject("user", weavecore.LinkableString);
+    if (!user.value)
+        React.render( < LogIn / > , document.getElementById('App'));
+    else {
+        React.render( < Navigation / > , document.getElementById('Menu'));
+        React.render( < Content / > , document.getElementById('App'));
+    }
+
 
 });

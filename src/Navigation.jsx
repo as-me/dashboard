@@ -56,7 +56,7 @@ class Navigation extends React.Component {
 
         var userPic;
         if(this.user.profilePic.value && this.user.profilePic.value.length > 0){
-            userPic = <img src={this.user.profilePic.value}></img>
+            userPic = <img className="pull-right" src={this.user.profilePic.value}></img>
         }
         else {
             userPic = "";
@@ -78,10 +78,11 @@ class Navigation extends React.Component {
                             <NavItem href={ '#charts' }>
                                 <span>< i className = "fa fa-fw fa-bar-chart-o" > < /i>Charts</span>
                             </NavItem>
-                            {userPic}
+
 
 
                         </Nav>
+                         {userPic}
 
                     </Navbar>;
         }

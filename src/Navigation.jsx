@@ -20,6 +20,8 @@ class Navigation extends React.Component {
         this.triggerInput = this.triggerInput.bind(this);
         this.saveAsmeLocal = this.saveAsmeLocal.bind(this);
         this.openAsmeLocal = this.openAsmeLocal.bind(this);
+
+        this.user = WeaveAPI.globalHashMap.requestObject("user", Asme.User);
     }
 
     componentDidMount() {
@@ -36,7 +38,7 @@ class Navigation extends React.Component {
     }
 
     saveAsmeLocal(){
-        window.saveAs( Archive.createFileContent(), "example.zip");
+        window.saveAs( Archive.createFileContent(), "AsMe.zip");
     }
 
     triggerInput(e) {
@@ -51,6 +53,14 @@ class Navigation extends React.Component {
     render() {
 
         var NavigationLayout ;
+
+        var userPic;
+        if(this.user.profilePic.value && this.user.profilePic.value.length > 0){
+            userPic = <img src={this.user.profilePic.value}></img>
+        }
+        else {
+            userPic = "";
+        }
         if(!this.state.docked){
             NavigationLayout = <div/>;
         }
@@ -68,6 +78,7 @@ class Navigation extends React.Component {
                             <NavItem href={ '#charts' }>
                                 <span>< i className = "fa fa-fw fa-bar-chart-o" > < /i>Charts</span>
                             </NavItem>
+                            {userPic}
 
 
                         </Nav>

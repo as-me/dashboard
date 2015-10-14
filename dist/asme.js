@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("ReactBootstrap"), require("React"), require(undefined));
+		module.exports = factory(require("ReactBootstrap"), require("React"), require(undefined), require("d3"));
 	else if(typeof define === 'function' && define.amd)
-		define(["ReactBootstrap", "React", ], factory);
+		define(["ReactBootstrap", "React", , "d3"], factory);
 	else if(typeof exports === 'object')
-		exports["Asme"] = factory(require("ReactBootstrap"), require("React"), require(undefined));
+		exports["Asme"] = factory(require("ReactBootstrap"), require("React"), require(undefined), require("d3"));
 	else
-		root["Asme"] = factory(root["ReactBootstrap"], root["React"], root[undefined]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_175__, __WEBPACK_EXTERNAL_MODULE_177__, __WEBPACK_EXTERNAL_MODULE_195__) {
+		root["Asme"] = factory(root["ReactBootstrap"], root["React"], root[undefined], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_175__, __WEBPACK_EXTERNAL_MODULE_177__, __WEBPACK_EXTERNAL_MODULE_195__, __WEBPACK_EXTERNAL_MODULE_205__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -64,8 +64,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.SettingsBar = __webpack_require__(189);
 
 	exports.ToolPanel = __webpack_require__(183);
-	exports.FileReaderButton = __webpack_require__(207);
-	exports.LogIn = __webpack_require__(208);
+	exports.FileReaderButton = __webpack_require__(209);
+	exports.LogIn = __webpack_require__(210);
 
 	exports.Servlet = __webpack_require__(198);
 	exports.Archive = __webpack_require__(178);
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.APIDataSource = __webpack_require__(199);
 	exports.HumanAPIDataSource = __webpack_require__(196);
-	exports.User = __webpack_require__(209);
+	exports.User = __webpack_require__(211);
 
 /***/ },
 /* 1 */
@@ -23042,15 +23042,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsUsersPageUsers = __webpack_require__(204);
+	var _componentsUsersPageUsers = __webpack_require__(206);
 
 	var _componentsUsersPageUsers2 = _interopRequireDefault(_componentsUsersPageUsers);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(205);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(207);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(206);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(208);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -23087,7 +23087,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_updateState',
 	        value: function _updateState() {
-	            console.log("page changed");
 	            this.setState({
 	                page: this.activePage.value
 	            });
@@ -23095,14 +23094,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.activePage.removeCallback(this, this._updateState);
+	            this.activePage.removeCallback(this._updateState);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
 
 	            var pageComponent = this.routes[this.state.page];
-	            console.log(pageComponent);
 	            return pageComponent;
 	        }
 	    }]);
@@ -24857,23 +24855,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var companyUrl = dataSource['companyUrl'];
 	                    var logoUrl = dataSource['logoUrl'];
 	                    var bgColor = dataSource['backgroundColor'];
-	                    var connectFn = dataSource['connect'].bind(dataSource);
 	                    var apiCalls = dataSource['apiCalls'];
+
+	                    var connectFn;
+	                    var viewDataFn;
+	                    if (dataSource.isConnected()) {
+	                        viewDataFn = dataSource['getRecords'].bind(dataSource);
+	                    } else {
+	                        connectFn = dataSource['connect'].bind(dataSource);
+	                    }
 
 	                    return _react2['default'].createElement(
 	                        Col,
 	                        { key: index, xs: 12,
 	                            md: 3 },
-	                        _react2['default'].createElement(FlipCard, { key: index, title: name, companyURL: companyUrl, logoURL: logoUrl, connector: connectFn, bgColor: bgColor, apiCalls: apiCalls })
+	                        _react2['default'].createElement(FlipCard, { key: index, title: name, companyURL: companyUrl, logoURL: logoUrl, viewData: viewDataFn, connector: connectFn, bgColor: bgColor, apiCalls: apiCalls })
 	                    );
 	                } else {
+	                    var getRecordsFn = dataSource['getRecords'].bind(dataSource);
 	                    var name = AdapterAPI.peer.dataSources.getName(dataSource);
 	                    var bgColor = 'red';
 	                    return _react2['default'].createElement(
 	                        Col,
 	                        { key: index, xs: 12,
 	                            md: 3 },
-	                        _react2['default'].createElement(FlipCard, { key: index, title: name, companyURL: null, logoURL: null, connector: null, bgColor: bgColor, apiCalls: [] })
+	                        _react2['default'].createElement(FlipCard, { key: index, title: name, companyURL: null, logoURL: null, viewData: getRecordsFn, connector: null, bgColor: bgColor, apiCalls: [] })
 	                    );
 	                }
 	            }).bind(this));
@@ -24990,23 +24996,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        console.log('Promise call initiated');
 	    };
 
-	    p.connect = function () {
-	        if (!this.sessionToken.userID.value) {
-	            this.sessionToken.userID.value = "sanjay1909@gmail.com";
-	            this.sessionToken.publicToken.value = '3b14fe511ccc9e602727e75007480f25';
-	            this.sessionToken.accessToken.value = 'NL4V3fJIGM3DXkeJIYH5OfW-__g=mX1Z6GQx6a19e2ac8c192e77e66036d997fc0a9b2103f52760ee8b620aa53a1f1eec87959a8c9e87e72b26c85d47510f2fc9a2300f71598a36a6a996c23d9f49533c9a69edb812c62e28149f07a70235babf9e8e99f5c15476e32607fea4f32171b580c22b668b5b763c0b68f04881cbf5ed0ab3';
-	            this.sessionToken.humanID.value = '565ca01149bd0f998e64a1c8d236f9df';
-	        }
+	    p.isConnected = function () {
+	        if (!this.sessionToken.userID.value) return false;
+	        if (!this.sessionToken.humanID.value) return false;
+	        if (!this.sessionToken.publicToken.value) return false;
+	        if (!this.sessionToken.accessToken.value) return false;
+	        this.toggleActivities();
+	        return true;
+	    };
 
+	    p.connect = function () {
+
+	        /*if (!this.sessionToken.userID.value) {
+	            this.sessionToken.userID.value = "1909sanjay@gmail.com";
+	        }*/
 	        var inst = this;
 	        var options = {
 	            modal: 1,
 	            clientUserId: encodeURIComponent(this.sessionToken.userID.value), // can be email
 	            clientId: '9f9e4c03e02ab9e4ac8f264e65005b77e962cf8d', // found in Developer Portal
 	            finish: function finish(err, sessionTokenObject) {
-	                console.log(sessionTokenObject);
-	                // callback that would be called after user finishes
-	                // connecting data.
 
 	                var auth = new HumanAPIServices.AuthService('AsmeServlet');
 
@@ -25054,12 +25063,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    p._setData = function () {
 	        if (this._promise.result) {
-	            console.log('_setData:', this._promise.result);
 	            this.data.setSessionState(this._promise.result);
 	        } else console.error('Error:', this._promise.error);
 	    };
 
 	    p.initiate = function () {
+	        if (!this.sessionToken.userID.value) {
+	            this.sessionToken.userID.value = "sanjay1909@gmail.com";
+	            this.sessionToken.publicToken.value = '3b14fe511ccc9e602727e75007480f25';
+	            this.sessionToken.accessToken.value = 'NL4V3fJIGM3DXkeJIYH5OfW-__g=mX1Z6GQx6a19e2ac8c192e77e66036d997fc0a9b2103f52760ee8b620aa53a1f1eec87959a8c9e87e72b26c85d47510f2fc9a2300f71598a36a6a996c23d9f49533c9a69edb812c62e28149f07a70235babf9e8e99f5c15476e32607fea4f32171b580c22b668b5b763c0b68f04881cbf5ed0ab3';
+	            this.sessionToken.humanID.value = '565ca01149bd0f998e64a1c8d236f9df';
+	        }
 	        WeaveAPI.SessionManager.getCallbackCollection(this._promise).addImmediateCallback(null, this._setData.bind(this));
 	    };
 
@@ -25545,6 +25559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var CardFront = __webpack_require__(202);
 	var CardBack = __webpack_require__(203);
+	var DataTable = __webpack_require__(204);
 
 	var FlipCard = (function (_React$Component) {
 	    _inherits(FlipCard, _React$Component);
@@ -25555,10 +25570,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _get(Object.getPrototypeOf(FlipCard.prototype), 'constructor', this).call(this, props);
 
 	        this.state = {
-	            flipped: false
+	            flipped: false,
+	            tableShow: false
 	        };
 
 	        this.flip = this.flip.bind(this);
+	        this.showTable = this.showTable.bind(this);
 	    }
 
 	    _createClass(FlipCard, [{
@@ -25573,8 +25590,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.setState({ flipped: !this.state.flipped });
 	        }
 	    }, {
+	        key: 'showTable',
+	        value: function showTable() {
+	            this.setState({ tableShow: !this.state.tableShow });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this = this;
+
+	            var tableClose = function tableClose() {
+	                return _this.setState({ tableShow: false });
+	            };
 	            var apiList = this.props.apiCalls.map(function (apiCall, index) {
 	                return React.createElement('input', { key: index, type: 'button', value: 'Activities', onClick: function () {
 	                        apiCall(true);
@@ -25587,6 +25614,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                { className: 'card__button', onClick: this.props.connector },
 	                'Connect'
 	            ) : "";
+
+	            var viewDataButton = this.props.viewData ? React.createElement(
+	                'span',
+	                { className: 'card__button', onClick: this.showTable },
+	                'View Data'
+	            ) : "";
+	            var records = this.props.viewData ? this.props.viewData() : [];
 
 	            return React.createElement(
 	                'div',
@@ -25614,6 +25648,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        React.createElement(
 	                            'div',
 	                            { className: 'card__action-bar', style: { color: this.props.bgColor } },
+	                            viewDataButton,
 	                            connectorButton,
 	                            React.createElement(
 	                                'span',
@@ -25645,7 +25680,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            )
 	                        )
 	                    )
-	                )
+	                ),
+	                React.createElement(DataTable, { title: this.props.title, dataFn: this.props.viewData, show: this.state.tableShow, onHide: tableClose })
 	            );
 	        }
 	    }]);
@@ -25755,6 +25791,160 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _d3 = __webpack_require__(205);
+
+	var d3 = _interopRequireWildcard(_d3);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Modal = ReactBootstrap.Modal;
+	var Table = ReactBootstrap.Table;
+
+	var DataTable = (function (_React$Component) {
+	    _inherits(DataTable, _React$Component);
+
+	    function DataTable(props) {
+	        _classCallCheck(this, DataTable);
+
+	        _get(Object.getPrototypeOf(DataTable.prototype), 'constructor', this).call(this, props);
+
+	        this.populateTable = this.populateTable.bind(this);
+	    }
+
+	    _createClass(DataTable, [{
+	        key: 'populateTable',
+	        value: function populateTable(dataFunction) {
+	            var data = dataFunction ? dataFunction() : [];
+	            if (!data || data.length === 0) {
+	                return '';
+	            }
+
+	            var headers = Object.keys(data[0]);
+	            var tableHeaders = headers.map(function (header, i) {
+	                return React.createElement(
+	                    'th',
+	                    { key: i },
+	                    ' ',
+	                    header,
+	                    ' '
+	                );
+	            });
+
+	            var rows = data.map(function (row, id) {
+
+	                var cells = headers.map(function (prop, i) {
+	                    var cell = row[prop];
+	                    return id === 0 ? '' : React.createElement(
+	                        'td',
+	                        { key: i },
+	                        ' ',
+	                        cell,
+	                        ' '
+	                    );
+	                });
+
+	                return React.createElement(
+	                    'tr',
+	                    { key: id },
+	                    ' ',
+	                    cells,
+	                    ' '
+	                );
+	            });
+	            return React.createElement(
+	                Table,
+	                { striped: true, bordered: true, condensed: true, hover: true, responsive: true },
+	                ' ',
+	                React.createElement(
+	                    'thead',
+	                    null,
+	                    ' ',
+	                    React.createElement(
+	                        'tr',
+	                        null,
+	                        ' ',
+	                        tableHeaders,
+	                        ' '
+	                    ),
+	                    ' '
+	                ),
+	                ' ',
+	                React.createElement(
+	                    'tbody',
+	                    null,
+	                    ' ',
+	                    rows,
+	                    ' '
+	                ),
+	                ' '
+	            );
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var tableContent = this.populateTable(this.props.dataFn);
+	            return React.createElement(
+	                Modal,
+	                _extends({}, this.props, {
+	                    bsSize: 'large' }),
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        null,
+	                        ' ',
+	                        this.props.title,
+	                        ' '
+	                    ),
+	                    ' '
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    ' ',
+	                    tableContent,
+	                    ' '
+	                )
+	            );
+	        }
+	    }]);
+
+	    return DataTable;
+	})(React.Component);
+
+	module.exports = DataTable;
+
+/***/ },
+/* 205 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_205__;
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
@@ -25800,13 +25990,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 205 */
+/* 207 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 206 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25856,7 +26046,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 207 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25985,7 +26175,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = FileReaderButton;
 
 /***/ },
-/* 208 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26179,7 +26369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LogIn;
 
 /***/ },
-/* 209 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26203,7 +26393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        Object.defineProperty(this, 'logged', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false))
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(true))
 	        });
 
 	        Object.defineProperty(this, 'profilePic', {

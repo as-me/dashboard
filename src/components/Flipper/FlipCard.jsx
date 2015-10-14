@@ -35,11 +35,16 @@ export default class FlipCard extends React.Component {
 
     render() {
         let tableClose = () => this.setState({ tableShow: false });
+
         var apiList = this.props.apiCalls.map(function(apiCall, index){
-        return <input key={index} type='button' value='Activities' onClick ={function(){
-                apiCall(true);
-            }}/>
-        })
+
+        return <div key={index} className='cardCheckBox'>
+                    <input type="checkbox" value="None" id="c1" name="check"  onClick ={function(){
+                                apiCall(true);
+                            }}/>
+                            <label for="c1"><span></span>Activities</label>
+                </div>
+        });
 
         var logo = this.props.logoURL?<img  src={this.props.logoURL}/>:"";
         var connectorButton = this.props.connector?<span className="card__button" onClick ={this.props.connector}>

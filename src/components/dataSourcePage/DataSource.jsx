@@ -70,7 +70,7 @@ export default class DataSource extends React.Component {
         else{
             var getRecordsFn = dataSource['getRecords'].bind(dataSource);
             var name = AdapterAPI.peer.dataSources.getName(dataSource);
-            var bgColor = 'red';
+            var bgColor = '#ad0202';
             return < Col key={index} xs = {
                             12
                         }

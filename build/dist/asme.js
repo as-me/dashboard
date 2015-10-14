@@ -24874,7 +24874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                } else {
 	                    var getRecordsFn = dataSource['getRecords'].bind(dataSource);
 	                    var name = AdapterAPI.peer.dataSources.getName(dataSource);
-	                    var bgColor = 'red';
+	                    var bgColor = '#ad0202';
 	                    return _react2['default'].createElement(
 	                        Col,
 	                        { key: index, xs: 12,
@@ -25602,10 +25602,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var tableClose = function tableClose() {
 	                return _this.setState({ tableShow: false });
 	            };
+
 	            var apiList = this.props.apiCalls.map(function (apiCall, index) {
-	                return React.createElement('input', { key: index, type: 'button', value: 'Activities', onClick: function () {
-	                        apiCall(true);
-	                    } });
+
+	                return React.createElement(
+	                    'div',
+	                    { key: index, className: 'cardCheckBox' },
+	                    React.createElement('input', { type: 'checkbox', value: 'None', id: 'c1', name: 'check', onClick: function () {
+	                            apiCall(true);
+	                        } }),
+	                    React.createElement(
+	                        'label',
+	                        { 'for': 'c1' },
+	                        React.createElement('span', null),
+	                        'Activities'
+	                    )
+	                );
 	            });
 
 	            var logo = this.props.logoURL ? React.createElement('img', { src: this.props.logoURL }) : "";

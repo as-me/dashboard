@@ -304,3 +304,39 @@
         line-height: 32px;
     }
 }
+
+.cardCheckBox {
+    padding-left: 48px;
+    margin-top: 32px;
+}
+
+input[type="checkbox"]::before {
+    display: inline-block;
+    margin: 8px 8px 0 0;
+    background-color: rgb(31, 106, 208);
+    border: 1px solid rgb(166, 166, 166);
+    border-radius: 4px;
+}
+
+input[type="checkbox"] + label span {
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 8px;
+    cursor: pointer;
+}
+
+input[type="checkbox"] + label {
+    color: #ccc;
+    font-style: italic;
+}
+
+input[type="checkbox"]:checked + label {
+    color: rgb(31, 106, 208);
+    font-style: normal;
+}
+
+input[type="checkbox"]:checked {
+    content: '';
+    background: rgb(8, 117, 175);
+    border: 3px solid #1062a4;
+}

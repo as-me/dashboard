@@ -10,7 +10,18 @@ if (typeof window === 'undefined') {
     function C3Interface(chart) {
         adapter.Interface.call(this);
         if (chart)
-            this.chart = chart;
+            this._chart = chart;
+
+        Object.defineProperty(this, 'chart', {
+            get: function () {
+                return this._chart;
+            },
+            set: function (chart) {
+                this._chart = chart;
+            }
+        })
+
+
     }
 
     C3Interface.prototype = new adapter.Interface();
@@ -19,16 +30,15 @@ if (typeof window === 'undefined') {
     var p = C3Interface.prototype;
 
 
-    p.setChart = function (chart) {
-        this.chart = chart;
-    }
+
 
     p.doProbe = function (key) {
         if (!this.chart) {
-            console.log('Hook a C3 chart First');
+            console.error('Hook a C3 chart First');
             return;
         }
-        this.chart.select(this.chart.columns, [key], true);
+        var yIndex = Number(this.chart.keyColumnToYIndex[key]);
+        this.chart.select(['y'], [yIndex], true);
     }
 
     /*
@@ -39,7 +49,7 @@ if (typeof window === 'undefined') {
      */
     p.doSelection = function (keys) {
         if (!this.chart) {
-            console.log('Hook a c3 chart First');
+            console.error('Hook a c3 chart First');
             return;
         }
 
@@ -48,13 +58,10 @@ if (typeof window === 'undefined') {
         } else console.log("keys(Array)  is required");
 
         if (keys.length > 0) {
-            var numericKeys = keys.map(function (key) {
-                if (key.constructor === String)
-                    return key = Number(key);
-                else
-                    return key;
-            });
-            this.chart.select(this.chart.columns, numericKeys, true);
+            var yIndices = keys.map(function (key) {
+                return Number(this.chart.keyColumnToYIndex[key]);
+            }.bind(this));
+            this.chart.select(['y'], yIndices, true);
         } else
             this.chart.unselect();
     }

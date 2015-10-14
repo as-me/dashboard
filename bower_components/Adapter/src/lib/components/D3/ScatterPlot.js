@@ -69,15 +69,7 @@ if (typeof window === 'undefined') {
             value: WeaveAPI.SessionManager.registerLinkableChild(this, new adapter.session.ScatterPlot())
         });
 
-        /**
-         * @public
-         * @property chart
-         * @readOnly
-         * @type d3Chart.Scatterplot
-         */
-        /*Object.defineProperty(this, 'chart', {
-            value: new d3Chart.Scatterplot()
-        });*/
+
 
         /**
          * @public

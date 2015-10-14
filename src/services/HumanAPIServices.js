@@ -3,17 +3,11 @@ var Servlet = require('./Servlet.js');
 (function () {
     'use strict';
 
+    var SERVLET_URL = 'http://localhost:8080/AsmeHealthDataService';
     var API_URL = 'http://localhost:8080/AsmeHealthDataService';
 
 
     var HumanAPIServices = function () {
-
-
-
-        this.getAuth = function (servlet) {
-            return new HumanAPIServices.Auth(servlet);
-        };
-
 
     };
 
@@ -24,13 +18,11 @@ var Servlet = require('./Servlet.js');
     HumanAPIServices.AuthService = function (servlet) {
         this.servlet = '/' + servlet;
 
-        /*function (err, res) {
-            cb(err, res);
-        }*/
+
         this.getToken = function (sessionTokenObject) {
 
             //return _request("POST", this.servlet, sessionTokenObject);
-            return Servlet.queryService(API_URL + this.servlet, 'getToken', [sessionTokenObject], null, 'getToken');
+            return Servlet.queryService(SERVLET_URL + this.servlet, 'getToken', [sessionTokenObject], null, 'getToken');
         };
 
 
@@ -49,21 +41,29 @@ var Servlet = require('./Servlet.js');
         }*/
         this.getInfo = function (accessToken) {
 
-            return Servlet.queryService(API_URL + this.servlet, 'getInfo', [accessToken], null, 'getInfo');
+            return Servlet.queryService(SERVLET_URL + this.servlet, 'getInfo', [accessToken], null, 'getInfo');
         };
 
         this.getDemoData = function () {
 
-            return Servlet.queryService(API_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
+            return Servlet.queryService(SERVLET_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
         };
 
         this.getActivities = function (accessToken) {
 
-            return Servlet.queryService(API_URL + this.servlet, 'getActivities', [], null, 'getActivties');
+            return Servlet.queryService(SERVLET_URL + this.servlet, 'getActivities', [accessToken], null, 'getActivties');
         };
 
 
 
+
+    };
+
+    HumanAPIServices.DataAPIService = function (API_URL) {
+        this.API_URL = API_URL;
+        this.getActivities = function (accessToken) {
+            return Servlet.queryAPIService(this.API_URL + '?access_token=' + accessToken, null, 'getActivties');
+        };
 
     };
 

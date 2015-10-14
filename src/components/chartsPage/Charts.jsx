@@ -7,13 +7,8 @@ var Navbar = ReactBootstrap.Navbar;
 var NavItem = ReactBootstrap.NavItem;
 var NavDropdown = ReactBootstrap.NavDropdown;
 
-
-
-
 var Nav = require('../../Nav.js');
-var FileReaderInput = require('../FileReaderButton.jsx');
 var Layout = require('../../Layout.js');
-var Settings = require('../../Settingsbar.js');
 var Slider = require('../SessionSlider.js');
 var Content = require('./ChartContent.js');
 var Archive = require('../../services/Archive.js');
@@ -32,7 +27,6 @@ var Archive = require('../../services/Archive.js');
         this.state = {isDesktop: this.mql.matches};
         this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
 
-        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
 
         this._onToolSelection = this._onToolSelection.bind(this);
 
@@ -44,7 +38,7 @@ var Archive = require('../../services/Archive.js');
     }
 
     saveAsmeLocal(){
-        window.saveAs( Archive.createFileContent(), "example.zip");
+        window.saveAs( Archive.createFileContent(), "asme.zip");
     }
 
     triggerInput(e) {
@@ -73,9 +67,7 @@ var Archive = require('../../services/Archive.js');
     }
 
     _onToolSelection(tool,toolName, eventKey, href, target){
-
-        var chart = this.tools.requestObject(toolName + this.counter++,tool);
-        console.log('_onToolSelection' ,chart);
+       AdapterAPI.peer.requestHook(toolName + this.counter++,tool);
     }
 
     render() {
@@ -83,20 +75,18 @@ var Archive = require('../../services/Archive.js');
 
         //to-do transform this to function so that in th future we can have menu extracted externally
         var libs = Object.getOwnPropertyNames(adapter.libs);
-        console.log('libs' ,libs);
 
-        var libsMenu = libs.map(function(libName){
+        var libsMenu = libs.map(function(libName,libIndex){
             var libCharts = Object.getOwnPropertyNames(adapter.libs[libName]);
-            console.log("libCharts: ",libCharts);
             var chartMenus  = libCharts.map(function(chartName,index){
                 var toolName = libName + '-' +chartName
                 var tool = adapter.libs[libName][chartName];
-                return <MenuItem eventKey={index} onSelect={this._onToolSelection.bind(this,tool,toolName)} >
+                return <MenuItem key={index} eventKey={index} onSelect={this._onToolSelection.bind(this,tool,toolName)} >
                             <span className="asmeMenu"> {chartName}</span>
                        </MenuItem>;
             }.bind(this));
 
-            return <NavDropdown  title={<span className="asmeMenu"> {libName}</span>} id='nav-brand-dropdown'>
+return <NavDropdown key={libIndex} title={<span className="asmeMenu"> {libName}</span>} id='nav-brand-dropdown'>
                         {chartMenus}
                    </NavDropdown>
         }.bind(this));

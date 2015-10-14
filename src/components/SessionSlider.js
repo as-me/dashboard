@@ -24,16 +24,15 @@ class SessionSlider extends React.Component {
     }
 
     _setReactState() {
-
+        console.log('Slider');
         this.setState({
-            max: this.log._undoHistory.length + this.log._redoHistory.length,
-            value: this.log._undoHistory.length
+            max: Archive.history._undoHistory.length + Archive.history._redoHistory.length,
+            value: Archive.history._undoHistory.length
         });
     }
 
     _runLog(e, value) {
-        console.log(e.target.value);
-        var delta = e.target.value - this.log.undoHistory.length;
+        var delta = e.target.value - Archive.history.undoHistory.length;
         if (delta < 0)
             this.log.undo(-delta);
         else
@@ -42,13 +41,13 @@ class SessionSlider extends React.Component {
     }
 
     componentDidMount() {
-        var cc = WeaveAPI.SessionManager.getCallbackCollection(this.log);
-        cc.addGroupedCallback(this, this._setReactState, true);
+        var cc = WeaveAPI.SessionManager.getCallbackCollection(Archive.history);
+        cc.addImmediateCallback(this, this._setReactState, true);
     }
 
     // Unbind change listener
     componentWillUnmount() {
-        var cc = WeaveAPI.SessionManager.getCallbackCollection(this.log);
+        var cc = WeaveAPI.SessionManager.getCallbackCollection(Archive.history);
         cc.removeCallback(this._setReactState);
     }
 
@@ -57,7 +56,9 @@ class SessionSlider extends React.Component {
 
         var options = [];
         for (var i = 0; i <= this.state.max; i++) {
-            var option = < option > {
+            var option = < option key = {
+                i
+            } > {
                 i
             } < /option>
             options.push(option);

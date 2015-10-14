@@ -36,16 +36,24 @@ d3.csv("data/testCereal.csv", function (d, i) {
     d.index = i;
     return d;
 }, function (error, rows) {
-    console.log(rows);
-    var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
-    columns.setSessionState(d3.keys(rows[0]));
-    console.log('rows: ', rows)
-    adapter.weaveInteractionPeer = new adapter.peer.WeaveJSInterface();
-    WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(rows);
+
+    AdapterAPI.peer.requestDataSource("cereals", adapter.session.DataSource).data.setSessionState(rows);
+
     user = WeaveAPI.globalHashMap.requestObject("user", Asme.User);
     user.logged.addImmediateCallback(null, showApp, true)
 
 
+
+
+});
+
+d3.csv("data/rice-paddy-gigagrams.csv", function (d, i) {
+    d.index = i;
+    return d;
+}, function (error, rows) {
+
+
+    AdapterAPI.peer.requestDataSource("rice-paddy", adapter.session.DataSource).data.setSessionState(rows);
 
 });
 

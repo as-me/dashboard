@@ -88,8 +88,8 @@ d3.csv("data/testCereal.csv", function (d, i) {
     return d;
 }, function (error, rows) {
     console.log('rows: ', rows)
-    adapter.weaveInteractionPeer = new adapter.peer.WeaveJSInterface();
-    WeaveAPI.globalHashMap.getObject("dataSource").setSessionState(rows);
+        // adapter.peer = new adapter.peer.WeaveJSInterface();
+    AdapterAPI.peer.requestDataSource("cereal", adapter.session.DataSource).data.setSessionState(rows);
     renderPage();
     WeaveAPI.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
 

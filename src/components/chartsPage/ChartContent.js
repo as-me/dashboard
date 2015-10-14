@@ -2,7 +2,7 @@ import React from 'react';
 import * as ReactBootstrap from 'react-bootstrap';
 
 var Layout = require('../../Layout.js');
-var Settings = require('../../Settingsbar.js');
+var Settings = require('../settings/SettingsBar.js');
 import appendVendorPrefix from '../../utils/appendVendorPrefix';
 import Styles from '../../utils/Styles';
 
@@ -34,32 +34,30 @@ class ChartContent extends React.Component {
     componentDidUpdate(prevProps, prevState) {}
 
     componentWillUnmount() {
-        this.activeTool.removeCallback(this, this._updateState);
-        this.slideBarStyle.removeCallback(this, this._updateState);
+        this.activeTool.removeCallback(this._updateState);
+        this.slideBarStyle.removeCallback(this._updateState);
     }
 
     _toggleMenu() {
 
         if (this.activeTool.value.length > 0)
             this.activeTool.value = '';
-
-
     }
 
 
 
     render() {
+
         return ( < div id = "outer-container"
             style = {
                 Styles.outerContainer(!this.state.isOpen, this.state.style)
-            } >
-            < Settings isOpen = {
+            } > < Settings isOpen = {
                 this.state.isOpen
             }
             style = {
                 this.state.style
             }
-            / >   < div
+            />< div
 
             onClick = {
                 this._toggleMenu

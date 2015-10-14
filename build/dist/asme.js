@@ -60,18 +60,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Navigation = __webpack_require__(176);
 
 	exports.Content = __webpack_require__(179);
-	exports.Layout = __webpack_require__(183);
-	exports.Settingsbar = __webpack_require__(185);
+	exports.Layout = __webpack_require__(182);
+	exports.SettingsBar = __webpack_require__(189);
 
-	exports.ToolPanel = __webpack_require__(184);
-	exports.FileReaderButton = __webpack_require__(182);
-	exports.LogIn = __webpack_require__(200);
+	exports.ToolPanel = __webpack_require__(183);
+	exports.FileReaderButton = __webpack_require__(207);
+	exports.LogIn = __webpack_require__(208);
 
-	exports.Servlet = __webpack_require__(194);
+	exports.Servlet = __webpack_require__(198);
 	exports.Archive = __webpack_require__(178);
-	exports.HumanAPIServices = __webpack_require__(193);
-	exports.HumanConnectSession = __webpack_require__(196);
-	exports.User = __webpack_require__(201);
+	exports.HumanAPIServices = __webpack_require__(197);
+
+	exports.APIDataSource = __webpack_require__(199);
+	exports.HumanAPIDataSource = __webpack_require__(196);
+	exports.User = __webpack_require__(209);
 
 /***/ },
 /* 1 */
@@ -23036,19 +23038,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _componentsChartsPageCharts2 = _interopRequireDefault(_componentsChartsPageCharts);
 
-	var _componentsDataSourcePageDataSource = __webpack_require__(192);
+	var _componentsDataSourcePageDataSource = __webpack_require__(194);
 
 	var _componentsDataSourcePageDataSource2 = _interopRequireDefault(_componentsDataSourcePageDataSource);
 
-	var _componentsUsersPageUsers = __webpack_require__(197);
+	var _componentsUsersPageUsers = __webpack_require__(204);
 
 	var _componentsUsersPageUsers2 = _interopRequireDefault(_componentsUsersPageUsers);
 
-	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(198);
+	var _componentsNotFoundPageNotFoundPageJsx = __webpack_require__(205);
 
 	var _componentsNotFoundPageNotFoundPageJsx2 = _interopRequireDefault(_componentsNotFoundPageNotFoundPageJsx);
 
-	var _componentsErrorPageErrorPageJsx = __webpack_require__(199);
+	var _componentsErrorPageErrorPageJsx = __webpack_require__(206);
 
 	var _componentsErrorPageErrorPageJsx2 = _interopRequireDefault(_componentsErrorPageErrorPageJsx);
 
@@ -23169,6 +23171,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'mediaQueryChanged',
 	        value: function mediaQueryChanged() {
+	            console.log('Home ');
 	            this.setState({ isDesktop: this.mql.matches });
 	        }
 	    }, {
@@ -23329,11 +23332,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var NavDropdown = ReactBootstrap.NavDropdown;
 
 	var Nav = __webpack_require__(1);
-	var FileReaderInput = __webpack_require__(182);
-	var Layout = __webpack_require__(183);
-	var Settings = __webpack_require__(185);
-	var Slider = __webpack_require__(190);
-	var Content = __webpack_require__(191);
+	var Layout = __webpack_require__(182);
+	var Slider = __webpack_require__(184);
+	var Content = __webpack_require__(185);
 	var Archive = __webpack_require__(178);
 
 	var Charts = (function (_React$Component) {
@@ -23351,8 +23352,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.state = { isDesktop: this.mql.matches };
 	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
 
-	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
-
 	        this._onToolSelection = this._onToolSelection.bind(this);
 
 	        this.triggerInput = this.triggerInput.bind(this);
@@ -23365,7 +23364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(Charts, [{
 	        key: 'saveAsmeLocal',
 	        value: function saveAsmeLocal() {
-	            window.saveAs(Archive.createFileContent(), "example.zip");
+	            window.saveAs(Archive.createFileContent(), "asme.zip");
 	        }
 	    }, {
 	        key: 'triggerInput',
@@ -23400,9 +23399,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_onToolSelection',
 	        value: function _onToolSelection(tool, toolName, eventKey, href, target) {
-
-	            var chart = this.tools.requestObject(toolName + this.counter++, tool);
-	            console.log('_onToolSelection', chart);
+	            AdapterAPI.peer.requestHook(toolName + this.counter++, tool);
 	        }
 	    }, {
 	        key: 'render',
@@ -23410,17 +23407,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            //to-do transform this to function so that in th future we can have menu extracted externally
 	            var libs = Object.getOwnPropertyNames(adapter.libs);
-	            console.log('libs', libs);
 
-	            var libsMenu = libs.map((function (libName) {
+	            var libsMenu = libs.map((function (libName, libIndex) {
 	                var libCharts = Object.getOwnPropertyNames(adapter.libs[libName]);
-	                console.log("libCharts: ", libCharts);
 	                var chartMenus = libCharts.map((function (chartName, index) {
 	                    var toolName = libName + '-' + chartName;
 	                    var tool = adapter.libs[libName][chartName];
 	                    return _react2['default'].createElement(
 	                        MenuItem,
-	                        { eventKey: index, onSelect: this._onToolSelection.bind(this, tool, toolName) },
+	                        { key: index, eventKey: index, onSelect: this._onToolSelection.bind(this, tool, toolName) },
 	                        _react2['default'].createElement(
 	                            'span',
 	                            { className: 'asmeMenu' },
@@ -23432,7 +23427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                return _react2['default'].createElement(
 	                    NavDropdown,
-	                    { title: _react2['default'].createElement(
+	                    { key: libIndex, title: _react2['default'].createElement(
 	                            'span',
 	                            { className: 'asmeMenu' },
 	                            ' ',
@@ -23515,6 +23510,2353 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Grid = ReactBootstrap.Grid;
+	var Row = ReactBootstrap.Row;
+	var Col = ReactBootstrap.Col;
+	var ToolPanel = __webpack_require__(183);
+
+	var Layout = (function (_React$Component) {
+	    _inherits(Layout, _React$Component);
+
+	    function Layout(props) {
+	        _classCallCheck(this, Layout);
+
+	        _get(Object.getPrototypeOf(Layout.prototype), 'constructor', this).call(this, props);
+	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
+	        this.state = {
+	            names: this.tools.getNames()
+	        };
+	        this._updateState = this._updateState.bind(this);
+	    }
+
+	    _createClass(Layout, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.tools.childListCallbacks.addImmediateCallback(this, this._updateState);
+	        }
+	    }, {
+	        key: '_updateState',
+	        value: function _updateState() {
+	            this.setState({
+	                names: this.tools.getNames()
+	            });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.tools.childListCallbacks.removeCallback(this._updateState);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var children = [];
+	            if (this.state.names) {
+	                for (var i = 0; i < this.state.names.length; i++) {
+	                    var toolName = this.state.names[i];
+	                    var tool = this.tools.getObject(toolName);
+	                    var cols = tool.sessionData.dataSourceWatcher.target.columns;
+	                    tool.sessionData.xAxis.value = tool.sessionData.xAxis.value ? tool.sessionData.xAxis.value : cols[0];
+	                    tool.sessionData.yAxis.value = tool.sessionData.yAxis.value ? tool.sessionData.yAxis.value : cols[1];
+
+	                    var padding = {
+	                        top: 20,
+	                        bottom: 40,
+	                        left: 40,
+	                        right: 20
+	                    };
+	                    var interaction = {
+	                        onProbe: {
+	                            showToolTip: true,
+	                            callback: function callback(d) {
+	                                AdapterAPI.peer.activeHook = this;
+	                                AdapterAPI.peer.doProbe(d);
+	                            }
+	                        },
+	                        onSelect: {
+	                            callback: function callback(keys) {
+	                                AdapterAPI.peer.activeHook = this;
+	                                AdapterAPI.peer.doSelection(keys);
+	                            }
+	                        }
+	                    };
+
+	                    tool.createUI(padding, {}, interaction);
+	                    var columnCount = 6;
+	                    //var columnCount = this.state.names.length === 1 ? 12 : 6
+	                    children.push(React.createElement(
+	                        Col,
+	                        { key: i,
+	                            xs: 12,
+	                            md: columnCount },
+	                        ' ',
+	                        React.createElement(ToolPanel, { title: toolName,
+	                            content: tool.ui,
+	                            sessionedTool: tool
+	                        })
+	                    ));
+	                }
+	            }
+
+	            return React.createElement(
+	                Grid,
+	                null,
+	                ' ',
+	                React.createElement(
+	                    Row,
+	                    null,
+	                    ' ',
+	                    children,
+	                    ' '
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Layout;
+	})(React.Component);
+
+	module.exports = Layout;
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Panel = ReactBootstrap.Panel;
+	var Button = ReactBootstrap.Button;
+
+	var ToolPanel = (function (_React$Component) {
+	    _inherits(ToolPanel, _React$Component);
+
+	    function ToolPanel(props) {
+	        _classCallCheck(this, ToolPanel);
+
+	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
+
+	        this._closePanel = this._closePanel.bind(this);
+	        this._openSettings = this._openSettings.bind(this);
+	    }
+
+	    _createClass(ToolPanel, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {}
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_closePanel',
+	        value: function _closePanel() {
+	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
+	            var name = tools.getName(this.props.sessionedTool);
+	            tools.removeObject(name);
+	        }
+	    }, {
+	        key: '_openSettings',
+	        value: function _openSettings() {
+	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
+	            var name = tools.getName(this.props.sessionedTool);
+	            var activetool = window.NavigationHashMap.getObject("activeTool");
+	            activetool.value = name;
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                Panel,
+	                { header: React.createElement(
+	                        'div',
+	                        null,
+	                        ' ',
+	                        this.props.title,
+	                        ' ',
+	                        React.createElement(
+	                            'span',
+	                            { className: 'pull-right' },
+	                            ' ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-wrench fa-fw fa-pointer',
+	                                    onClick: this._openSettings },
+	                                ' '
+	                            ),
+	                            '   ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-trash-o fa-fw fa-pointer',
+	                                    onClick: this._closePanel },
+	                                ' '
+	                            ),
+	                            '  '
+	                        ),
+	                        ' '
+	                    ) },
+	                ' ',
+	                this.props.content,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return ToolPanel;
+	})(React.Component);
+
+	module.exports = ToolPanel;
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Panel = ReactBootstrap.Panel;
+
+	var Button = ReactBootstrap.Button;
+	var Archive = __webpack_require__(178);
+
+	var SessionSlider = (function (_React$Component) {
+	    _inherits(SessionSlider, _React$Component);
+
+	    function SessionSlider(props) {
+	        _classCallCheck(this, SessionSlider);
+
+	        _get(Object.getPrototypeOf(SessionSlider.prototype), 'constructor', this).call(this, props);
+	        this.log = Archive.history;
+
+	        this.state = {
+	            max: 1,
+	            value: 0,
+	            open: this.props.open
+	        };
+
+	        this._runLog = this._runLog.bind(this);
+	        this._setReactState = this._setReactState.bind(this);
+	    }
+
+	    _createClass(SessionSlider, [{
+	        key: '_setReactState',
+	        value: function _setReactState() {
+	            console.log('Slider');
+	            this.setState({
+	                max: Archive.history._undoHistory.length + Archive.history._redoHistory.length,
+	                value: Archive.history._undoHistory.length
+	            });
+	        }
+	    }, {
+	        key: '_runLog',
+	        value: function _runLog(e, value) {
+	            var delta = e.target.value - Archive.history.undoHistory.length;
+	            if (delta < 0) this.log.undo(-delta);else this.log.redo(delta);
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var cc = WeaveAPI.SessionManager.getCallbackCollection(Archive.history);
+	            cc.addImmediateCallback(this, this._setReactState, true);
+	        }
+
+	        // Unbind change listener
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            var cc = WeaveAPI.SessionManager.getCallbackCollection(Archive.history);
+	            cc.removeCallback(this._setReactState);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this = this;
+
+	            var options = [];
+	            for (var i = 0; i <= this.state.max; i++) {
+	                var option = React.createElement(
+	                    'option',
+	                    { key: i },
+	                    ' ',
+	                    i,
+	                    ' '
+	                );
+	                options.push(option);
+	            }
+
+	            return React.createElement(
+	                'div',
+	                { className: 'slider' },
+	                React.createElement(
+	                    Button,
+	                    { className: 'sliderBtn',
+	                        bsSize: 'small',
+	                        onClick: function () {
+	                            return _this.setState({
+	                                open: !_this.state.open
+	                            });
+	                        } },
+	                    ' ',
+	                    this.state.open ? React.createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-circle-down' },
+	                        ' '
+	                    ) : React.createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-circle-up' },
+	                        ' '
+	                    ),
+	                    ' '
+	                ),
+	                React.createElement(
+	                    Panel,
+	                    { collapsible: true, expanded: this.state.open },
+	                    ' ',
+	                    React.createElement(
+	                        'input',
+	                        { type: 'range',
+	                            min: 0,
+	                            max: this.state.max,
+
+	                            value: this.state.value,
+	                            onChange: this._runLog,
+
+	                            list: 'steplist'
+
+	                        },
+	                        ' ',
+	                        React.createElement(
+	                            'datalist',
+	                            { id: 'steplist' },
+	                            ' ',
+	                            options,
+	                            ' '
+	                        )
+	                    ),
+	                    ' '
+	                ),
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return SessionSlider;
+	})(React.Component);
+
+	module.exports = SessionSlider;
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var _utilsAppendVendorPrefix = __webpack_require__(186);
+
+	var _utilsAppendVendorPrefix2 = _interopRequireDefault(_utilsAppendVendorPrefix);
+
+	var _utilsStyles = __webpack_require__(188);
+
+	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
+
+	var Layout = __webpack_require__(182);
+	var Settings = __webpack_require__(189);
+
+	var ChartContent = (function (_React$Component) {
+	    _inherits(ChartContent, _React$Component);
+
+	    function ChartContent(props) {
+	        _classCallCheck(this, ChartContent);
+
+	        _get(Object.getPrototypeOf(ChartContent.prototype), 'constructor', this).call(this, props);
+	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	        this.slideBarStyle = window.NavigationHashMap.getObject("slideBarStyle");
+	        this._updateState = this._updateState.bind(this);
+	        this._toggleMenu = this._toggleMenu.bind(this);
+	        this.state = {
+	            isOpen: this.activeTool.value.length > 0,
+	            style: this.slideBarStyle.value
+	        };
+	    }
+
+	    _createClass(ChartContent, [{
+	        key: '_updateState',
+	        value: function _updateState() {
+	            this.setState({
+	                isOpen: this.activeTool.value.length > 0,
+	                style: this.slideBarStyle.value
+	            });
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.activeTool.addImmediateCallback(this, this._updateState);
+	            this.slideBarStyle.addImmediateCallback(this, this._updateState);
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.activeTool.removeCallback(this._updateState);
+	            this.slideBarStyle.removeCallback(this._updateState);
+	        }
+	    }, {
+	        key: '_toggleMenu',
+	        value: function _toggleMenu() {
+
+	            if (this.activeTool.value.length > 0) this.activeTool.value = '';
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            return _react2['default'].createElement(
+	                'div',
+	                { id: 'outer-container',
+	                    style: _utilsStyles2['default'].outerContainer(!this.state.isOpen, this.state.style) },
+	                ' ',
+	                _react2['default'].createElement(Settings, { isOpen: this.state.isOpen,
+	                    style: this.state.style
+	                }),
+	                _react2['default'].createElement('div', {
+
+	                    onClick: this._toggleMenu,
+	                    style: _utilsStyles2['default'].overlay(this.state.isOpen, this.state.style) }),
+	                ' ',
+	                _react2['default'].createElement(
+	                    'div',
+	                    { id: 'page-wrap',
+	                        style: _utilsStyles2['default'].pageWrap(!this.state.isOpen, this.state.style) },
+	                    ' ',
+	                    _react2['default'].createElement(Layout, { alignment: 'left' }),
+	                    ' '
+	                ),
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return ChartContent;
+	})(_react2['default'].Component);
+
+	module.exports = ChartContent;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var getVendorPropertyName = __webpack_require__(187);
+
+	module.exports = function (target, sources) {
+	    var to = Object(target);
+	    var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+	    for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+	        var nextSource = arguments[nextIndex];
+	        if (nextSource == null) {
+	            continue;
+	        }
+
+	        var from = Object(nextSource);
+
+	        for (var key in from) {
+	            if (hasOwnProperty.call(from, key)) {
+	                to[key] = from[key];
+	            }
+	        }
+	    }
+
+	    var prefixed = {};
+	    for (var key in to) {
+	        prefixed[getVendorPropertyName(key)] = to[key];
+	    }
+
+	    return prefixed;
+	};
+
+/***/ },
+/* 187 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var div = document.createElement('div');
+	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
+	var domVendorPrefix;
+
+	// Helper function to get the proper vendor property name. (transition => WebkitTransition)
+	module.exports = function (prop) {
+
+	    if (prop in div.style) return prop;
+
+	    var prop = prop.charAt(0).toUpperCase() + prop.substr(1);
+	    if (domVendorPrefix) {
+	        return domVendorPrefix + prop;
+	    } else {
+	        for (var i = 0; i < prefixes.length; ++i) {
+	            var vendorProp = prefixes[i] + prop;
+	            if (vendorProp in div.style) {
+	                domVendorPrefix = prefixes[i];
+	                return vendorProp;
+	            }
+	        }
+	    }
+	};
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var _appendVendorPrefix = __webpack_require__(186);
+
+	var _appendVendorPrefix2 = _interopRequireDefault(_appendVendorPrefix);
+
+	var Styles = (function () {
+	    function Styles() {
+	        _classCallCheck(this, Styles);
+	    }
+
+	    _createClass(Styles, null, [{
+	        key: 'menuWrap',
+	        value: function menuWrap(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: 'fixed',
+	                zIndex: 2,
+	                width: 200,
+	                height: '100%',
+	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
+	                transition: 'all 0.5s',
+	                background: '#f4f4f4'
+	            });
+	        }
+	    }, {
+	        key: 'rightMenuWrap',
+	        value: function rightMenuWrap(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: 'fixed',
+	                zIndex: 2,
+	                width: 200,
+	                right: -200,
+	                height: '100%',
+	                transform: isOpen ? 'translate3d(-100%, 0, 0)' : 'translate3d(0, 0, 0)',
+	                transition: 'all 0.5s',
+	                background: '#f4f4f4'
+	            });
+	        }
+	    }, {
+	        key: 'menu',
+	        value: function menu() {
+	            return (0, _appendVendorPrefix2['default'])({
+	                height: '100%'
+	            });
+	        }
+	    }, {
+	        key: 'overlay',
+	        value: function overlay(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: 'fixed',
+	                width: '100%',
+	                height: '100%',
+	                background: 'rgba(0, 0, 0, 0.1)',
+	                opacity: isOpen ? 1 : 0,
+	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
+	                transition: isOpen ? 'opacity 0.5s' : 'opacity 0.5s, transform 0.1s 0.5s',
+	                zIndex: 1
+	            });
+	        }
+	    }, {
+	        key: 'pageWrap',
+	        value: function pageWrap(isOpen, type) {
+	            var transform, overflow;
+	            if (type === 'scaleRotate') {
+	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(100px, 0, -600px) rotateY(-20deg)';
+	            } else if (type === 'scaleDown') {
+	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
+	            }
+
+	            return (0, _appendVendorPrefix2['default'])({
+	                transform: transform,
+	                transformStyle: 'preserve-3d',
+	                transition: 'all 0.5s',
+	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }, {
+	        key: 'rightPageWrap',
+	        value: function rightPageWrap(isOpen, type) {
+	            var transform, overflow;
+	            if (type === 'scaleRotate') {
+	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100px, 0, -600px) rotateY(20deg)';
+	            } else if (type === 'scaleDown') {
+	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
+	            }
+
+	            return (0, _appendVendorPrefix2['default'])({
+	                transform: transform,
+	                transformStyle: 'preserve-3d',
+	                transition: 'all 0.5s',
+	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }, {
+	        key: 'outerContainer',
+	        value: function outerContainer(isOpen) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                perspective: '1500px',
+	                overflow: isOpen ? '' : 'hidden'
+	            });
+	        }
+	    }, {
+	        key: 'introText',
+	        value: function introText(isDesktop) {
+	            return (0, _appendVendorPrefix2['default'])({
+	                position: "fixed",
+	                bottom: 120,
+	                right: 120
+	            });
+	        }
+	    }]);
+
+	    return Styles;
+	})();
+
+	exports['default'] = Styles;
+	module.exports = exports['default'];
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var _SideBar = __webpack_require__(190);
+
+	var _SideBar2 = _interopRequireDefault(_SideBar);
+
+	var _ToolSettings = __webpack_require__(191);
+
+	var _ToolSettings2 = _interopRequireDefault(_ToolSettings);
+
+	var Label = ReactBootstrap.Label;
+	var Panel = ReactBootstrap.Panel;
+	var Input = ReactBootstrap.Input;
+
+	var SettingsBar = (function (_React$Component) {
+	    _inherits(SettingsBar, _React$Component);
+
+	    function SettingsBar(props) {
+	        _classCallCheck(this, SettingsBar);
+
+	        _get(Object.getPrototypeOf(SettingsBar.prototype), 'constructor', this).call(this, props);
+	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
+	        this._updateState = this._updateState.bind(this);
+	        this.state = {
+	            activeTool: this.activeTool.value
+	        };
+	    }
+
+	    _createClass(SettingsBar, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.activeTool.addImmediateCallback(this, this._updateState, true, true);
+	        }
+	    }, {
+	        key: '_updateState',
+	        value: function _updateState() {
+	            console.log(' Settings Bar');
+	            this.setState({
+	                activeTool: this.activeTool.value
+	            });
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.activeTool.removeCallback(this._updateState);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var currentTool = this.state.activeTool;
+
+	            var toolSettings = React.createElement('div', null);
+	            if (this.props.isOpen) {
+	                var toolObj = this.tools.getObject(currentTool);
+	                toolSettings = React.createElement(_ToolSettings2['default'], { toolName: currentTool,
+	                    tool: toolObj
+	                });
+	            }
+
+	            return React.createElement(
+	                _SideBar2['default'],
+	                { isOpen: this.props.isOpen,
+	                    style: this.props.style },
+	                toolSettings,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return SettingsBar;
+	})(React.Component);
+
+	module.exports = SettingsBar;
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _utilsStyles = __webpack_require__(188);
+
+	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
+
+	var SideBar = (function (_React$Component) {
+	    _inherits(SideBar, _React$Component);
+
+	    function SideBar(props) {
+	        _classCallCheck(this, SideBar);
+
+	        _get(Object.getPrototypeOf(SideBar.prototype), 'constructor', this).call(this, props);
+
+	        this.toggleMenu = this.toggleMenu.bind(this);
+	        this.listenForClose = this.listenForClose.bind(this);
+	    }
+
+	    _createClass(SideBar, [{
+	        key: 'toggleMenu',
+	        value: function toggleMenu() {
+	            // Order important: handle wrappers before setting sidebar state.
+	            this.activeTool = window.NavigationHashMap.getObject("activeTool");
+	            if (this.activeTool.value.length > 0) this.activeTool.value = '';
+	        }
+	    }, {
+	        key: 'listenForClose',
+	        value: function listenForClose(e) {
+	            e = e || window.event;
+
+	            if (this.props.isOpen && (e.key === 'Escape' || e.keyCode === 27)) {
+	                this.toggleMenu();
+	            }
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            window.onkeydown = this.listenForClose;
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            window.onkeydown = null;
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2['default'].createElement(
+	                'div',
+	                null,
+	                _react2['default'].createElement(
+	                    'div',
+	                    { id: this.props.id,
+	                        style: _utilsStyles2['default'].menuWrap(this.props.isOpen) },
+	                    _react2['default'].createElement(
+	                        'div',
+	                        { className: 'bm-menu',
+	                            style: _utilsStyles2['default'].menu(this.props.isOpen) },
+	                        ' ',
+	                        this.props.children,
+	                        ' '
+	                    ),
+	                    '    '
+	                ),
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return SideBar;
+	})(_react2['default'].Component);
+
+	module.exports = SideBar;
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var _SideBar = __webpack_require__(190);
+
+	var _SideBar2 = _interopRequireDefault(_SideBar);
+
+	var _PropertiesSettings = __webpack_require__(192);
+
+	var _PropertiesSettings2 = _interopRequireDefault(_PropertiesSettings);
+
+	var Label = ReactBootstrap.Label;
+	var Panel = ReactBootstrap.Panel;
+	var Input = ReactBootstrap.Input;
+
+	var ToolSettings = (function (_React$Component) {
+	    _inherits(ToolSettings, _React$Component);
+
+	    function ToolSettings(props) {
+	        _classCallCheck(this, ToolSettings);
+
+	        _get(Object.getPrototypeOf(ToolSettings.prototype), 'constructor', this).call(this, props);
+
+	        this.tool = this.props.tool;
+	        this.state = {
+	            dataSourcePath: this.tool.sessionData.dataSourcePath.getSessionState()
+	        };
+
+	        this._setReactState = this._setReactState.bind(this);
+	        this.updateColumns = this.updateColumns.bind(this);
+	        this._close = this._close.bind(this);
+	        this._handleDatSourceChange = this._handleDatSourceChange.bind(this);
+	        this.isDataSourceChanged = false;
+	    }
+
+	    _createClass(ToolSettings, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var cc = WeaveAPI.SessionManager.getCallbackCollection(this.tool.sessionData.dataSourcePath);
+	            cc.addImmediateCallback(this, this.updateColumns);
+	            cc.addImmediateCallback(this, this._setReactState);
+	        }
+	    }, {
+	        key: 'updateColumns',
+	        value: function updateColumns() {
+	            var cols = this.tool.sessionData.dataSourceWatcher.target.columns;
+	            var colProperties = this.tool.sessionData.getColumnProperties();
+	            for (var i = 0; i < colProperties.length; i++) {
+	                this.tool.sessionData[colProperties[i]].value = cols[i];
+	            }
+	        }
+	    }, {
+	        key: '_setReactState',
+	        value: function _setReactState() {
+	            console.log('Tool Settings');
+
+	            this.setState({
+	                dataSourcePath: this.tool.sessionData.dataSourcePath.getSessionState()
+	            });
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: '_close',
+	        value: function _close() {
+	            window.NavigationHashMap.getObject("activeTool").value = "";
+	        }
+	    }, {
+	        key: '_handleDatSourceChange',
+	        value: function _handleDatSourceChange(event) {
+
+	            var path = WeaveAPI.SessionManager.getPath(WeaveAPI.globalHashMap, AdapterAPI.peer.dataSources.getObject(event.target.value));
+	            var property = event.target.id;
+	            this.isDataSourceChanged = true;
+
+	            this.tool.sessionData[property].targetPath = path;
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            var cc = WeaveAPI.SessionManager.getCallbackCollection(this.tool.sessionData.dataSourcePath);
+	            cc.removeCallback(this._setReactState);
+	            cc.removeCallback(this.updateColumns);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            var dataSourceUI = React.createElement('div', null);
+	            var ui = React.createElement(
+	                Label,
+	                null,
+	                ' No Chart selected Yet '
+	            );
+
+	            var colProperties = this.tool.sessionData.getColumnProperties();
+	            var path = this.state.dataSourcePath;
+	            var ds = WeaveAPI.SessionManager.getObject(WeaveAPI.globalHashMap, path);
+	            var cols = ds.columns;
+	            ui = React.createElement(_PropertiesSettings2['default'], { columnProperties: colProperties,
+	                columns: cols,
+	                toolData: this.tool.sessionData,
+	                isDataSourceChanged: this.isDataSourceChanged
+	            });
+
+	            var propertyName = 'Data Source';
+
+	            var id = 'dataSourceWatcher';
+	            var sources = AdapterAPI.peer.dataSources.getNames();
+	            var options = sources.map(function (sourceName, id) {
+	                return React.createElement(
+	                    'option',
+	                    { key: sourceName,
+	                        value: sourceName },
+	                    ' ',
+	                    sourceName,
+	                    ' '
+	                );
+	            });
+
+	            var currentValue = path[path.length - 1];
+
+	            dataSourceUI = React.createElement(
+	                Input,
+	                { type: 'select',
+	                    label: propertyName,
+
+	                    id: id,
+
+	                    value: currentValue,
+	                    placeholder: 'select',
+
+	                    onChange: this._handleDatSourceChange },
+	                ' ',
+	                options,
+	                ' '
+	            );
+
+	            return React.createElement(
+	                Panel,
+	                { className: 'settingsBar',
+	                    header: React.createElement(
+	                        'div',
+	                        null,
+	                        ' ',
+	                        this.props.toolName,
+	                        ' ',
+	                        React.createElement(
+	                            'span',
+	                            { className: 'pull-right' },
+	                            ' ',
+	                            React.createElement(
+	                                'i',
+	                                { className: 'fa fa-times fa-fw fa-pointer',
+	                                    onClick: this._close },
+	                                ' '
+	                            ),
+	                            '  '
+	                        ),
+	                        ' '
+	                    ) },
+	                dataSourceUI,
+	                ui
+	            );
+	        }
+	    }]);
+
+	    return ToolSettings;
+	})(React.Component);
+
+	module.exports = ToolSettings;
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var _ColumnSettings = __webpack_require__(193);
+
+	var _ColumnSettings2 = _interopRequireDefault(_ColumnSettings);
+
+	var Input = ReactBootstrap.Input;
+
+	var PropertiesSettings = (function (_React$Component) {
+	    _inherits(PropertiesSettings, _React$Component);
+
+	    function PropertiesSettings(props) {
+	        _classCallCheck(this, PropertiesSettings);
+
+	        _get(Object.getPrototypeOf(PropertiesSettings.prototype), 'constructor', this).call(this, props);
+	    }
+
+	    _createClass(PropertiesSettings, [{
+	        key: 'render',
+	        value: function render() {
+
+	            var ui = this.props.columnProperties.map((function (property, index) {
+
+	                return React.createElement(_ColumnSettings2['default'], { key: index,
+	                    propertyName: property,
+	                    sessionProperty: this.props.toolData[property],
+	                    columns: this.props.columns
+	                });
+	            }).bind(this));
+	            return React.createElement(
+	                'div',
+	                null,
+	                ' ',
+	                ui,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return PropertiesSettings;
+	})(React.Component);
+
+	module.exports = PropertiesSettings;
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var React = _interopRequireWildcard(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	var Input = ReactBootstrap.Input;
+
+	var ColumnSettings = (function (_React$Component) {
+	    _inherits(ColumnSettings, _React$Component);
+
+	    function ColumnSettings(props) {
+	        _classCallCheck(this, ColumnSettings);
+
+	        _get(Object.getPrototypeOf(ColumnSettings.prototype), 'constructor', this).call(this, props);
+	        this._handleChange = this._handleChange.bind(this);
+	        this._updateState = this._updateState.bind(this);
+
+	        this.sessionProperty = this.props.sessionProperty;
+
+	        this.state = {
+	            selectedValue: this.sessionProperty.value
+	        };
+	    }
+
+	    _createClass(ColumnSettings, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.sessionProperty.addImmediateCallback(this, this._updateState, true);
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {}
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.sessionProperty.removeCallback(this._updateState);
+	        }
+	    }, {
+	        key: '_handleChange',
+	        value: function _handleChange(event) {
+	            this.sessionProperty.value = event.target.value;
+	        }
+	    }, {
+	        key: '_updateState',
+	        value: function _updateState() {
+	            console.log('8*****************************');
+	            this.setState({
+	                selectedValue: this.sessionProperty.value
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var options = this.props.columns.map(function (columnName, id) {
+	                return React.createElement(
+	                    'option',
+	                    { key: columnName,
+	                        value: columnName },
+	                    ' ',
+	                    columnName,
+	                    ' '
+	                );
+	            });
+
+	            return React.createElement(
+	                Input,
+	                { type: 'select',
+	                    label: this.props.propertyName,
+
+	                    id: this.props.propertyName,
+
+	                    value: this.state.selectedValue,
+	                    placeholder: 'select',
+
+	                    onChange: this._handleChange },
+	                ' ',
+	                options,
+	                ' '
+	            );
+	        }
+	    }]);
+
+	    return ColumnSettings;
+	})(React.Component);
+
+	module.exports = ColumnSettings;
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(175);
+
+	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
+
+	__webpack_require__(195);
+
+	var HumanAPIDataSource = __webpack_require__(196);
+	var FlipCard = __webpack_require__(201);
+	var Navbar = ReactBootstrap.Navbar;
+
+	var Grid = ReactBootstrap.Grid;
+	var Row = ReactBootstrap.Row;
+	var Col = ReactBootstrap.Col;
+
+	var DataSource = (function (_React$Component) {
+	    _inherits(DataSource, _React$Component);
+
+	    function DataSource(props) {
+	        _classCallCheck(this, DataSource);
+
+	        _get(Object.getPrototypeOf(DataSource.prototype), 'constructor', this).call(this, props);
+	        this.mql = window.matchMedia('(min-width: 800px)');
+	        this.state = { isDesktop: this.mql.matches };
+	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+	        this.hc = AdapterAPI.peer.requestDataSource("HumanConnect", HumanAPIDataSource);
+	    }
+
+	    _createClass(DataSource, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.mql.addListener(this.mediaQueryChanged);
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.mql.removeListener(this.mediaQueryChanged);
+	        }
+	    }, {
+	        key: 'mediaQueryChanged',
+	        value: function mediaQueryChanged() {
+	            this.setState({ isDesktop: this.mql.matches });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var dataSourceList = AdapterAPI.peer.dataSources.getObjects().map((function (dataSource, index) {
+	                if (dataSource.isAPIDataSource) {
+	                    var name = dataSource['name'];
+	                    var companyUrl = dataSource['companyUrl'];
+	                    var logoUrl = dataSource['logoUrl'];
+	                    var bgColor = dataSource['backgroundColor'];
+	                    var connectFn = dataSource['connect'].bind(dataSource);
+	                    var apiCalls = dataSource['apiCalls'];
+
+	                    return _react2['default'].createElement(
+	                        Col,
+	                        { key: index, xs: 12,
+	                            md: 3 },
+	                        _react2['default'].createElement(FlipCard, { key: index, title: name, companyURL: companyUrl, logoURL: logoUrl, connector: connectFn, bgColor: bgColor, apiCalls: apiCalls })
+	                    );
+	                } else {
+	                    var name = AdapterAPI.peer.dataSources.getName(dataSource);
+	                    var bgColor = 'red';
+	                    return _react2['default'].createElement(
+	                        Col,
+	                        { key: index, xs: 12,
+	                            md: 3 },
+	                        _react2['default'].createElement(FlipCard, { key: index, title: name, companyURL: null, logoURL: null, connector: null, bgColor: bgColor, apiCalls: [] })
+	                    );
+	                }
+	            }).bind(this));
+	            var title = this.state.isDesktop ? "Data Source" : _react2['default'].createElement(
+	                'span',
+	                null,
+	                ' ',
+	                _react2['default'].createElement(
+	                    'a',
+	                    { href: '#home' },
+	                    ' ',
+	                    _react2['default'].createElement(
+	                        'i',
+	                        { className: 'fa fa-chevron-left' },
+	                        ' '
+	                    ),
+	                    'Data Source '
+	                )
+	            );
+
+	            return _react2['default'].createElement(
+	                'div',
+	                null,
+	                _react2['default'].createElement(Navbar, { brand: title
+	                }),
+	                _react2['default'].createElement(
+	                    Grid,
+	                    null,
+	                    ' ',
+	                    _react2['default'].createElement(
+	                        Row,
+	                        null,
+	                        dataSourceList
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return DataSource;
+	})(_react2['default'].Component);
+
+	exports['default'] = DataSource;
+	module.exports = exports['default'];
+
+/***/ },
+/* 195 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_195__;
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var HumanAPIServices = __webpack_require__(197);
+	var APIDataSource = __webpack_require__(199);
+
+	(function () {
+	    Object.defineProperty(HumanAPIDataSource, 'NS', {
+	        value: 'Asme'
+	    });
+
+	    Object.defineProperty(HumanAPIDataSource, 'CLASS_NAME', {
+	        value: 'HumanAPIDataSource'
+	    });
+
+	    function HumanAPIDataSource() {
+
+	        APIDataSource.call(this);
+
+	        Object.defineProperty(this, 'name', {
+	            value: 'Human API'
+	        });
+
+	        Object.defineProperty(this, 'companyUrl', {
+	            value: 'https://www.humanapi.co/'
+	        });
+
+	        Object.defineProperty(this, 'logoUrl', {
+	            value: 'images/HumanAPI.png'
+	        });
+
+	        Object.defineProperty(this, 'backgroundColor', {
+	            value: "#2C3D51"
+	        });
+
+	        Object.defineProperty(this, 'wellnessAPIs', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableVariable([]))
+	        });
+
+	        Object.defineProperty(this, 'activities', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false, null, false))
+	        });
+
+	        Object.defineProperty(this, '_promise', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkablePromise(this.getActivities.bind(this), this._describePromise.bind(this), false))
+	        });
+
+	        this.apiCalls = [this.toggleActivities.bind(this)];
+
+	        this._promise.depend(this.activities);
+	        this.initiate();
+	    }
+
+	    HumanAPIDataSource.prototype = new APIDataSource();
+	    HumanAPIDataSource.prototype.constructor = HumanAPIDataSource;
+
+	    var p = HumanAPIDataSource.prototype;
+
+	    p._describePromise = function () {
+	        console.log('Promise call initiated');
+	    };
+
+	    p.connect = function () {
+	        if (!this.sessionToken.userID.value) {
+	            this.sessionToken.userID.value = "sanjay1909@gmail.com";
+	            this.sessionToken.publicToken.value = '3b14fe511ccc9e602727e75007480f25';
+	            this.sessionToken.accessToken.value = 'NL4V3fJIGM3DXkeJIYH5OfW-__g=mX1Z6GQx6a19e2ac8c192e77e66036d997fc0a9b2103f52760ee8b620aa53a1f1eec87959a8c9e87e72b26c85d47510f2fc9a2300f71598a36a6a996c23d9f49533c9a69edb812c62e28149f07a70235babf9e8e99f5c15476e32607fea4f32171b580c22b668b5b763c0b68f04881cbf5ed0ab3';
+	            this.sessionToken.humanID.value = '565ca01149bd0f998e64a1c8d236f9df';
+	        }
+
+	        var inst = this;
+	        var options = {
+	            modal: 1,
+	            clientUserId: encodeURIComponent(this.sessionToken.userID.value), // can be email
+	            clientId: '9f9e4c03e02ab9e4ac8f264e65005b77e962cf8d', // found in Developer Portal
+	            finish: function finish(err, sessionTokenObject) {
+	                console.log(sessionTokenObject);
+	                // callback that would be called after user finishes
+	                // connecting data.
+
+	                var auth = new HumanAPIServices.AuthService('AsmeServlet');
+
+	                var prom = auth.getToken(sessionTokenObject);
+	                prom.then(function (response) {
+	                    inst.sessionToken.humanID.value = response['humanId'];
+	                    inst.sessionToken.publicToken.value = response['publicToken'];
+	                    inst.sessionToken.accessToken.value = response['accessToken'];
+	                }, function (error) {
+	                    console.log('failed');
+	                });
+	            },
+	            close: function close() {
+	                // optional callback that will be called if the user
+	                // closes the popup without connecting any data sources.
+	            },
+	            error: function error(err) {
+	                console.log(err);
+	                // optional callback that will be called if an error occurs while
+	                // loading the popup.
+	                // `err` is an object with the fields: `code`, `message`, `detailedMessage`
+	            }
+	        };
+	        if (this.sessionToken.publicToken.value) {
+	            options.publicToken = this.sessionToken.publicToken.value;
+	        }
+	        HumanConnect.open(options);
+	    };
+
+	    p.toggleActivities = function (value) {
+	        this.activities.value = !this.activities.value;
+	    };
+
+	    p.getActivities = function (useServlet) {
+	        useServlet = useServlet === undefined ? false : useServlet;
+
+	        if (this.sessionToken.accessToken.value) {
+	            var dataService = useServlet ? new HumanAPIServices.DataService('AsmeDataService') : new HumanAPIServices.DataAPIService('https://api.humanapi.co/v1/human/activities');
+	            return dataService.getActivities(this.sessionToken.accessToken.value);
+	        } else {
+	            console.warn('No Access token');
+	            return null;
+	        }
+	    };
+
+	    p._setData = function () {
+	        if (this._promise.result) {
+	            console.log('_setData:', this._promise.result);
+	            this.data.setSessionState(this._promise.result);
+	        } else console.error('Error:', this._promise.error);
+	    };
+
+	    p.initiate = function () {
+	        WeaveAPI.SessionManager.getCallbackCollection(this._promise).addImmediateCallback(null, this._setData.bind(this));
+	    };
+
+	    p.dispose = function () {
+	        WeaveAPI.SessionManager.getCallbackCollection(this._promise).removeCallback(this._setData);
+	    };
+
+	    if (true) {
+	        module.exports = HumanAPIDataSource;
+	    } else {
+	        console.log('window is used');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.HumanAPIDataSource = HumanAPIDataSource;
+	    }
+	})();
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Servlet = __webpack_require__(198);
+
+	(function () {
+	    'use strict';
+
+	    var SERVLET_URL = 'http://localhost:8080/AsmeHealthDataService';
+	    var API_URL = 'http://localhost:8080/AsmeHealthDataService';
+
+	    var HumanAPIServices = function HumanAPIServices() {};
+
+	    // User API
+	    // =======
+
+	    HumanAPIServices.AuthService = function (servlet) {
+	        this.servlet = '/' + servlet;
+
+	        this.getToken = function (sessionTokenObject) {
+
+	            //return _request("POST", this.servlet, sessionTokenObject);
+	            return Servlet.queryService(SERVLET_URL + this.servlet, 'getToken', [sessionTokenObject], null, 'getToken');
+	        };
+	    };
+
+	    // User API
+	    // =======
+
+	    HumanAPIServices.DataService = function (servlet) {
+	        this.servlet = '/' + servlet;
+
+	        /*function (err, res) {
+	            cb(err, res);
+	        }*/
+	        this.getInfo = function (accessToken) {
+
+	            return Servlet.queryService(SERVLET_URL + this.servlet, 'getInfo', [accessToken], null, 'getInfo');
+	        };
+
+	        this.getDemoData = function () {
+
+	            return Servlet.queryService(SERVLET_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
+	        };
+
+	        this.getActivities = function (accessToken) {
+
+	            return Servlet.queryService(SERVLET_URL + this.servlet, 'getActivities', [accessToken], null, 'getActivties');
+	        };
+	    };
+
+	    HumanAPIServices.DataAPIService = function (API_URL) {
+	        this.API_URL = API_URL;
+	        this.getActivities = function (accessToken) {
+	            return Servlet.queryAPIService(this.API_URL + '?access_token=' + accessToken, null, 'getActivties');
+	        };
+	    };
+
+	    if (true) {
+	        module.exports = HumanAPIServices;
+	    } else {
+	        console.log('window is used: HumanConnect');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.HumanAPIServices = HumanAPIServices;
+	    }
+	}).call(undefined);
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	//idead of referencing the promise's resolve and reject take from weave - weaveClient Project
+	/**
+	 * Queries a JSON RPC 2.0 service.
+	 * @param {string} url The URL of the service.
+	 * @param {string} method Name of the method to call on the server.
+	 * @param {?Array|Object} params Parameters for the server method.
+	 * @param {Function} resultHandler Optional Function to call when the RPC call returns.  This function will be passed the result of the method as the first parameter.
+	 * @param {string|number=} queryId Optional id to be associated with this RPC call.  This will be passed as the second parameter to the resultHandler function.
+	 * @return A Promise.
+	 */
+	"use strict";
+
+	var Servlet = {
+	    queryService: function queryService(url, method, params, resultHandler, queryId) {
+
+	        var data = {
+	            jsonrpc: "2.0",
+	            id: queryId || "no_id",
+	            method: method,
+	            params: params
+	        };
+
+	        var client = new XMLHttpRequest();
+	        client.open('POST', url, true);
+	        client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	        client.onload = function (e) {
+	            if (client.readyState === 4) {
+	                if (client.status === 200) {
+	                    _handleResponse(client.response, true);
+	                } else {
+	                    _handleResponse(client.statusText, true);
+	                }
+	            }
+	        };
+	        client.onerror = function (e) {
+	            _handleResponse(client.statusText, true);
+	        };
+
+	        client.send(JSON.stringify(data));
+
+	        var promise, resolve, reject;
+	        if (window.Promise) {
+	            promise = new Promise(function (_resolve, _reject) {
+	                resolve = _resolve;
+	                reject = _reject;
+	            });
+	        }
+
+	        function _handleResponse(response) {
+	            var jsonResponse = JSON.parse(response);
+	            try {
+	                if (jsonResponse.error) {
+	                    if (promise) reject(jsonResponse.error);else console.error(response);
+	                } else {
+	                    if (resultHandler) resultHandler(jsonResponse.result, queryId);
+	                    if (promise) // which calls the function attached with then
+	                        resolve(jsonResponse.result);
+	                }
+	            } catch (e) {
+	                if (promise) reject(e);else console.error(e);
+	            }
+	        }
+
+	        return promise;
+	    },
+
+	    /**
+	     * Makes a batch request to a JSON RPC 2.0 service.
+	     * @param {string} url The URL of the service.
+	     * @param {string} method Name of the method to call on the server for each entry in the queryIdToParams mapping.
+	     * @param {Array|Object} queryIdToParams A mapping from queryId to RPC parameters.
+	     * @param {function(Array|Object)} resultsHandler Optional Function to receive a mapping from queryId to RPC result.
+	     * @return A Promise.
+	     */
+	    bulkQueryService: function bulkQueryService(url, method, queryIdToParams, resultsHandler) {
+	        var batch = [];
+	        for (var queryId in queryIdToParams) {
+	            var m = typeof method === 'string' ? method : method[queryId];
+	            batch.push({
+	                jsonrpc: "2.0",
+	                id: queryId,
+	                method: m,
+	                params: queryIdToParams[queryId]
+	            });
+	        }
+	        if (batch.length) {
+	            var client = new XMLHttpRequest();
+	            client.open('POST', servletURL, true);
+	            client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	            client.onload = function (e) {
+	                if (client.readyState === 4) {
+	                    if (client.status === 200) {
+	                        handleBatch(client.responseText);
+	                    } else {
+	                        handleBatch(client.statusText);
+	                    }
+	                }
+	            };
+	            client.onerror = function (e) {
+	                handleBatch(client.statusText);
+	            };
+
+	            client.send(JSON.stringify(batch));
+	        } else setTimeout(handleBatch, 0);
+
+	        var promise, resolve, reject;
+	        if (window.Promise) {
+	            promise = new Promise(function (_resolve, _reject) {
+	                resolve = _resolve;
+	                reject = _reject;
+	            });
+	        }
+
+	        function handleBatch(batchResponse) {
+	            try {
+	                var results = Array.isArray(queryIdToParams) ? [] : {};
+	                var foundError = false;
+	                for (var i in batchResponse) {
+	                    var response = batchResponse[i];
+	                    if (response.error) {
+	                        results[response.id] = response.error;
+	                        foundError = true;
+	                    } else {
+	                        results[response.id] = response.result;
+	                    }
+	                }
+	                if (foundError) {
+	                    if (promise) reject(results);else console.error(JSON.stringify(results, null, 3));
+	                } else {
+	                    if (resultsHandler) resultsHandler(results);
+	                    if (promise) resolve(results);
+	                }
+	            } catch (e) {
+	                if (promise) reject(e);else console.error(e);
+	            }
+	        }
+
+	        return promise;
+	    },
+
+	    queryAPIService: function queryAPIService(url, resultHandler, queryId) {
+
+	        var client = new XMLHttpRequest();
+	        client.open('GET', url, true);
+	        client.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	        client.onload = function (e) {
+	            if (client.readyState === 4) {
+	                if (client.status === 200) {
+	                    _handleResponse(client.response, false, false);
+	                } else {
+	                    _handleResponse(client.statusText, false, true);
+	                }
+	            }
+	        };
+	        client.onerror = function (e) {
+	            _handleResponse(client.statusText, false, true);
+	        };
+
+	        client.send();
+
+	        var promise, resolve, reject;
+	        if (window.Promise) {
+	            promise = new Promise(function (_resolve, _reject) {
+	                resolve = _resolve;
+	                reject = _reject;
+	            });
+	        }
+
+	        function _handleResponse(response, isServletCall, isError) {
+	            var jsonResponse;
+	            if (!isServletCall) {
+	                jsonResponse = JSON.parse(response);
+	                try {
+	                    if (isError) {
+	                        if (promise) reject(jsonResponse);else console.error(response);
+	                    } else {
+	                        if (resultHandler) resultHandler(jsonResponse, queryId);
+	                        if (promise) // which calls the function attached with then
+	                            resolve(jsonResponse);
+	                    }
+	                } catch (e) {
+	                    if (promise) reject(e);else console.error(e);
+	                }
+	            } else {
+	                jsonResponse = JSON.parse(response);
+	                try {
+	                    if (jsonResponse.error) {
+	                        if (promise) reject(jsonResponse.error);else console.error(response);
+	                    } else {
+	                        if (resultHandler) resultHandler(jsonResponse.result, queryId);
+	                        if (promise) // which calls the function attached with then
+	                            resolve(jsonResponse.result);
+	                    }
+	                } catch (e) {
+	                    if (promise) reject(e);else console.error(e);
+	                }
+	            }
+	        }
+
+	        return promise;
+	    },
+
+	    /**
+	     * Makes a batch request to a JSON RPC 2.0 service.
+	     * @param {string} url The URL of the service.
+	     * @param {string} method Name of the method to call on the server for each entry in the queryIdToParams mapping.
+	     * @param {Array|Object} queryIdToParams A mapping from queryId to RPC parameters.
+	     * @param {function(Array|Object)} resultsHandler Optional Function to receive a mapping from queryId to RPC result.
+	     * @return A Promise.
+	     */
+	    bulkQueryAPIService: function bulkQueryAPIService(url, method, queryIdToParams, resultsHandler) {
+	        var batch = [];
+	        for (var queryId in queryIdToParams) {
+	            var m = typeof method === 'string' ? method : method[queryId];
+	            batch.push({
+	                jsonrpc: "2.0",
+	                id: queryId,
+	                method: m,
+	                params: queryIdToParams[queryId]
+	            });
+	        }
+	        if (batch.length) {
+	            var client = new XMLHttpRequest();
+	            client.open('POST', servletURL, true);
+
+	            client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	            client.onload = function (e) {
+	                if (client.readyState === 4) {
+	                    if (client.status === 200) {
+	                        handleBatch(client.responseText);
+	                    } else {
+	                        handleBatch(client.statusText);
+	                    }
+	                }
+	            };
+	            client.onerror = function (e) {
+	                handleBatch(client.statusText);
+	            };
+
+	            client.send(JSON.stringify(batch));
+	        } else setTimeout(handleBatch, 0);
+
+	        var promise, resolve, reject;
+	        if (window.Promise) {
+	            promise = new Promise(function (_resolve, _reject) {
+	                resolve = _resolve;
+	                reject = _reject;
+	            });
+	        }
+
+	        function handleBatch(batchResponse) {
+	            try {
+	                var results = Array.isArray(queryIdToParams) ? [] : {};
+	                var foundError = false;
+	                for (var i in batchResponse) {
+	                    var response = batchResponse[i];
+	                    if (response.error) {
+	                        results[response.id] = response.error;
+	                        foundError = true;
+	                    } else {
+	                        results[response.id] = response.result;
+	                    }
+	                }
+	                if (foundError) {
+	                    if (promise) reject(results);else console.error(JSON.stringify(results, null, 3));
+	                } else {
+	                    if (resultsHandler) resultsHandler(results);
+	                    if (promise) resolve(results);
+	                }
+	            } catch (e) {
+	                if (promise) reject(e);else console.error(e);
+	            }
+	        }
+
+	        return promise;
+	    }
+
+	};
+
+	if (true) {
+	    module.exports = Servlet;
+	} else {
+	    console.log('window is used');
+	    window.Asme = window.Asme ? window.Asme : {};
+	    window.Asme.Servlet = Servlet;
+	}
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var SessionToken = __webpack_require__(200);
+
+	(function () {
+	    Object.defineProperty(APIDataSource, 'NS', {
+	        value: 'Asme'
+	    });
+
+	    Object.defineProperty(APIDataSource, 'CLASS_NAME', {
+	        value: 'APIDataSource'
+	    });
+
+	    function APIDataSource() {
+	        Object.defineProperty(this, 'isAPIDataSource', {
+	            value: true
+	        });
+	        Object.defineProperty(this, 'sessionToken', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new SessionToken())
+	        });
+
+	        this.apiCalls = [];
+	    }
+
+	    APIDataSource.prototype = new adapter.session.DataSource();
+	    APIDataSource.prototype.constructor = APIDataSource;
+	    var p = APIDataSource.prototype;
+
+	    if (true) {
+	        module.exports = APIDataSource;
+	    } else {
+	        console.log('window is used');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.APIDataSource = APIDataSource;
+	    }
+	})();
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	(function () {
+	    Object.defineProperty(SessionToken, 'NS', {
+	        value: 'Asme'
+	    });
+
+	    Object.defineProperty(SessionToken, 'CLASS_NAME', {
+	        value: 'SessionToken'
+	    });
+
+	    function SessionToken() {
+	        Object.defineProperty(this, 'sessionable', {
+	            value: true
+	        });
+
+	        Object.defineProperty(this, 'userID', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+
+	        Object.defineProperty(this, 'humanID', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+
+	        Object.defineProperty(this, 'publicToken', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+	        Object.defineProperty(this, 'accessToken', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+	    }
+
+	    var p = SessionToken.prototype;
+
+	    if (true) {
+	        module.exports = SessionToken;
+	    } else {
+	        console.log('window is used');
+	        window.Asme = window.Asme ? window.Asme : {};
+	        window.Asme.SessionToken = SessionToken;
+	    }
+	})();
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CardFront = __webpack_require__(202);
+	var CardBack = __webpack_require__(203);
+
+	var FlipCard = (function (_React$Component) {
+	    _inherits(FlipCard, _React$Component);
+
+	    function FlipCard(props) {
+	        _classCallCheck(this, FlipCard);
+
+	        _get(Object.getPrototypeOf(FlipCard.prototype), 'constructor', this).call(this, props);
+
+	        this.state = {
+	            flipped: false
+	        };
+
+	        this.flip = this.flip.bind(this);
+	    }
+
+	    _createClass(FlipCard, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {}
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {}
+	    }, {
+	        key: 'flip',
+	        value: function flip() {
+	            this.setState({ flipped: !this.state.flipped });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var apiList = this.props.apiCalls.map(function (apiCall, index) {
+	                return React.createElement('input', { key: index, type: 'button', value: 'Activities', onClick: function () {
+	                        apiCall(true);
+	                    } });
+	            });
+
+	            var logo = this.props.logoURL ? React.createElement('img', { src: this.props.logoURL }) : "";
+	            var connectorButton = this.props.connector ? React.createElement(
+	                'span',
+	                { className: 'card__button', onClick: this.props.connector },
+	                'Connect'
+	            ) : "";
+
+	            return React.createElement(
+	                'div',
+	                { className: 'card horizontal card--big' },
+	                React.createElement(
+	                    'div',
+	                    { className: "flipper" + (this.state.flipped ? " flipped" : "") },
+	                    React.createElement(
+	                        CardFront,
+	                        null,
+	                        React.createElement(
+	                            'div',
+	                            { style: { backgroundColor: this.props.bgColor }, className: 'card__content' },
+	                            React.createElement(
+	                                'h2',
+	                                { className: 'card__title' },
+	                                this.props.title
+	                            ),
+	                            React.createElement(
+	                                'span',
+	                                { className: 'card__logo' },
+	                                logo
+	                            )
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { className: 'card__action-bar', style: { color: this.props.bgColor } },
+	                            connectorButton,
+	                            React.createElement(
+	                                'span',
+	                                { className: 'card__button pull-right', onClick: this.flip },
+	                                React.createElement('i', { className: 'fa fa-repeat' })
+	                            )
+	                        )
+	                    ),
+	                    React.createElement(
+	                        CardBack,
+	                        null,
+	                        React.createElement(
+	                            'div',
+	                            { className: 'card__content' },
+	                            apiList
+	                        ),
+	                        React.createElement(
+	                            'div',
+	                            { style: { color: this.props.bgColor }, className: 'card__action-bar' },
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                'Settings'
+	                            ),
+	                            React.createElement(
+	                                'span',
+	                                { className: 'card__button pull-right', onClick: this.flip },
+	                                React.createElement('i', { className: 'fa fa-repeat' })
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return FlipCard;
+	})(React.Component);
+
+	exports['default'] = FlipCard;
+	module.exports = exports['default'];
+
+/***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CardFront = (function (_React$Component) {
+	    _inherits(CardFront, _React$Component);
+
+	    function CardFront() {
+	        _classCallCheck(this, CardFront);
+
+	        _get(Object.getPrototypeOf(CardFront.prototype), "constructor", this).apply(this, arguments);
+	    }
+
+	    _createClass(CardFront, [{
+	        key: "render",
+	        value: function render() {
+
+	            return React.createElement(
+	                "div",
+	                { className: "front" },
+	                " ",
+	                this.props.children,
+	                " "
+	            );
+	        }
+	    }]);
+
+	    return CardFront;
+	})(React.Component);
+
+	exports["default"] = CardFront;
+	module.exports = exports["default"];
+
+/***/ },
+/* 203 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CardBack = (function (_React$Component) {
+	    _inherits(CardBack, _React$Component);
+
+	    function CardBack() {
+	        _classCallCheck(this, CardBack);
+
+	        _get(Object.getPrototypeOf(CardBack.prototype), "constructor", this).apply(this, arguments);
+	    }
+
+	    _createClass(CardBack, [{
+	        key: "render",
+	        value: function render() {
+	            return React.createElement(
+	                "div",
+	                { className: "back" },
+	                " ",
+	                this.props.children,
+	                " "
+	            );
+	        }
+	    }]);
+
+	    return CardBack;
+	})(React.Component);
+
+	exports["default"] = CardBack;
+	module.exports = exports["default"];
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var Users = (function (_React$Component) {
+	  _inherits(Users, _React$Component);
+
+	  function Users() {
+	    _classCallCheck(this, Users);
+
+	    _get(Object.getPrototypeOf(Users.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(Users, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'h1',
+	        null,
+	        'Users - Under Development'
+	      );
+	    }
+	  }]);
+
+	  return Users;
+	})(_react2['default'].Component);
+
+	exports['default'] = Users;
+	module.exports = exports['default'];
+
+/***/ },
+/* 205 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(177);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var ErrorPage = (function (_React$Component) {
+	  _inherits(ErrorPage, _React$Component);
+
+	  function ErrorPage() {
+	    _classCallCheck(this, ErrorPage);
+
+	    _get(Object.getPrototypeOf(ErrorPage.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(ErrorPage, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'h1',
+	        null,
+	        'ErrorPage'
+	      );
+	    }
+	  }]);
+
+	  return ErrorPage;
+	})(_react2['default'].Component);
+
+	exports['default'] = ErrorPage;
+	module.exports = exports['default'];
+
+/***/ },
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23643,1585 +25985,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = FileReaderButton;
 
 /***/ },
-/* 183 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var React = _interopRequireWildcard(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var Grid = ReactBootstrap.Grid;
-	var Row = ReactBootstrap.Row;
-	var Col = ReactBootstrap.Col;
-	var ToolPanel = __webpack_require__(184);
-
-	var Layout = (function (_React$Component) {
-	    _inherits(Layout, _React$Component);
-
-	    function Layout(props) {
-	        _classCallCheck(this, Layout);
-
-	        _get(Object.getPrototypeOf(Layout.prototype), 'constructor', this).call(this, props);
-	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
-
-	        this.state = {
-	            names: this.tools.getNames()
-	        };
-	        this._updateState = this._updateState.bind(this);
-
-	        this.columns = window.NavigationHashMap.getObject("columns").getSessionState();
-	    }
-
-	    _createClass(Layout, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            this.tools.childListCallbacks.addImmediateCallback(this, this._updateState);
-	        }
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {}
-	    }, {
-	        key: '_updateState',
-	        value: function _updateState() {
-	            this.setState({
-	                names: this.tools.getNames()
-	            });
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            this.tools.childListCallbacks.removeCallback(this, this._updateState);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var children = [];
-	            //var toolName = "";
-	            if (this.state.names) {
-	                for (var i = 0; i < this.state.names.length; i++) {
-	                    var toolName = this.state.names[i];
-	                    var tool = this.tools.getObject(toolName);
-	                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value);
-	                    tool.sessionData.xAxis.value = tool.sessionData.xAxis.value ? tool.sessionData.xAxis.value : this.columns[0];
-	                    tool.sessionData.yAxis.value = tool.sessionData.yAxis.value ? tool.sessionData.yAxis.value : this.columns[4];
-	                    console.log(tool.sessionData.xAxis.value, tool.sessionData.yAxis.value, this.columns);
-	                    var padding = {
-	                        top: 20,
-	                        bottom: 40,
-	                        left: 40,
-	                        right: 20
-	                    };
-	                    //d3 tool
-
-	                    var interaction = {};
-	                    if (tool.library === 'd3') {
-	                        interaction = {
-	                            onProbe: {
-	                                showToolTip: true,
-	                                callback: function callback(d) {
-	                                    adapter.weaveInteractionPeer.activeHook = this;
-	                                    adapter.weaveInteractionPeer.doProbe(d);
-	                                }
-	                            },
-	                            onSelect: {
-	                                callback: function callback(keys) {
-	                                    adapter.weaveInteractionPeer.activeHook = this;
-	                                    adapter.weaveInteractionPeer.doSelection(keys);
-	                                }
-	                            }
-	                        };
-	                    } else if (tool.library === 'c3') {
-	                        interaction = {
-	                            onProbe: {
-	                                showToolTip: true,
-	                                callback: function callback(data) {
-	                                    adapter.weaveInteractionPeer.activeHook = this;
-	                                    adapter.weaveInteractionPeer.doProbe(data.index);
-	                                }
-	                            },
-	                            onSelect: {
-	                                callback: function callback(keys) {
-	                                    keys = this.selected();
-	                                    adapter.weaveInteractionPeer.activeHook = this;
-	                                    if (keys.constructor === Array) adapter.weaveInteractionPeer.doSelection(keys.map(function (key) {
-	                                        return key.index;
-	                                    }), true);else adapter.weaveInteractionPeer.doSelection([keys.index], true);
-	                                }
-	                            }
-	                        };
-	                    }
-
-	                    tool.createUI(padding, {}, interaction);
-	                    var columnCount = 6;
-	                    //var columnCount = this.state.names.length === 1 ? 12 : 6
-	                    children.push(React.createElement(
-	                        Col,
-	                        { xs: 12,
-	                            md: columnCount },
-	                        ' ',
-	                        React.createElement(ToolPanel, { title: toolName,
-	                            content: tool.ui,
-	                            sessionedTool: tool
-	                        })
-	                    ));
-	                }
-	            }
-
-	            return React.createElement(
-	                Grid,
-	                null,
-	                ' ',
-	                React.createElement(
-	                    Row,
-	                    null,
-	                    ' ',
-	                    children,
-	                    ' '
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Layout;
-	})(React.Component);
-
-	module.exports = Layout;
-	/*< div className = {
-	            'layout ' + moveClass + this.props.alignment
-	        } >*/
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var React = _interopRequireWildcard(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var Panel = ReactBootstrap.Panel;
-	var Button = ReactBootstrap.Button;
-
-	var ToolPanel = (function (_React$Component) {
-	    _inherits(ToolPanel, _React$Component);
-
-	    function ToolPanel(props) {
-	        _classCallCheck(this, ToolPanel);
-
-	        _get(Object.getPrototypeOf(ToolPanel.prototype), 'constructor', this).call(this, props);
-
-	        this._closePanel = this._closePanel.bind(this);
-	        this._openSettings = this._openSettings.bind(this);
-	    }
-
-	    _createClass(ToolPanel, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {}
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {}
-	    }, {
-	        key: '_closePanel',
-	        value: function _closePanel() {
-	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
-	            var name = tools.getName(this.props.sessionedTool);
-	            tools.removeObject(name);
-	        }
-	    }, {
-	        key: '_openSettings',
-	        value: function _openSettings() {
-	            var tools = WeaveAPI.globalHashMap.getObject("hooks");
-	            var name = tools.getName(this.props.sessionedTool);
-	            var activetool = window.NavigationHashMap.getObject("activeTool");
-	            activetool.value = name;
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {}
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return React.createElement(
-	                Panel,
-	                { header: React.createElement(
-	                        'div',
-	                        null,
-	                        ' ',
-	                        this.props.title,
-	                        ' ',
-	                        React.createElement(
-	                            'span',
-	                            { className: 'pull-right' },
-	                            ' ',
-	                            React.createElement(
-	                                'i',
-	                                { className: 'fa fa-wrench fa-fw fa-pointer',
-	                                    onClick: this._openSettings },
-	                                ' '
-	                            ),
-	                            '   ',
-	                            React.createElement(
-	                                'i',
-	                                { className: 'fa fa-trash-o fa-fw fa-pointer',
-	                                    onClick: this._closePanel },
-	                                ' '
-	                            ),
-	                            '  '
-	                        ),
-	                        ' '
-	                    ) },
-	                ' ',
-	                this.props.content,
-	                ' '
-	            );
-	        }
-	    }]);
-
-	    return ToolPanel;
-	})(React.Component);
-
-	module.exports = ToolPanel;
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var React = _interopRequireWildcard(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var _componentsSideBar = __webpack_require__(186);
-
-	var _componentsSideBar2 = _interopRequireDefault(_componentsSideBar);
-
-	var Label = ReactBootstrap.Label;
-	var Panel = ReactBootstrap.Panel;
-	var Input = ReactBootstrap.Input;
-
-	var Settingsbar = (function (_React$Component) {
-	    _inherits(Settingsbar, _React$Component);
-
-	    function Settingsbar(props) {
-	        _classCallCheck(this, Settingsbar);
-
-	        _get(Object.getPrototypeOf(Settingsbar.prototype), 'constructor', this).call(this, props);
-	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
-	        this.tools = WeaveAPI.globalHashMap.getObject("hooks");
-	        this._close = this._close.bind(this);
-	        this._handleChange = this._handleChange.bind(this);
-	        //hack to make ui render the selected value
-	        // to-do: find a better solution
-	        this.state = {
-	            changed: false
-	        };
-	    }
-
-	    _createClass(Settingsbar, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {}
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {}
-	    }, {
-	        key: '_close',
-	        value: function _close() {
-	            this.activeTool.value = "";
-	        }
-	    }, {
-	        key: '_handleChange',
-	        value: function _handleChange(event) {
-	            // console.log(event.target, event.target.value);
-	            var property = event.target.id;
-	            var tool = this.tools.getObject(this.activeTool.value);
-	            tool.sessionData[property].value = event.target.value;
-	            this.setState({
-	                changed: !this.state.changed
-	            });
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {}
-	    }, {
-	        key: 'render',
-	        value: function render() {
-
-	            var ui = React.createElement(
-	                Label,
-	                null,
-	                ' No Chart selected Yet '
-	            );
-	            if (this.activeTool.value.length > 0) {
-	                var tool = this.tools.getObject(this.activeTool.value);
-	                if (tool) {
-	                    var columnProperties = tool.sessionData.getColumnProperties();
-	                    var columns = window.NavigationHashMap.getObject("columns").getSessionState();
-	                    ui = columnProperties.map((function (property, index) {
-	                        var options = columns.map(function (columnName, id) {
-	                            return React.createElement(
-	                                'option',
-	                                { value: columnName },
-	                                ' ',
-	                                columnName,
-	                                ' '
-	                            );
-	                        });
-
-	                        return React.createElement(
-	                            Input,
-	                            { type: 'select',
-	                                label: property,
-
-	                                id: property,
-
-	                                value: tool.sessionData[property].value,
-	                                placeholder: 'select',
-
-	                                onChange: this._handleChange },
-	                            ' ',
-	                            options,
-	                            ' '
-	                        );
-	                    }).bind(this));
-	                }
-	            }
-
-	            return React.createElement(
-	                _componentsSideBar2['default'],
-	                { isOpen: this.props.isOpen,
-	                    style: this.props.style },
-	                React.createElement(
-	                    Panel,
-	                    { className: 'settingsBar',
-	                        header: React.createElement(
-	                            'div',
-	                            null,
-	                            ' ',
-	                            this.activeTool.value,
-	                            ' ',
-	                            React.createElement(
-	                                'span',
-	                                { className: 'pull-right' },
-	                                ' ',
-	                                React.createElement(
-	                                    'i',
-	                                    { className: 'fa fa-times fa-fw fa-pointer',
-	                                        onClick: this._close },
-	                                    ' '
-	                                ),
-	                                '  '
-	                            ),
-	                            ' '
-	                        ) },
-	                    ui
-	                ),
-	                ' '
-	            );
-	        }
-	    }]);
-
-	    return Settingsbar;
-	})(React.Component);
-
-	module.exports = Settingsbar;
-
-/***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _utilsStyles = __webpack_require__(187);
-
-	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
-
-	var SideBar = (function (_React$Component) {
-	    _inherits(SideBar, _React$Component);
-
-	    function SideBar(props) {
-	        _classCallCheck(this, SideBar);
-
-	        _get(Object.getPrototypeOf(SideBar.prototype), 'constructor', this).call(this, props);
-
-	        this.toggleMenu = this.toggleMenu.bind(this);
-	        this.listenForClose = this.listenForClose.bind(this);
-	    }
-
-	    _createClass(SideBar, [{
-	        key: 'toggleMenu',
-	        value: function toggleMenu() {
-	            // Order important: handle wrappers before setting sidebar state.
-	            this.activeTool = window.NavigationHashMap.getObject("activeTool");
-	            if (this.activeTool.value.length > 0) this.activeTool.value = '';
-	        }
-	    }, {
-	        key: 'listenForClose',
-	        value: function listenForClose(e) {
-	            e = e || window.event;
-
-	            if (this.props.isOpen && (e.key === 'Escape' || e.keyCode === 27)) {
-	                this.toggleMenu();
-	            }
-	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            window.onkeydown = this.listenForClose;
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            window.onkeydown = null;
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2['default'].createElement(
-	                'div',
-	                null,
-	                _react2['default'].createElement(
-	                    'div',
-	                    { id: this.props.id,
-	                        style: _utilsStyles2['default'].menuWrap(this.props.isOpen) },
-	                    _react2['default'].createElement(
-	                        'div',
-	                        { className: 'bm-menu',
-	                            style: _utilsStyles2['default'].menu(this.props.isOpen) },
-	                        ' ',
-	                        this.props.children,
-	                        ' '
-	                    ),
-	                    '    '
-	                ),
-	                ' '
-	            );
-	        }
-	    }]);
-
-	    return SideBar;
-	})(_react2['default'].Component);
-
-	module.exports = SideBar;
-
-/***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	var _appendVendorPrefix = __webpack_require__(188);
-
-	var _appendVendorPrefix2 = _interopRequireDefault(_appendVendorPrefix);
-
-	var Styles = (function () {
-	    function Styles() {
-	        _classCallCheck(this, Styles);
-	    }
-
-	    _createClass(Styles, null, [{
-	        key: 'menuWrap',
-	        value: function menuWrap(isOpen) {
-	            return (0, _appendVendorPrefix2['default'])({
-	                position: 'fixed',
-	                zIndex: 2,
-	                width: 200,
-	                height: '100%',
-	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
-	                transition: 'all 0.5s',
-	                background: '#f4f4f4'
-	            });
-	        }
-	    }, {
-	        key: 'rightMenuWrap',
-	        value: function rightMenuWrap(isOpen) {
-	            return (0, _appendVendorPrefix2['default'])({
-	                position: 'fixed',
-	                zIndex: 2,
-	                width: 200,
-	                right: -200,
-	                height: '100%',
-	                transform: isOpen ? 'translate3d(-100%, 0, 0)' : 'translate3d(0, 0, 0)',
-	                transition: 'all 0.5s',
-	                background: '#f4f4f4'
-	            });
-	        }
-	    }, {
-	        key: 'menu',
-	        value: function menu() {
-	            return (0, _appendVendorPrefix2['default'])({
-	                height: '100%'
-	            });
-	        }
-	    }, {
-	        key: 'overlay',
-	        value: function overlay(isOpen) {
-	            return (0, _appendVendorPrefix2['default'])({
-	                position: 'fixed',
-	                width: '100%',
-	                height: '100%',
-	                background: 'rgba(0, 0, 0, 0.1)',
-	                opacity: isOpen ? 1 : 0,
-	                transform: isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
-	                transition: isOpen ? 'opacity 0.5s' : 'opacity 0.5s, transform 0.1s 0.5s',
-	                zIndex: 1
-	            });
-	        }
-	    }, {
-	        key: 'pageWrap',
-	        value: function pageWrap(isOpen, type) {
-	            var transform, overflow;
-	            if (type === 'scaleRotate') {
-	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(100px, 0, -600px) rotateY(-20deg)';
-	            } else if (type === 'scaleDown') {
-	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
-	            }
-
-	            return (0, _appendVendorPrefix2['default'])({
-	                transform: transform,
-	                transformStyle: 'preserve-3d',
-	                transition: 'all 0.5s',
-	                overflow: isOpen ? '' : 'hidden'
-	            });
-	        }
-	    }, {
-	        key: 'rightPageWrap',
-	        value: function rightPageWrap(isOpen, type) {
-	            var transform, overflow;
-	            if (type === 'scaleRotate') {
-	                transform = isOpen ? 'translate3d(0, 0, 0)' : 'translate3d(-100px, 0, -600px) rotateY(20deg)';
-	            } else if (type === 'scaleDown') {
-	                transform = isOpen ? 'translate3d(0, 0, 1px)' : 'translate3d(0, 0, -300px)';
-	            }
-
-	            return (0, _appendVendorPrefix2['default'])({
-	                transform: transform,
-	                transformStyle: 'preserve-3d',
-	                transition: 'all 0.5s',
-	                overflow: isOpen ? '' : 'hidden'
-	            });
-	        }
-	    }, {
-	        key: 'outerContainer',
-	        value: function outerContainer(isOpen) {
-	            return (0, _appendVendorPrefix2['default'])({
-	                perspective: '1500px',
-	                overflow: isOpen ? '' : 'hidden'
-	            });
-	        }
-	    }, {
-	        key: 'introText',
-	        value: function introText(isDesktop) {
-	            return (0, _appendVendorPrefix2['default'])({
-	                position: "fixed",
-	                bottom: 120,
-	                right: 120
-	            });
-	        }
-	    }]);
-
-	    return Styles;
-	})();
-
-	exports['default'] = Styles;
-	module.exports = exports['default'];
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var getVendorPropertyName = __webpack_require__(189);
-
-	module.exports = function (target, sources) {
-	    var to = Object(target);
-	    var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-	    for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
-	        var nextSource = arguments[nextIndex];
-	        if (nextSource == null) {
-	            continue;
-	        }
-
-	        var from = Object(nextSource);
-
-	        for (var key in from) {
-	            if (hasOwnProperty.call(from, key)) {
-	                to[key] = from[key];
-	            }
-	        }
-	    }
-
-	    var prefixed = {};
-	    for (var key in to) {
-	        prefixed[getVendorPropertyName(key)] = to[key];
-	    }
-
-	    return prefixed;
-	};
-
-/***/ },
-/* 189 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var div = document.createElement('div');
-	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
-	var domVendorPrefix;
-
-	// Helper function to get the proper vendor property name. (transition => WebkitTransition)
-	module.exports = function (prop) {
-
-	    if (prop in div.style) return prop;
-
-	    var prop = prop.charAt(0).toUpperCase() + prop.substr(1);
-	    if (domVendorPrefix) {
-	        return domVendorPrefix + prop;
-	    } else {
-	        for (var i = 0; i < prefixes.length; ++i) {
-	            var vendorProp = prefixes[i] + prop;
-	            if (vendorProp in div.style) {
-	                domVendorPrefix = prefixes[i];
-	                return vendorProp;
-	            }
-	        }
-	    }
-	};
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var React = _interopRequireWildcard(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var Panel = ReactBootstrap.Panel;
-
-	var Button = ReactBootstrap.Button;
-	var Archive = __webpack_require__(178);
-
-	var SessionSlider = (function (_React$Component) {
-	    _inherits(SessionSlider, _React$Component);
-
-	    function SessionSlider(props) {
-	        _classCallCheck(this, SessionSlider);
-
-	        _get(Object.getPrototypeOf(SessionSlider.prototype), 'constructor', this).call(this, props);
-	        this.log = Archive.history;
-
-	        this.state = {
-	            max: 1,
-	            value: 0,
-	            open: this.props.open
-	        };
-
-	        this._runLog = this._runLog.bind(this);
-	        this._setReactState = this._setReactState.bind(this);
-	    }
-
-	    _createClass(SessionSlider, [{
-	        key: '_setReactState',
-	        value: function _setReactState() {
-
-	            this.setState({
-	                max: this.log._undoHistory.length + this.log._redoHistory.length,
-	                value: this.log._undoHistory.length
-	            });
-	        }
-	    }, {
-	        key: '_runLog',
-	        value: function _runLog(e, value) {
-	            console.log(e.target.value);
-	            var delta = e.target.value - this.log.undoHistory.length;
-	            if (delta < 0) this.log.undo(-delta);else this.log.redo(delta);
-	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var cc = WeaveAPI.SessionManager.getCallbackCollection(this.log);
-	            cc.addGroupedCallback(this, this._setReactState, true);
-	        }
-
-	        // Unbind change listener
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            var cc = WeaveAPI.SessionManager.getCallbackCollection(this.log);
-	            cc.removeCallback(this._setReactState);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _this = this;
-
-	            var options = [];
-	            for (var i = 0; i <= this.state.max; i++) {
-	                var option = React.createElement(
-	                    'option',
-	                    null,
-	                    ' ',
-	                    i,
-	                    ' '
-	                );
-	                options.push(option);
-	            }
-
-	            return React.createElement(
-	                'div',
-	                { className: 'slider' },
-	                React.createElement(
-	                    Button,
-	                    { className: 'sliderBtn',
-	                        bsSize: 'small',
-	                        onClick: function () {
-	                            return _this.setState({
-	                                open: !_this.state.open
-	                            });
-	                        } },
-	                    ' ',
-	                    this.state.open ? React.createElement(
-	                        'i',
-	                        { className: 'fa fa-chevron-circle-down' },
-	                        ' '
-	                    ) : React.createElement(
-	                        'i',
-	                        { className: 'fa fa-chevron-circle-up' },
-	                        ' '
-	                    ),
-	                    ' '
-	                ),
-	                React.createElement(
-	                    Panel,
-	                    { collapsible: true, expanded: this.state.open },
-	                    ' ',
-	                    React.createElement(
-	                        'input',
-	                        { type: 'range',
-	                            min: 0,
-	                            max: this.state.max,
-
-	                            value: this.state.value,
-	                            onChange: this._runLog,
-
-	                            list: 'steplist'
-
-	                        },
-	                        ' ',
-	                        React.createElement(
-	                            'datalist',
-	                            { id: 'steplist' },
-	                            ' ',
-	                            options,
-	                            ' '
-	                        )
-	                    ),
-	                    ' '
-	                ),
-	                ' '
-	            );
-	        }
-	    }]);
-
-	    return SessionSlider;
-	})(React.Component);
-
-	module.exports = SessionSlider;
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var _utilsAppendVendorPrefix = __webpack_require__(188);
-
-	var _utilsAppendVendorPrefix2 = _interopRequireDefault(_utilsAppendVendorPrefix);
-
-	var _utilsStyles = __webpack_require__(187);
-
-	var _utilsStyles2 = _interopRequireDefault(_utilsStyles);
-
-	var Layout = __webpack_require__(183);
-	var Settings = __webpack_require__(185);
-
-	var ChartContent = (function (_React$Component) {
-	    _inherits(ChartContent, _React$Component);
-
-	    function ChartContent(props) {
-	        _classCallCheck(this, ChartContent);
-
-	        _get(Object.getPrototypeOf(ChartContent.prototype), 'constructor', this).call(this, props);
-	        this.activeTool = window.NavigationHashMap.getObject("activeTool");
-	        this.slideBarStyle = window.NavigationHashMap.getObject("slideBarStyle");
-	        this._updateState = this._updateState.bind(this);
-	        this._toggleMenu = this._toggleMenu.bind(this);
-	        this.state = {
-	            isOpen: this.activeTool.value.length > 0,
-	            style: this.slideBarStyle.value
-	        };
-	    }
-
-	    _createClass(ChartContent, [{
-	        key: '_updateState',
-	        value: function _updateState() {
-	            this.setState({
-	                isOpen: this.activeTool.value.length > 0,
-	                style: this.slideBarStyle.value
-	            });
-	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            this.activeTool.addImmediateCallback(this, this._updateState);
-	            this.slideBarStyle.addImmediateCallback(this, this._updateState);
-	        }
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {}
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            this.activeTool.removeCallback(this, this._updateState);
-	            this.slideBarStyle.removeCallback(this, this._updateState);
-	        }
-	    }, {
-	        key: '_toggleMenu',
-	        value: function _toggleMenu() {
-
-	            if (this.activeTool.value.length > 0) this.activeTool.value = '';
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2['default'].createElement(
-	                'div',
-	                { id: 'outer-container',
-	                    style: _utilsStyles2['default'].outerContainer(!this.state.isOpen, this.state.style) },
-	                _react2['default'].createElement(Settings, { isOpen: this.state.isOpen,
-	                    style: this.state.style
-	                }),
-	                '   ',
-	                _react2['default'].createElement('div', {
-
-	                    onClick: this._toggleMenu,
-	                    style: _utilsStyles2['default'].overlay(this.state.isOpen, this.state.style) }),
-	                ' ',
-	                _react2['default'].createElement(
-	                    'div',
-	                    { id: 'page-wrap',
-	                        style: _utilsStyles2['default'].pageWrap(!this.state.isOpen, this.state.style) },
-	                    ' ',
-	                    _react2['default'].createElement(Layout, { alignment: 'left' }),
-	                    ' '
-	                ),
-	                ' '
-	            );
-	        }
-	    }]);
-
-	    return ChartContent;
-	})(_react2['default'].Component);
-
-	module.exports = ChartContent;
-
-/***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactBootstrap = __webpack_require__(175);
-
-	var ReactBootstrap = _interopRequireWildcard(_reactBootstrap);
-
-	var _servicesHumanAPIServicesJs = __webpack_require__(193);
-
-	var HumanAPIServices = _interopRequireWildcard(_servicesHumanAPIServicesJs);
-
-	__webpack_require__(195);
-
-	var HumanConnectSession = __webpack_require__(196);
-	var Navbar = ReactBootstrap.Navbar;
-
-	var DataSource = (function (_React$Component) {
-	    _inherits(DataSource, _React$Component);
-
-	    function DataSource(props) {
-	        _classCallCheck(this, DataSource);
-
-	        _get(Object.getPrototypeOf(DataSource.prototype), 'constructor', this).call(this, props);
-	        this.mql = window.matchMedia('(min-width: 800px)');
-	        this.state = { isDesktop: this.mql.matches };
-	        this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
-	        this.clickListener = this.clickListener.bind(this);
-	        this.activitesDataClickListener = this.activitesDataClickListener.bind(this);
-	        this._setReactState = this._setReactState.bind(this);
-	        this.hc = WeaveAPI.globalHashMap.requestObject("humanConnect", HumanConnectSession);
-	        this._promise = WeaveAPI.SessionManager.registerLinkableChild(this.hc, new weavecore.LinkablePromise(this._getActivities.bind(this), this._describePromise.bind(this), false));
-	    }
-
-	    _createClass(DataSource, [{
-	        key: '_describePromise',
-	        value: function _describePromise() {
-	            console.log('Promise call initiated');
-	        }
-	    }, {
-	        key: '_getActivities',
-	        value: function _getActivities() {
-	            if (this.hc.accessToken.value) {
-	                var dataService = new HumanAPIServices.DataService('AsmeDataService');
-	                return dataService.getActivities(this.hc.accessToken.value);
-	            } else return null;
-	        }
-	    }, {
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            this.mql.addListener(this.mediaQueryChanged);
-	            this.setState({ isDesktop: this.mql.matches });
-	            this._promise.depend(this.hc.accessToken);
-	            WeaveAPI.SessionManager.getCallbackCollection(this._promise).addImmediateCallback(null, this._setReactState.bind(this));
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            this.mql.removeListener(this.mediaQueryChanged);
-	            WeaveAPI.SessionManager.getCallbackCollection(this._promise).removeCallback(this._setReactState.bind(this));
-	            this._promise.dispose();
-	        }
-	    }, {
-	        key: '_setReactState',
-	        value: function _setReactState() {
-	            if (this._promise.result) {
-	                console.log(this._promise.result);
-	                var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
-	                columns.setSessionState(d3.keys(this._promise.result[0]));
-	                console.log('rows: ', this._promise.result);
-	                WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(this._promise.result);
-	            } else console.log(this._promise.error);
-	        }
-	    }, {
-	        key: 'activitesDataClickListener',
-	        value: function activitesDataClickListener(e) {
-
-	            var dataService = new HumanAPIServices.DataService('AsmeDataService');
-	            var prom;
-	            if (this.hc.accessToken.value) {
-	                prom = dataService.getActivities(this.hc.accessToken.value);
-	            } else {
-	                prom = dataService.getDemoData();
-	            }
-
-	            prom.then((function (response) {
-	                var columns = window.NavigationHashMap.requestObject("columns", weavecore.LinkableVariable);
-	                columns.setSessionState(d3.keys(response[0]));
-	                console.log('rows: ', response);
-	                WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable).setSessionState(response);
-	            }).bind(this), function (error) {
-	                console.log('failed');
-	            });
-	        }
-	    }, {
-	        key: 'clickListener',
-	        value: function clickListener(e) {
-	            if (!this.hc.userID.value) {
-	                this.hc.userID.value = "sanjay1909@gmail.com";
-	                this.hc.publicToken.value = 'f262ac54dc73aaaa7034b5431ff99b6c';
-	            }
-
-	            var inst = this;
-	            var options = {
-	                modal: 1,
-	                clientUserId: encodeURIComponent(this.hc.userID.value), // can be email
-	                clientId: '9f9e4c03e02ab9e4ac8f264e65005b77e962cf8d', // found in Developer Portal
-	                finish: function finish(err, sessionTokenObject) {
-	                    console.log(sessionTokenObject);
-	                    // callback that would be called after user finishes
-	                    // connecting data.
-
-	                    var auth = new HumanAPIServices.AuthService('AsmeServlet');
-
-	                    var prom = auth.getToken(sessionTokenObject);
-	                    prom.then(function (response) {
-	                        inst.hc.humanID.value = response['humanId'];
-	                        inst.hc.publicToken.value = response['publicToken'];
-	                        inst.hc.accessToken.value = response['accessToken'];
-	                    }, function (error) {
-	                        console.log('failed');
-	                    });
-	                },
-	                close: function close() {
-	                    // optional callback that will be called if the user
-	                    // closes the popup without connecting any data sources.
-	                },
-	                error: function error(err) {
-	                    console.log(err);
-	                    // optional callback that will be called if an error occurs while
-	                    // loading the popup.
-	                    // `err` is an object with the fields: `code`, `message`, `detailedMessage`
-	                }
-	            };
-	            if (this.hc.publicToken.value) {
-	                options.publicToken = this.hc.publicToken.value;
-	            }
-	            HumanConnect.open(options);
-	        }
-	    }, {
-	        key: 'mediaQueryChanged',
-	        value: function mediaQueryChanged() {
-	            this.setState({ isDesktop: this.mql.matches });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var title = this.state.isDesktop ? "Data Source" : _react2['default'].createElement(
-	                'span',
-	                null,
-	                ' ',
-	                _react2['default'].createElement(
-	                    'a',
-	                    { href: '#home' },
-	                    ' ',
-	                    _react2['default'].createElement(
-	                        'i',
-	                        { className: 'fa fa-chevron-left' },
-	                        ' '
-	                    ),
-	                    'Data Source '
-	                )
-	            );
-
-	            return _react2['default'].createElement(
-	                'div',
-	                { className: this.state.isDesktop ? "desktop" : "" },
-	                _react2['default'].createElement(Navbar, { brand: title
-	                }),
-	                _react2['default'].createElement('img', { id: 'connect-health-data-btn', src: 'https://connect.humanapi.co/assets/button/blue.png', onClick: this.clickListener }),
-	                _react2['default'].createElement('input', { type: 'button', value: 'Get Activities Datas', onClick: this.activitesDataClickListener })
-	            );
-	        }
-	    }]);
-
-	    return DataSource;
-	})(_react2['default'].Component);
-
-	exports['default'] = DataSource;
-	module.exports = exports['default'];
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Servlet = __webpack_require__(194);
-
-	(function () {
-	    'use strict';
-
-	    var API_URL = 'http://localhost:8080/AsmeHealthDataService';
-
-	    var HumanAPIServices = function HumanAPIServices() {
-
-	        this.getAuth = function (servlet) {
-	            return new HumanAPIServices.Auth(servlet);
-	        };
-	    };
-
-	    // User API
-	    // =======
-
-	    HumanAPIServices.AuthService = function (servlet) {
-	        this.servlet = '/' + servlet;
-
-	        /*function (err, res) {
-	            cb(err, res);
-	        }*/
-	        this.getToken = function (sessionTokenObject) {
-
-	            //return _request("POST", this.servlet, sessionTokenObject);
-	            return Servlet.queryService(API_URL + this.servlet, 'getToken', [sessionTokenObject], null, 'getToken');
-	        };
-	    };
-
-	    // User API
-	    // =======
-
-	    HumanAPIServices.DataService = function (servlet) {
-	        this.servlet = '/' + servlet;
-
-	        /*function (err, res) {
-	            cb(err, res);
-	        }*/
-	        this.getInfo = function (accessToken) {
-
-	            return Servlet.queryService(API_URL + this.servlet, 'getInfo', [accessToken], null, 'getInfo');
-	        };
-
-	        this.getDemoData = function () {
-
-	            return Servlet.queryService(API_URL + this.servlet, 'getDemoData', [], null, 'getDemoData');
-	        };
-
-	        this.getActivities = function (accessToken) {
-
-	            return Servlet.queryService(API_URL + this.servlet, 'getActivities', [], null, 'getActivties');
-	        };
-	    };
-
-	    if (true) {
-	        module.exports = HumanAPIServices;
-	    } else {
-	        console.log('window is used: HumanConnect');
-	        window.Asme = window.Asme ? window.Asme : {};
-	        window.Asme.HumanAPIServices = HumanAPIServices;
-	    }
-	}).call(undefined);
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	//idead of referencing the promise's resolve and reject take from weave - weaveClient Project
-	/**
-	 * Queries a JSON RPC 2.0 service.
-	 * @param {string} url The URL of the service.
-	 * @param {string} method Name of the method to call on the server.
-	 * @param {?Array|Object} params Parameters for the server method.
-	 * @param {Function} resultHandler Optional Function to call when the RPC call returns.  This function will be passed the result of the method as the first parameter.
-	 * @param {string|number=} queryId Optional id to be associated with this RPC call.  This will be passed as the second parameter to the resultHandler function.
-	 * @return A Promise.
-	 */
-	"use strict";
-
-	var Servlet = {
-	    queryService: function queryService(url, method, params, resultHandler, queryId) {
-
-	        var data = {
-	            jsonrpc: "2.0",
-	            id: queryId || "no_id",
-	            method: method,
-	            params: params
-	        };
-
-	        var client = new XMLHttpRequest();
-	        client.open('POST', url, true);
-	        client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-	        client.onload = function (e) {
-	            if (client.readyState === 4) {
-	                if (client.status === 200) {
-	                    _handleResponse(client.response);
-	                } else {
-	                    _handleResponse(client.statusText);
-	                }
-	            }
-	        };
-	        client.onerror = function (e) {
-	            _handleResponse(client.statusText);
-	        };
-
-	        client.send(JSON.stringify(data));
-
-	        var promise, resolve, reject;
-	        if (window.Promise) {
-	            promise = new Promise(function (_resolve, _reject) {
-	                resolve = _resolve;
-	                reject = _reject;
-	            });
-	        }
-
-	        function _handleResponse(response) {
-	            var jsonResponse = JSON.parse(response);
-	            try {
-	                if (jsonResponse.error) {
-	                    if (promise) reject(jsonResponse.error);else console.error(response);
-	                } else {
-	                    if (resultHandler) resultHandler(jsonResponse.result, queryId);
-	                    if (promise) // which calls the function attached with then
-	                        resolve(jsonResponse.result);
-	                }
-	            } catch (e) {
-	                if (promise) reject(e);else console.error(e);
-	            }
-	        }
-
-	        return promise;
-	    },
-
-	    /**
-	     * Makes a batch request to a JSON RPC 2.0 service.
-	     * @param {string} url The URL of the service.
-	     * @param {string} method Name of the method to call on the server for each entry in the queryIdToParams mapping.
-	     * @param {Array|Object} queryIdToParams A mapping from queryId to RPC parameters.
-	     * @param {function(Array|Object)} resultsHandler Optional Function to receive a mapping from queryId to RPC result.
-	     * @return A Promise.
-	     */
-	    bulkQueryService: function bulkQueryService(url, method, queryIdToParams, resultsHandler) {
-	        var batch = [];
-	        for (var queryId in queryIdToParams) {
-	            var m = typeof method === 'string' ? method : method[queryId];
-	            batch.push({
-	                jsonrpc: "2.0",
-	                id: queryId,
-	                method: m,
-	                params: queryIdToParams[queryId]
-	            });
-	        }
-	        if (batch.length) {
-	            var client = new XMLHttpRequest();
-	            client.open('POST', servletURL, true);
-	            client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-	            client.onload = function (e) {
-	                if (client.readyState === 4) {
-	                    if (client.status === 200) {
-	                        handleBatch(client.responseText);
-	                    } else {
-	                        handleBatch(client.statusText);
-	                    }
-	                }
-	            };
-	            client.onerror = function (e) {
-	                handleBatch(client.statusText);
-	            };
-
-	            client.send(JSON.stringify(batch));
-	        } else setTimeout(handleBatch, 0);
-
-	        var promise, resolve, reject;
-	        if (window.Promise) {
-	            promise = new Promise(function (_resolve, _reject) {
-	                resolve = _resolve;
-	                reject = _reject;
-	            });
-	        }
-
-	        function handleBatch(batchResponse) {
-	            try {
-	                var results = Array.isArray(queryIdToParams) ? [] : {};
-	                var foundError = false;
-	                for (var i in batchResponse) {
-	                    var response = batchResponse[i];
-	                    if (response.error) {
-	                        results[response.id] = response.error;
-	                        foundError = true;
-	                    } else {
-	                        results[response.id] = response.result;
-	                    }
-	                }
-	                if (foundError) {
-	                    if (promise) reject(results);else console.error(JSON.stringify(results, null, 3));
-	                } else {
-	                    if (resultsHandler) resultsHandler(results);
-	                    if (promise) resolve(results);
-	                }
-	            } catch (e) {
-	                if (promise) reject(e);else console.error(e);
-	            }
-	        }
-
-	        return promise;
-	    }
-
-	};
-
-	if (true) {
-	    module.exports = Servlet;
-	} else {
-	    console.log('window is used');
-	    window.Asme = window.Asme ? window.Asme : {};
-	    window.Asme.Servlet = Servlet;
-	}
-
-/***/ },
-/* 195 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_195__;
-
-/***/ },
-/* 196 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	(function () {
-	    Object.defineProperty(HumanConnectSession, 'NS', {
-	        value: 'Asme'
-	    });
-
-	    Object.defineProperty(HumanConnectSession, 'CLASS_NAME', {
-	        value: 'HumanConnectSession'
-	    });
-
-	    function HumanConnectSession() {
-	        Object.defineProperty(this, 'sessionable', {
-	            value: true
-	        });
-
-	        Object.defineProperty(this, 'userID', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
-	        });
-
-	        Object.defineProperty(this, 'humanID', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
-	        });
-
-	        Object.defineProperty(this, 'publicToken', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
-	        });
-	        Object.defineProperty(this, 'accessToken', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
-	        });
-	    }
-
-	    var p = HumanConnectSession.prototype;
-
-	    if (true) {
-	        module.exports = HumanConnectSession;
-	    } else {
-	        console.log('window is used');
-	        window.Asme = window.Asme ? window.Asme : {};
-	        window.Asme.HumanConnectSession = HumanConnectSession;
-	    }
-	})();
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var Users = (function (_React$Component) {
-	  _inherits(Users, _React$Component);
-
-	  function Users() {
-	    _classCallCheck(this, Users);
-
-	    _get(Object.getPrototypeOf(Users.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(Users, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'h1',
-	        null,
-	        'Users - Under Development'
-	      );
-	    }
-	  }]);
-
-	  return Users;
-	})(_react2['default'].Component);
-
-	exports['default'] = Users;
-	module.exports = exports['default'];
-
-/***/ },
-/* 198 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(177);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var ErrorPage = (function (_React$Component) {
-	  _inherits(ErrorPage, _React$Component);
-
-	  function ErrorPage() {
-	    _classCallCheck(this, ErrorPage);
-
-	    _get(Object.getPrototypeOf(ErrorPage.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(ErrorPage, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'h1',
-	        null,
-	        'ErrorPage'
-	      );
-	    }
-	  }]);
-
-	  return ErrorPage;
-	})(_react2['default'].Component);
-
-	exports['default'] = ErrorPage;
-	module.exports = exports['default'];
-
-/***/ },
-/* 200 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25316,7 +26080,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.user.logged.value = true;
 
 	                console.log('Successful login for: ' + response.name);
-	                document.getElementById('status').innerHTML = 'Thanks for logging in, ' + response.name + '!';
 	            }).bind(this));
 
 	            FB.api('/me/picture', (function (response) {
@@ -25416,7 +26179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LogIn;
 
 /***/ },
-/* 201 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25440,7 +26203,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        Object.defineProperty(this, 'logged', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false))
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(true))
 	        });
 
 	        Object.defineProperty(this, 'profilePic', {

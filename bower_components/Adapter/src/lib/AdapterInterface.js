@@ -7,6 +7,7 @@ if (typeof window === 'undefined') {
 
 
 (function () {
+
     function Interface() {}
     var p = Interface.prototype;
     /*
@@ -21,8 +22,7 @@ if (typeof window === 'undefined') {
         console.log('this hook doesnt have Probe API')
     };
 
-    p.setData = function () {};
-    p.getData = function () {};
+
 
     adapter.Interface = Interface;
 

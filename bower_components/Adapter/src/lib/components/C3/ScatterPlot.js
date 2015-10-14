@@ -77,15 +77,7 @@ if (typeof window === 'undefined') {
             value: WeaveAPI.SessionManager.registerLinkableChild(this, new adapter.session.ScatterPlot())
         });
 
-        /**
-         * @public
-         * @property chart
-         * @readOnly
-         * @type d3Chart.Scatterplot
-         */
-        /*Object.defineProperty(this, 'chart', {
-            value: c3.generate(WeaveAPI.globalHashMap.getObject('dataSource').getSessionState())
-        });*/
+
 
         /**
          * @public

@@ -38,8 +38,11 @@ gulp.task("demo", ["build"], function (cb) {
             ""))
         .pipe(gulp.dest("./build"));
 
-    gulp.src(["./docs/images/*"])
+    gulp.src(["./docs/images/*", "./demo/images/*"])
         .pipe(gulp.dest("build/images"));
+
+    gulp.src(["./demo/css/*.css"])
+        .pipe(gulp.dest("build/css"));
 
     gulp.src(["./docs/data/*"])
         .pipe(gulp.dest("build/data"));

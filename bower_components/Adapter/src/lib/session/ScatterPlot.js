@@ -13,7 +13,6 @@ if (typeof window === 'undefined') {
     window.adapter.session = window.adapter.session || {};
 }
 
-
 (function () {
 
     Object.defineProperty(ScatterPlot, 'NS', {
@@ -45,7 +44,7 @@ if (typeof window === 'undefined') {
          * @type weavecore.LinkableString
          */
         Object.defineProperty(this, 'xAxis', {
-            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString())
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
         });
 
         /**
@@ -55,13 +54,47 @@ if (typeof window === 'undefined') {
          * @type weavecore.LinkableString
          */
         Object.defineProperty(this, 'yAxis', {
-            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString())
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
         });
 
-        // since c3 creates charts with default config need to set at the time of creation.
-        this.chart;
+        /**
+         * @public
+         * @property keyColumn
+         * @readOnly
+         * @type weavecore.LinkableString
+         */
+        Object.defineProperty(this, 'keyColumn', {
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+        });
+
+        /**
+         * @public
+         * @property dataSourcePath
+         * @readOnly
+         * @type weavecore.LinkableVariable
+         */
+        Object.defineProperty(this, 'dataSourcePath', {
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableVariable([]))
+        });
+
+        /**
+         * @public
+         * @property dataSourceName
+         * @readOnly
+         * @type weavecore.LinkableString
+         */
+        Object.defineProperty(this, '_dataSourceWatcher', {
+            value: new weavecore.LinkableWatcher()
+        });
 
 
+        Object.defineProperty(this, 'dataSourceWatcher', {
+            get: function () {
+                return this._dataSourceWatcher;
+            }
+        });
+
+        WeaveAPI.SessionManager.getCallbackCollection(this.dataSourceWatcher).addImmediateCallback(this, this._updateDataSourcePath.bind(this), true);
     }
 
     // Prototypes
@@ -75,10 +108,16 @@ if (typeof window === 'undefined') {
     p.getSessionStateValue = function () {
         return {
             'xAxis': this.xAxis.value,
-            'yAxis': this.yAxis.value
+            'yAxis': this.yAxis.value,
+            'dataSourcePath': this.dataSourcePath.getSessionState()
         };
 
     };
+
+    p._updateDataSourcePath = function () {
+        var path = this.dataSourceWatcher.targetPath;
+        this.dataSourcePath.setSessionState(path);
+    }
 
     // public methods:
     /**
@@ -90,12 +129,13 @@ if (typeof window === 'undefined') {
 
     };
 
+    // getter function for react State Objects
 
     /**
      * @method getXAxisValue
      * @return {Object}
      */
-    p.getXAxisValue = function () {
+    p.getXAxisState = function () {
         return {
             'xAxis': this.xAxis.value
         };
@@ -105,9 +145,19 @@ if (typeof window === 'undefined') {
      * @method getYAxisValue
      * @return {Object}
      */
-    p.getYAxisValue = function () {
+    p.getYAxisState = function () {
         return {
             'yAxis': this.yAxis.value
+        };
+    };
+
+    /**
+     * @method getDataSourceState
+     * @return {Object}
+     */
+    p.getDataSourceState = function () {
+        return {
+            'dataSourcePath': this.dataSourcePath.getSessionState()
         };
     };
 

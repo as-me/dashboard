@@ -67,8 +67,7 @@ class LogIn extends React.Component {
             this.user.logged.value = true;
 
             console.log('Successful login for: ' + response.name);
-            document.getElementById('status').innerHTML =
-                'Thanks for logging in, ' + response.name + '!';
+
         }.bind(this));
 
         FB.api('/me/picture', function (response) {

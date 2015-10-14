@@ -24,6 +24,7 @@ constructor(props) {
       }
 
       mediaQueryChanged() {
+      console.log('Home ');
         this.setState({isDesktop: this.mql.matches});
       }
 

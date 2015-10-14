@@ -26203,7 +26203,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        Object.defineProperty(this, 'logged', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(true))
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false))
 	        });
 
 	        Object.defineProperty(this, 'profilePic', {

@@ -7,7 +7,7 @@
 		exports["AsmeAdapter"] = factory(require(undefined), require("React"), require("d3chart"), require("c3"));
 	else
 		root["AsmeAdapter"] = factory(root[undefined], root["React"], root["d3chart"], root["c3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_14__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_14__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -56,15 +56,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 
-	__webpack_require__(1);
-	exports.AdapterInterface = __webpack_require__(3);
+	exports.AdapterInterface = __webpack_require__(1);
 	exports.hook = {};
 
-	exports.hook.C3Hook = __webpack_require__(4);
-	exports.hook.D3Hook = __webpack_require__(5);
+	exports.hook.C3Hook = __webpack_require__(2);
+	exports.hook.D3Hook = __webpack_require__(3);
 
 	exports.peer = {};
-	exports.peer.WeaveJSPeer = __webpack_require__(6);
+	exports.peer.WeaveJSPeer = __webpack_require__(4);
 
 	exports.components = {};
 
@@ -74,70 +73,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.components.C3 = {};
 	exports.components.C3.ScatterPlotTool = __webpack_require__(12);
 
-/***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	__webpack_require__(2);
-
 	//namesapce
 	if (typeof window === 'undefined') {
-	    undefined.adapter = undefined.adapter || {};
+	    undefined.AdapterAPI = undefined.AdapterAPI || {};
 	} else {
-	    window.adapter = window.adapter || {};
+	    window.AdapterAPI = window.AdapterAPI || {};
 	}
 
-	if (typeof window === 'undefined') {
-	    undefined.adapter.session = undefined.adapter.session || {};
-	} else {
-	    window.adapter.session = window.adapter.session || {};
-	}
-
-	(function () {
-	    function GlobalData() {
-
-	        /**
-	         * @public
-	         * @property xAxis
-	         * @readOnly
-	         * @type weavecore.LinkableString
-	         */
-	        Object.defineProperty(this, 'dataSource', {
-	            value: WeaveAPI.globalHashMap.requestObject("dataSource", weavecore.LinkableVariable)
-	        });
-	    }
-
-	    // Prototypes
-	    var p = GlobalData.prototype;
-
-	    p.getData = function () {
-	        return this.dataSource.getSessionState();
-	    };
-
-	    // public methods:
-	    /**
-	     * @method getSessionStateValue
-	     * @return {Object}
-	     */
-	    p.getSessionStateValue = function () {
-	        return {
-	            'dataSource': this.dataSource.getSessionState()
-	        };
-	    };
-
-	    adapter.session.GlobalData = new GlobalData();
-	})();
+	AdapterAPI.peer = new adapter.peer.WeaveJSInterface();
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
-
-/***/ },
-/* 3 */
+/* 1 */
 /***/ function(module, exports) {
 
 	//namespace
@@ -150,6 +96,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	(function () {
+
 	    function Interface() {}
 	    var p = Interface.prototype;
 	    /*
@@ -164,14 +111,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        console.log('this hook doesnt have Probe API');
 	    };
 
-	    p.setData = function () {};
-	    p.getData = function () {};
-
 	    adapter.Interface = Interface;
 	})();
 
 /***/ },
-/* 4 */
+/* 2 */
 /***/ function(module, exports) {
 
 	//namespace
@@ -186,7 +130,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	(function () {
 	    function C3Interface(chart) {
 	        adapter.Interface.call(this);
-	        if (chart) this.chart = chart;
+	        if (chart) this._chart = chart;
+
+	        Object.defineProperty(this, 'chart', {
+	            get: function get() {
+	                return this._chart;
+	            },
+	            set: function set(chart) {
+	                this._chart = chart;
+	            }
+	        });
 	    }
 
 	    C3Interface.prototype = new adapter.Interface();
@@ -194,16 +147,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var p = C3Interface.prototype;
 
-	    p.setChart = function (chart) {
-	        this.chart = chart;
-	    };
-
 	    p.doProbe = function (key) {
 	        if (!this.chart) {
-	            console.log('Hook a C3 chart First');
+	            console.error('Hook a C3 chart First');
 	            return;
 	        }
-	        this.chart.select(this.chart.columns, [key], true);
+	        var yIndex = Number(this.chart.keyColumnToYIndex[key]);
+	        this.chart.select(['y'], [yIndex], true);
 	    };
 
 	    /*
@@ -214,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    p.doSelection = function (keys) {
 	        if (!this.chart) {
-	            console.log('Hook a c3 chart First');
+	            console.error('Hook a c3 chart First');
 	            return;
 	        }
 
@@ -223,10 +173,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else console.log("keys(Array)  is required");
 
 	        if (keys.length > 0) {
-	            var numericKeys = keys.map(function (key) {
-	                if (key.constructor === String) return key = Number(key);else return key;
-	            });
-	            this.chart.select(this.chart.columns, numericKeys, true);
+	            var yIndices = keys.map((function (key) {
+	                return Number(this.chart.keyColumnToYIndex[key]);
+	            }).bind(this));
+	            this.chart.select(['y'], yIndices, true);
 	        } else this.chart.unselect();
 	    };
 
@@ -234,7 +184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 5 */
+/* 3 */
 /***/ function(module, exports) {
 
 	//namespace
@@ -249,7 +199,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	(function () {
 	    function D3Interface(chart) {
 	        adapter.Interface.call(this);
-	        if (chart) this.chart = chart;
+	        if (chart) this._chart = chart;
+
+	        Object.defineProperty(this, 'chart', {
+	            get: function get() {
+	                return this._chart;
+	            },
+	            set: function set(chart) {
+	                this._chart = chart;
+	            }
+	        });
 	        this.dataSource;
 	    }
 
@@ -257,10 +216,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    D3Interface.prototype.constructor = D3Interface;
 
 	    var p = D3Interface.prototype;
-
-	    p.setChart = function (chart) {
-	        this.chart = chart;
-	    };
 
 	    /*
 	     *This function renders on the visualization library , which are hooked to it
@@ -270,6 +225,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    p.doSelection = function (keys) {
 	        if (!this.chart) {
+	            console.log(this);
 	            console.log('Hook a d3 chart First');
 	            return;
 	        }
@@ -278,6 +234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    p.doProbe = function (key) {
 	        if (!this.chart) {
+	            console.log(this);
 	            console.log('Hook a d3 chart First');
 	            return;
 	        }
@@ -297,7 +254,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -306,9 +263,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	__webpack_require__(2);
+	__webpack_require__(5);
 
 	//namespace
+	__webpack_require__(6);
 	if (typeof window === 'undefined') {
 	    undefined.adapter.peer = undefined.adapter.peer || {};
 	} else {
@@ -327,10 +285,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        adapter.Interface.call(this);
 	        this.activeHook = null;
 
-	        Object.defineProperty(this, 'sessionable', {
-	            value: true
-	        });
-
 	        // set Probe and Selection keys
 	        Object.defineProperty(this, 'probeKeys', {
 	            value: WeaveAPI.globalHashMap.requestObject('probeKeys', weavecore.LinkableVariable, false)
@@ -344,11 +298,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            value: WeaveAPI.globalHashMap.requestObject('hooks', weavecore.LinkableHashMap, false)
 	        });
 
+	        Object.defineProperty(this, 'dataSources', {
+	            value: WeaveAPI.globalHashMap.requestObject('dataSources', weavecore.LinkableHashMap, false)
+	        });
+
 	        this.selectionKeys.setSessionState([]);
 	        this.probeKeys.setSessionState(null);
 
 	        this.selectionKeys.addImmediateCallback(this, renderSelection.bind(this));
 	        this.probeKeys.addImmediateCallback(this, renderProbe.bind(this));
+
+	        this.hooks.childListCallbacks.addImmediateCallback(this, updateDataSource.bind(this));
 	    }
 
 	    WeaveJSInterface.prototype = new adapter.Interface();
@@ -356,18 +316,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function renderSelection() {
 	        var keys = this.selectionKeys.getSessionState();
+	        console.log(keys);
 	        var hookedTools = this.hooks.getObjects();
 	        hookedTools.forEach((function (tool, index) {
-	            if (tool.sessionData.chart != this.activeHook) tool.hook.doSelection(keys);else this.activeTool = null;
+	            if (tool.hook.chart !== this.activeHook) {
+	                console.log(tool.hook, keys);
+	                tool.hook.doSelection(keys);
+	            }
 	        }).bind(this));
+	        this.activeHook = null;
 	    }
 
 	    function renderProbe() {
 	        var key = this.probeKeys.getSessionState();
 	        var hookedTools = this.hooks.getObjects();
 	        hookedTools.forEach((function (tool, index) {
-	            if (tool.sessionData.chart != this.activeHook) tool.hook.doProbe(key);else this.activeHook = null;
+	            if (tool.hook.chart != this.activeHook) tool.hook.doProbe(key);
 	        }).bind(this));
+	        this.activeHook = null;
+	    }
+
+	    function updateDataSource() {
+	        if (this.hooks.childListCallbacks.lastObjectAdded) {
+	            var addedTool = this.hooks.childListCallbacks.lastObjectAdded;
+	            addedTool.sessionData.dataSourceWatcher.targetPath = WeaveAPI.SessionManager.getPath(WeaveAPI.globalHashMap, this.dataSources.getObject(this.dataSources.getNames()[0]));
+	        }
+	        if (this.hooks.childListCallbacks.lastObjectRemoved) {
+	            var removedTool = this.hooks.childListCallbacks.lastObjectRemoved;
+	            removedTool.sessionData.dataSourceWatcher.dispose();
+	            WeaveAPI.SessionManager.disposeObject(removedTool.sessionData);
+	            WeaveAPI.SessionManager.disposeObject(removedTool);
+	        }
 	    }
 
 	    var p = WeaveJSInterface.prototype;
@@ -410,14 +389,122 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Object} classDefn sessionable Object
 	     * @return {Object} Mostly DOM element which is wrapped with sessionable propert
 	     */
-	    p.deleteHook = function (name) {
+	    p.removeHook = function (name) {
 	        return this.hooks.removeObject(name);
 	    };
 
-	    p.loadSessionState = function () {};
+	    /**
+	     * This function request for hook which is either instance of IlinkableObject or has sessionable property value true
+	     * @method requestHook
+	     * @param {String} name to identify the object in session state
+	     * @param {Class} classDefn sessionable Object
+	     * @return {Object} Mostly DOM element which is wrapped with sessionable propert
+	     */
+	    p.requestDataSource = function (name, classDefn) {
+	        return this.dataSources.requestObject(name, classDefn, false);
+	    };
+
+	    /**
+	     * This function request for hook which is either instance of IlinkableObject or has sessionable property value true
+	     * @method requestHook
+	     * @param {String} name to identify the object in session state
+	     * @param {Object} classDefn sessionable Object
+	     * @return {Object} Mostly DOM element which is wrapped with sessionable propert
+	     */
+	    p.removeDataSource = function (name) {
+	        return this.dataSources.removeObject(name);
+	    };
+
+	    // p.register
 
 	    adapter.peer.WeaveJSInterface = WeaveJSInterface;
 	})();
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(6);
+
+	//namesapce
+	if (typeof window === 'undefined') {
+	    undefined.adapter = undefined.adapter || {};
+	} else {
+	    window.adapter = window.adapter || {};
+	}
+
+	if (typeof window === 'undefined') {
+	    undefined.adapter.session = undefined.adapter.session || {};
+	} else {
+	    window.adapter.session = window.adapter.session || {};
+	}
+
+	(function () {
+
+	    Object.defineProperty(DataSource, 'NS', {
+	        value: 'adapter.session'
+	    });
+
+	    Object.defineProperty(DataSource, 'CLASS_NAME', {
+	        value: 'DataSource'
+	    });
+
+	    function DataSource() {
+
+	        /**
+	         * @public
+	         * @property sessionable
+	         * @readOnly
+	         * @type Booloean
+	         */
+	        Object.defineProperty(this, 'sessionable', {
+	            value: true
+	        });
+
+	        /**
+	         * To identify dataSource session objects
+	         * @public
+	         * @property IDataSource
+	         * @readOnly
+	         * @type Booloean
+	         */
+	        Object.defineProperty(this, 'IDataSource', {
+	            value: true
+	        });
+	        /**
+	         * @public
+	         * @property data
+	         * @readOnly
+	         * @type weavecore.LinkableVariable
+	         */
+	        Object.defineProperty(this, 'data', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableVariable([]), updateColumns.bind(this))
+	        });
+
+	        this.columns = [];
+	    }
+
+	    function updateColumns() {
+	        var records = this.data.getSessionState();
+	        if (records.length) {
+	            var row = records[0];
+	            for (var key in row) this.columns.push(key);
+	        }
+	    }
+
+	    // Prototypes
+	    var p = DataSource.prototype;
+
+	    adapter.session.DataSource = DataSource;
+	})();
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
 
 /***/ },
 /* 7 */
@@ -437,7 +524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	__webpack_require__(11);
 
-	__webpack_require__(2);
+	__webpack_require__(6);
 
 	//namesapce
 	if (typeof window === 'undefined') {
@@ -502,16 +589,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @public
-	         * @property chart
-	         * @readOnly
-	         * @type d3Chart.Scatterplot
-	         */
-	        /*Object.defineProperty(this, 'chart', {
-	            value: new d3Chart.Scatterplot()
-	        });*/
-
-	        /**
-	         * @public
 	         * @property hook
 	         * @readOnly
 	         * @type d3Chart.Scatterplot
@@ -570,17 +647,17 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	__webpack_require__(10);
 
@@ -594,81 +671,120 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function D3ScatterPlot(props) {
 	        _classCallCheck(this, D3ScatterPlot);
 
-	        _get(Object.getPrototypeOf(D3ScatterPlot.prototype), "constructor", this).call(this, props);
+	        _get(Object.getPrototypeOf(D3ScatterPlot.prototype), 'constructor', this).call(this, props);
 	        this.sessionData = props.sessionData;
-	        this.chart = props.chart;
+	        this.hook = props.hook;
+	        this.state = this.sessionData.getSessionStateValue();
+	        this.initialize = this.initialize.bind(this);
 	        this._setReactState = this._setReactState.bind(this);
 	    }
 
-	    //tied with d3 creation
-
 	    _createClass(D3ScatterPlot, [{
-	        key: "componentDidMount",
+	        key: 'initialize',
+	        value: function initialize() {
+	            var _dataSourcePath = this.state.dataSourcePath;
+	            //since key wasnt mentioned here it creates index column and name index as key column name
+	            if (_dataSourcePath && _dataSourcePath.length > 0) {
+	                var config = {
+	                    container: _react2['default'].findDOMNode(this),
+	                    margin: this.props.padding ? this.props.padding : {},
+	                    size: this.props.size ? this.props.size : {},
+	                    interactions: {
+	                        onProbe: this.props.onProbe,
+	                        onSelect: this.props.onSelect
+	                    }
+	                };
+	                this.hook.chart = new d3Chart.Scatterplot();
+	                this.hook.chart.create(config);
+	                var path = this.state.dataSourcePath;
+	                var rows = WeaveAPI.SessionManager.getObject(WeaveAPI.globalHashMap, path).data.getSessionState();
+	                var data = {
+	                    columns: {
+	                        x: this.state.xAxis,
+	                        y: this.state.yAxis
+
+	                    },
+	                    records: rows
+	                };
+	                console.log('d3', rows);
+	                this.hook.chart.renderChart(data);
+	            } else {
+	                console.warn("No data");
+	            }
+	        }
+
+	        //tied with d3 creation
+	    }, {
+	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            var config = {
-	                container: _react2["default"].findDOMNode(this),
-	                margin: this.props.padding ? this.props.padding : {},
-	                size: this.props.size ? this.props.size : {},
-	                columns: {
-	                    x: this.sessionData.xAxis.value,
-	                    y: this.sessionData.yAxis.value,
-	                    key: "index"
-	                },
-	                interactions: {
-	                    onProbe: this.props.onProbe,
-	                    onSelect: this.props.onSelect
-	                }
-	            };
-
-	            var data = WeaveAPI.globalHashMap.getObject('dataSource').getSessionState();
-	            WeaveAPI.globalHashMap.getObject('dataSource').addGroupedCallback(this, this._setReactState);
-	            console.log(this, this.props);
-	            this.sessionData.chart = new d3Chart.Scatterplot();
-	            this.props.hook.setChart(this.sessionData.chart);
-
-	            this.sessionData.chart.create(config);
-	            this.sessionData.chart.renderChart(data);
-	            this.sessionData.xAxis.addGroupedCallback(this, this._setReactState);
-	            this.sessionData.yAxis.addGroupedCallback(this, this._setReactState);
+	            this.initialize();
+	            // make sure data update is called last , so that x and y axis property will be ready by then.
+	            WeaveAPI.SessionManager.getCallbackCollection(this.sessionData).addGroupedCallback(this, this._setReactState, true);
+	        }
+	    }, {
+	        key: '_setReactState',
+	        value: function _setReactState() {
+	            if (!this.hook.chart) {
+	                this.initialize();
+	            }
+	            this.setState(this.sessionData.getSessionStateValue());
 	        }
 
 	        //tied with d3 update
 	    }, {
-	        key: "componentDidUpdate",
+	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {
-	            //var data = WeaveAPI.globalHashMap.getObject('dataSource').getSessionState();
-	            //this.sessionData.chart.renderChart(data);
-	            this.sessionData.chart.setXAttribute(this.sessionData.xAxis.value);
-	            this.sessionData.chart.setYAttribute(this.sessionData.yAxis.value);
+	            if (this.hook.chart) {
+	                var path = this.state.dataSourcePath;
+	                var rows = WeaveAPI.SessionManager.getObject(WeaveAPI.globalHashMap, path).data.getSessionState();
+	                var data = {
+	                    columns: {
+	                        x: this.state.xAxis,
+	                        y: this.state.yAxis
+
+	                    },
+	                    records: rows
+	                };
+	                this.hook.chart.renderChart(data);
+	            }
 	        }
 
 	        //tied with d3 destruction
 	    }, {
-	        key: "componentWillUnmount",
+	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.sessionData.xAxis.removeCallback(this._setReactState);
-	            this.sessionData.yAxis.removeCallback(this._setReactState);
-	            WeaveAPI.globalHashMap.getObject('dataSource').removeCallback(this._setReactState);
+	            WeaveAPI.SessionManager.getCallbackCollection(this.sessionData).removeCallback(this._setReactState);
 	        }
 	    }, {
-	        key: "_setReactState",
-	        value: function _setReactState() {
-	            //this wil call render function which in turn calls componentDidUpdate
-	            this.setState(this.sessionData.getSessionStateValue());
-	        }
-	    }, {
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
-	            return _react2["default"].createElement(
-	                "div",
-	                { className: "Chart" },
-	                " "
-	            );
+	            var _dataSourcePath = this.state.dataSourcePath;
+	            if (_dataSourcePath && _dataSourcePath.length > 0) {
+	                return _react2['default'].createElement(
+	                    'div',
+	                    { className: 'Chart' },
+	                    ' '
+	                );
+	            } else {
+	                return _react2['default'].createElement(
+	                    'div',
+	                    { className: 'Chart' },
+	                    ' ',
+	                    _react2['default'].createElement(
+	                        'h2',
+	                        null,
+	                        ' ',
+	                        this.sessionData.dataSourceName,
+	                        'dont have data '
+	                    ),
+	                    ' '
+	                );
+	            }
 	        }
 	    }]);
 
 	    return D3ScatterPlot;
-	})(_react2["default"].Component);
+	})(_react2['default'].Component);
 
 	module.exports = D3ScatterPlot;
 
@@ -684,7 +800,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	__webpack_require__(2);
+	__webpack_require__(6);
 
 	//namesapce
 	if (typeof window === 'undefined') {
@@ -728,7 +844,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type weavecore.LinkableString
 	         */
 	        Object.defineProperty(this, 'xAxis', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString())
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
 	        });
 
 	        /**
@@ -738,11 +854,46 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type weavecore.LinkableString
 	         */
 	        Object.defineProperty(this, 'yAxis', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString())
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
 	        });
 
-	        // since c3 creates charts with default config need to set at the time of creation.
-	        this.chart;
+	        /**
+	         * @public
+	         * @property keyColumn
+	         * @readOnly
+	         * @type weavecore.LinkableString
+	         */
+	        Object.defineProperty(this, 'keyColumn', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableString(''))
+	        });
+
+	        /**
+	         * @public
+	         * @property dataSourcePath
+	         * @readOnly
+	         * @type weavecore.LinkableVariable
+	         */
+	        Object.defineProperty(this, 'dataSourcePath', {
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableVariable([]))
+	        });
+
+	        /**
+	         * @public
+	         * @property dataSourceName
+	         * @readOnly
+	         * @type weavecore.LinkableString
+	         */
+	        Object.defineProperty(this, '_dataSourceWatcher', {
+	            value: new weavecore.LinkableWatcher()
+	        });
+
+	        Object.defineProperty(this, 'dataSourceWatcher', {
+	            get: function get() {
+	                return this._dataSourceWatcher;
+	            }
+	        });
+
+	        WeaveAPI.SessionManager.getCallbackCollection(this.dataSourceWatcher).addImmediateCallback(this, this._updateDataSourcePath.bind(this), true);
 	    }
 
 	    // Prototypes
@@ -756,8 +907,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    p.getSessionStateValue = function () {
 	        return {
 	            'xAxis': this.xAxis.value,
-	            'yAxis': this.yAxis.value
+	            'yAxis': this.yAxis.value,
+	            'dataSourcePath': this.dataSourcePath.getSessionState()
 	        };
+	    };
+
+	    p._updateDataSourcePath = function () {
+	        var path = this.dataSourceWatcher.targetPath;
+	        this.dataSourcePath.setSessionState(path);
 	    };
 
 	    // public methods:
@@ -769,11 +926,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return ['xAxis', 'yAxis'];
 	    };
 
+	    // getter function for react State Objects
+
 	    /**
 	     * @method getXAxisValue
 	     * @return {Object}
 	     */
-	    p.getXAxisValue = function () {
+	    p.getXAxisState = function () {
 	        return {
 	            'xAxis': this.xAxis.value
 	        };
@@ -783,9 +942,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @method getYAxisValue
 	     * @return {Object}
 	     */
-	    p.getYAxisValue = function () {
+	    p.getYAxisState = function () {
 	        return {
 	            'yAxis': this.yAxis.value
+	        };
+	    };
+
+	    /**
+	     * @method getDataSourceState
+	     * @return {Object}
+	     */
+	    p.getDataSourceState = function () {
+	        return {
+	            'dataSourcePath': this.dataSourcePath.getSessionState()
 	        };
 	    };
 
@@ -810,7 +979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	__webpack_require__(11);
 
-	__webpack_require__(2);
+	__webpack_require__(6);
 
 	//namesapce
 	if (typeof window === 'undefined') {
@@ -882,16 +1051,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Object.defineProperty(this, 'sessionData', {
 	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new adapter.session.ScatterPlot())
 	        });
-
-	        /**
-	         * @public
-	         * @property chart
-	         * @readOnly
-	         * @type d3Chart.Scatterplot
-	         */
-	        /*Object.defineProperty(this, 'chart', {
-	            value: c3.generate(WeaveAPI.globalHashMap.getObject('dataSource').getSessionState())
-	        });*/
 
 	        /**
 	         * @public
@@ -975,102 +1134,194 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        _get(Object.getPrototypeOf(C3ScatterPlot.prototype), 'constructor', this).call(this, props);
 	        this.sessionData = props.sessionData;
+	        this.hook = props.hook;
+	        this.state = this.sessionData.getSessionStateValue();
+	        this.initialize = this.initialize.bind(this);
 	        this._setReactState = this._setReactState.bind(this);
+
+	        this.getColumns = this.getColumns.bind(this);
 	    }
 
-	    //tied with d3 creation
-
 	    _createClass(C3ScatterPlot, [{
+	        key: 'initialize',
+	        value: function initialize() {
+	            var chartUI = this;
+	            var _dataSourcePath = this.state.dataSourcePath;
+	            if (_dataSourcePath && _dataSourcePath.length > 0) {
+	                //data.x data.y are ids - so make it x and y
+	                //unlike d3 c3 wont le tyou to load all data, it converts data specifed in columns to array fo json data style
+	                //so its important to set hide to keycolumnName which hleps in retrieving the the seleted data
+
+	                var config = {
+	                    bindto: _react2['default'].findDOMNode(this),
+	                    padding: this.props.padding ? this.props.padding : {},
+	                    size: this.props.size ? this.props.size : {},
+	                    data: {
+	                        x: 'x',
+	                        y: 'y',
+	                        columns: [],
+	                        type: 'scatter',
+	                        selection: {
+	                            enabled: true,
+	                            multiple: true,
+	                            draggable: true
+
+	                        },
+	                        onselected: function onselected() {
+	                            var selectedPoints = this.selected();
+	                            //console.log('From c3 Selection selectedPoints Key', selectedPoints);
+	                            if (selectedPoints.constructor === Array) {
+	                                var keys = selectedPoints.map(function (point) {
+	                                    return chartUI.hook.chart.yIndexToKeyColumn[point['index']];
+	                                });
+	                                //console.log('From c3 Selection Multiple Key', keys);
+	                                chartUI.props.onSelect.callback.call(this, keys);
+	                            } else {
+	                                //console.log('From c3 Selection Single Key', chartUI.hook.chart.yIndexToKeyColumn[selectedPoints['index']])
+	                                chartUI.props.onSelect.callback.call(this, chartUI.hook.chart.yIndexToKeyColumn[selectedPoints['index']]);
+	                            }
+	                        },
+	                        onmouseover: function onmouseover(point) {
+	                            //console.log('From c3 Probe Key', chartUI.hook.chart.yIndexToKeyColumn[point['index']])
+	                            chartUI.props.onProbe.callback.call(this, chartUI.hook.chart.yIndexToKeyColumn[point['index']]);
+	                        }
+	                    },
+	                    axis: {
+	                        x: {
+	                            label: this.state.xAxis,
+	                            tick: {
+	                                fit: false
+	                            }
+	                        },
+	                        y: {
+	                            label: this.state.yAxis
+	                        }
+	                    },
+	                    onmouseout: function onmouseout() {
+	                        WeaveAPI.globalHashMap.getObject('selectionKeys').setSessionState([]);
+	                    },
+	                    legend: {
+	                        show: false
+	                    }
+
+	                };
+	                this.hook.chart = _c32['default'].generate(config);
+	                var records = this.getColumns(this.state.xAxis, this.state.yAxis);
+	                this.hook.chart.load({
+	                    columns: records
+	                });
+	            } else {
+	                console.warn("No Data Found");
+	            }
+	        }
+
+	        //tied with d3 creation
+	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
+	            this.initialize();
+	            WeaveAPI.SessionManager.getCallbackCollection(this.sessionData).addGroupedCallback(this, this._setReactState, true);
+	        }
+	    }, {
+	        key: '_setReactState',
+	        value: function _setReactState() {
+	            if (!this.hook.chart) {
+	                this.initialize();
+	            }
+	            this.setState(this.sessionData.getSessionStateValue());
+	        }
+	    }, {
+	        key: 'getColumns',
+	        value: function getColumns(xColumnName, yColumnName) {
+	            this.hook.chart.keyColumnToYIndex = {};
+	            this.hook.chart.yIndexToKeyColumn = {};
+	            var path = this.state.dataSourcePath;
+	            var data = WeaveAPI.SessionManager.getObject(WeaveAPI.globalHashMap, path).data.getSessionState();
+	            var createIndex = false;
+	            if (!data[0].hasOwnProperty('index')) {
+	                console.warn("Its a good practise to set key column. failing to do so, will create a index as key column");
+	                createIndex = true;
+	            }
 
-	            var data = WeaveAPI.globalHashMap.getObject('dataSource').getSessionState();
-	            var columns = [[], [], []];
-	            columns[0].push(this.sessionData.xAxis.value);
-	            columns[1].push(this.sessionData.yAxis.value);
-	            columns[2].push('index');
-	            var records = data.map((function (object) {
-	                columns[0].push(object[this.sessionData.xAxis.value]);
-	                columns[1].push(object[this.sessionData.yAxis.value]);
-	                columns[2].push(object['index']);
-	            }).bind(this));
-
-	            var config = {
-	                bindto: _react2['default'].findDOMNode(this),
-	                padding: this.props.padding ? this.props.padding : {},
-	                size: this.props.size ? this.props.size : {},
-	                data: {
-	                    x: this.sessionData.xAxis.value,
-	                    y: this.sessionData.yAxis.value,
-	                    columns: columns,
-	                    type: 'scatter',
-	                    selection: {
-	                        enabled: true,
-	                        multiple: true,
-	                        draggable: true
-
-	                    },
-	                    hide: ['index'],
-	                    onselected: this.props.onSelect.callback,
-	                    onmouseover: this.props.onProbe.callback
-	                },
-	                axis: {
-	                    x: {
-	                        label: this.sessionData.xAxis.value
-
-	                    },
-	                    y: {
-	                        label: this.sessionData.yAxis.value
+	            var columns = [[], []];
+	            var keyCol = this.sessionData.keyColumn.value = this.sessionData.keyColumn.value ? this.sessionData.keyColumn.value : 'index';
+	            console.log('Key Column:', keyCol);
+	            columns[0].push('x');
+	            columns[1].push('y');
+	            // in c3 index value is mapped with Y axis value
+	            // So map our keycolumn value with Y index which aids in exact selection and probing
+	            data.forEach((function (object, i) {
+	                if (createIndex) object['index'] = i;
+	                if (typeof object[xColumnName] === 'string') {
+	                    if (isNaN(Number(object[xColumnName]))) {
+	                        columns[0].push(object['index']);
+	                    } else {
+	                        columns[0].push(Number(object[xColumnName]));
 	                    }
-	                },
-	                onmouseout: function onmouseout() {
-	                    WeaveAPI.globalHashMap.getObject('selectionKeys').setSessionState([]);
-	                },
-	                legend: {
-	                    show: false
+	                } else {
+	                    columns[0].push(object[xColumnName]);
 	                }
-
-	            };
-
-	            WeaveAPI.globalHashMap.getObject('dataSource').addGroupedCallback(this, this._setReactState);
-
-	            this.sessionData.chart = _c32['default'].generate(config);
-	            this.props.hook.setChart(this.sessionData.chart);
-
-	            this.sessionData.xAxis.addImmediateCallback(this, this._setReactState);
-	            this.sessionData.yAxis.addImmediateCallback(this, this._setReactState);
+	                if (typeof object[yColumnName] === 'string') {
+	                    if (isNaN(Number(object[yColumnName]))) {
+	                        columns[1].push(object['index']);
+	                    } else {
+	                        columns[1].push(Number(object[yColumnName]));
+	                    }
+	                } else {
+	                    columns[1].push(object[yColumnName]);
+	                }
+	                this.hook.chart.keyColumnToYIndex[object[keyCol]] = i;
+	                this.hook.chart.yIndexToKeyColumn[i] = object[keyCol];
+	            }).bind(this));
+	            console.log(columns);
+	            return columns;
 	        }
 
 	        //tied with d3 update
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {
-	            this.sessionData.chart.setXAttribute(this.sessionData.xAxis.value);
-	            this.sessionData.chart.setYAttribute(this.sessionData.yAxis.value);
+	            if (this.hook.chart) {
+	                this.hook.chart.axis.labels({
+	                    x: this.state.xAxis,
+	                    y: this.state.yAxis
+	                });
+	                var columns = this.getColumns(this.state.xAxis, this.state.yAxis);
+	                this.hook.chart.load({
+	                    columns: columns
+	                });
+	            }
 	        }
 
 	        //tied with d3 destruction
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.sessionData.xAxis.removeCallback(this._setReactState);
-	            this.sessionData.yAxis.removeCallback(this._setReactState);
-	            WeaveAPI.globalHashMap.getObject('dataSource').removeCallback(this._setReactState);
-	        }
-	    }, {
-	        key: '_setReactState',
-	        value: function _setReactState() {
-	            //this wil call render function which in turn calls componentDidUpdate
-	            this.setState(this.sessionData.getSessionStateValue());
+	            WeaveAPI.SessionManager.getCallbackCollection(this.sessionData).removeCallback(this._setReactState);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2['default'].createElement(
-	                'div',
-	                { className: 'Chart' },
-	                ' '
-	            );
+	            var _target = this.sessionData.dataSourceWatcher.target;
+	            if (_target) {
+	                return _react2['default'].createElement(
+	                    'div',
+	                    { className: 'Chart' },
+	                    ' '
+	                );
+	            } else {
+	                return _react2['default'].createElement(
+	                    'div',
+	                    { className: 'Chart' },
+	                    ' ',
+	                    _react2['default'].createElement(
+	                        'h2',
+	                        null,
+	                        ' No Data '
+	                    ),
+	                    ' '
+	                );
+	            }
 	        }
 	    }]);
 

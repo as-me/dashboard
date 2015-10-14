@@ -1,4 +1,3 @@
-require("./lib/Global.js");
 exports.AdapterInterface = require("./lib/AdapterInterface.js");
 exports.hook = {};
 
@@ -15,3 +14,13 @@ exports.components.D3.ScatterPlotTool = require("./lib/components/D3/ScatterPlot
 
 exports.components.C3 = {}
 exports.components.C3.ScatterPlotTool = require("./lib/components/C3/ScatterPlot.js");
+
+
+//namesapce
+if (typeof window === 'undefined') {
+    this.AdapterAPI = this.AdapterAPI || {};
+} else {
+    window.AdapterAPI = window.AdapterAPI || {};
+}
+
+AdapterAPI.peer = new adapter.peer.WeaveJSInterface();

@@ -45,8 +45,17 @@ export default class DataSource extends React.Component {
             var companyUrl = dataSource['companyUrl'];
             var logoUrl = dataSource['logoUrl'];
             var bgColor = dataSource['backgroundColor'];
-            var connectFn = dataSource['connect'].bind(dataSource);
             var apiCalls = dataSource['apiCalls'];
+
+            var connectFn;
+            var viewDataFn;
+            if(dataSource.isConnected()){
+                 viewDataFn = dataSource['getRecords'].bind(dataSource);
+            }else{
+                 connectFn = dataSource['connect'].bind(dataSource);
+
+            }
+
 
             return < Col key={index} xs = {
                         12
@@ -54,11 +63,12 @@ export default class DataSource extends React.Component {
                     md = {
                         3
                     } >
-                    <FlipCard key={index} title={name} companyURL={companyUrl} logoURL={logoUrl} connector={connectFn} bgColor={bgColor} apiCalls={apiCalls}/>
+                    <FlipCard key={index} title={name} companyURL={companyUrl} logoURL={logoUrl} viewData={viewDataFn} connector={connectFn} bgColor={bgColor} apiCalls={apiCalls}/>
 
                     </Col>;
         }
         else{
+            var getRecordsFn = dataSource['getRecords'].bind(dataSource);
             var name = AdapterAPI.peer.dataSources.getName(dataSource);
             var bgColor = 'red';
             return < Col key={index} xs = {
@@ -67,7 +77,7 @@ export default class DataSource extends React.Component {
                         md = {
                             3
                         } >
-                        <FlipCard key={index} title={name} companyURL={null} logoURL={null} connector={null} bgColor={bgColor} apiCalls={[]}/>
+                        <FlipCard key={index} title={name} companyURL={null} logoURL={null} viewData={getRecordsFn} connector={null} bgColor={bgColor} apiCalls={[]}/>
 
                         </Col>;
             }

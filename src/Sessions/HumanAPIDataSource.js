@@ -62,24 +62,30 @@ var APIDataSource = require('./APIDataSource.js');
     }
 
 
+    p.isConnected = function () {
+        if (!this.sessionToken.userID.value) return false;
+        if (!this.sessionToken.humanID.value) return false;
+        if (!this.sessionToken.publicToken.value) return false;
+        if (!this.sessionToken.accessToken.value) return false;
+        this.toggleActivities();
+        return true;
+
+    }
+
+
 
     p.connect = function () {
-        if (!this.sessionToken.userID.value) {
-            this.sessionToken.userID.value = "sanjay1909@gmail.com";
-            this.sessionToken.publicToken.value = '3b14fe511ccc9e602727e75007480f25';
-            this.sessionToken.accessToken.value = 'NL4V3fJIGM3DXkeJIYH5OfW-__g=mX1Z6GQx6a19e2ac8c192e77e66036d997fc0a9b2103f52760ee8b620aa53a1f1eec87959a8c9e87e72b26c85d47510f2fc9a2300f71598a36a6a996c23d9f49533c9a69edb812c62e28149f07a70235babf9e8e99f5c15476e32607fea4f32171b580c22b668b5b763c0b68f04881cbf5ed0ab3';
-            this.sessionToken.humanID.value = '565ca01149bd0f998e64a1c8d236f9df';
-        }
 
+
+        /*if (!this.sessionToken.userID.value) {
+            this.sessionToken.userID.value = "1909sanjay@gmail.com";
+        }*/
         var inst = this;
         var options = {
             modal: 1,
             clientUserId: encodeURIComponent(this.sessionToken.userID.value), // can be email
             clientId: '9f9e4c03e02ab9e4ac8f264e65005b77e962cf8d', // found in Developer Portal
             finish: function (err, sessionTokenObject) {
-                console.log(sessionTokenObject);
-                // callback that would be called after user finishes
-                // connecting data.
 
                 var auth = new HumanAPIServices.AuthService('AsmeServlet');
 
@@ -131,7 +137,6 @@ var APIDataSource = require('./APIDataSource.js');
 
     p._setData = function () {
         if (this._promise.result) {
-            console.log('_setData:', this._promise.result);
             this.data.setSessionState(this._promise.result);
         } else
             console.error('Error:', this._promise.error);
@@ -141,6 +146,12 @@ var APIDataSource = require('./APIDataSource.js');
 
 
     p.initiate = function () {
+        if (!this.sessionToken.userID.value) {
+            this.sessionToken.userID.value = "sanjay1909@gmail.com";
+            this.sessionToken.publicToken.value = '3b14fe511ccc9e602727e75007480f25';
+            this.sessionToken.accessToken.value = 'NL4V3fJIGM3DXkeJIYH5OfW-__g=mX1Z6GQx6a19e2ac8c192e77e66036d997fc0a9b2103f52760ee8b620aa53a1f1eec87959a8c9e87e72b26c85d47510f2fc9a2300f71598a36a6a996c23d9f49533c9a69edb812c62e28149f07a70235babf9e8e99f5c15476e32607fea4f32171b580c22b668b5b763c0b68f04881cbf5ed0ab3';
+            this.sessionToken.humanID.value = '565ca01149bd0f998e64a1c8d236f9df';
+        }
         WeaveAPI.SessionManager.getCallbackCollection(this._promise).addImmediateCallback(null, this._setData.bind(this));
 
     }

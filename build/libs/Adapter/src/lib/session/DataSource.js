@@ -75,6 +75,10 @@ if (typeof window === 'undefined') {
     // Prototypes
     var p = DataSource.prototype;
 
+    p.getRecords = function () {
+        return this.data.getSessionState();
+    }
+
 
     adapter.session.DataSource = DataSource;
 

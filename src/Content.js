@@ -39,20 +39,18 @@ class Content extends React.Component {
 
 
     _updateState() {
-        console.log("page changed");
         this.setState({
             page: this.activePage.value
         });
     }
 
     componentWillUnmount() {
-        this.activePage.removeCallback(this, this._updateState)
+        this.activePage.removeCallback(this._updateState)
     }
 
     render() {
 
         var pageComponent = this.routes[this.state.page];
-        console.log(pageComponent);
         return pageComponent;
 
     }

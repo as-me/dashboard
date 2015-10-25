@@ -49,12 +49,12 @@ export default class DataSource extends React.Component {
 
             var connectFn;
             var viewDataFn;
-            if(dataSource.isConnected()){
+            //if(dataSource.isConnected()){
                  viewDataFn = dataSource['getRecords'].bind(dataSource);
-            }else{
+                 //}else{
                  connectFn = dataSource['connect'].bind(dataSource);
 
-            }
+//}
 
 
             return < Col key={index} xs = {

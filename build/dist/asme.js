@@ -24859,11 +24859,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    var connectFn;
 	                    var viewDataFn;
-	                    if (dataSource.isConnected()) {
-	                        viewDataFn = dataSource['getRecords'].bind(dataSource);
-	                    } else {
-	                        connectFn = dataSource['connect'].bind(dataSource);
-	                    }
+	                    //if(dataSource.isConnected()){
+	                    viewDataFn = dataSource['getRecords'].bind(dataSource);
+	                    //}else{
+	                    connectFn = dataSource['connect'].bind(dataSource);
+
+	                    //}
 
 	                    return _react2['default'].createElement(
 	                        Col,

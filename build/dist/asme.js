@@ -23215,7 +23215,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _react2['default'].createElement(
 	                    'div',
 	                    null,
-	                    'is worth a days of '
+	                    'is worth days of '
 	                ),
 	                _react2['default'].createElement(
 	                    'div',
@@ -24975,7 +24975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        Object.defineProperty(this, 'activities', {
-	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false, null, false))
+	            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(true, null, false))
 	        });
 
 	        Object.defineProperty(this, '_promise', {

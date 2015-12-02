@@ -37,7 +37,7 @@ var APIDataSource = require('./APIDataSource.js');
         });
 
         Object.defineProperty(this, 'activities', {
-            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(false, null, false))
+            value: WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.LinkableBoolean(true, null, false))
         });
 
         Object.defineProperty(this, '_promise', {
